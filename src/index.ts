@@ -8,8 +8,8 @@ export interface Env {
   // Mantido para não quebrar o ambiente atual.
   LIVEPIX_API_TOKEN: string;
 
-  // OAuth2 LivePix
-  ID_DO_CLIENTE_LIVEPIX: string;
+  // Nome exatamente igual ao Secret do Cloudflare.
+  LIVEPIX_CLIENT_ID: string;
   LIVEPIX_CLIENT_SECRET: string;
 
   DISCORD_URL?: string;
@@ -19,6 +19,7 @@ export interface Env {
 const LIVEPIX_OAUTH_URL = "https://oauth.livepix.gg/oauth2/token";
 const LIVEPIX_API_URL = "https://api.livepix.gg/v2";
 
+// Taxa considerada para o cálculo do valor cobrado.
 const LIVEPIX_FEE_PERCENT = 5;
 
 let oauthCache: {
@@ -30,8 +31,7 @@ const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
     headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store"
+      "content-type": "application/json; charset=utf-8"
     }
   });
 
@@ -42,10 +42,6 @@ function id(prefix: string) {
 function adminAuthorized(request: Request, env: Env) {
   return request.headers.get("x-admin-password") === env.ADMIN_PASSWORD;
 }
-
-/* =========================
-   CRIPTOGRAFIA
-========================= */
 
 async function keyFromSecret(secret: string) {
   const bytes = new TextEncoder().encode(secret);
@@ -95,10 +91,7 @@ async function encrypt(text: string, secret: string) {
   );
 }
 
-async function decrypt(
-  value: string,
-  secret: string
-) {
+async function decrypt(value: string, secret: string) {
   const raw = Uint8Array.from(
     atob(value),
     c => c.charCodeAt(0)
@@ -109,35 +102,23 @@ async function decrypt(
 
   const key = await keyFromSecret(secret);
 
-  const decrypted =
-    await crypto.subtle.decrypt(
-      {
-        name: "AES-GCM",
-        iv
-      },
-      key,
-      data
-    );
-
-  return new TextDecoder().decode(
-    decrypted
+  const decrypted = await crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv
+    },
+    key,
+    data
   );
+
+  return new TextDecoder().decode(decrypted);
 }
 
-/* =========================
-   VALOR / TAXA
-========================= */
-
-function amountWithFee(
-  amountCents: number
-) {
-  const fee =
-    LIVEPIX_FEE_PERCENT / 100;
+function amountWithFee(amountCents: number) {
+  const fee = LIVEPIX_FEE_PERCENT / 100;
 
   if (fee <= 0 || fee >= 1) {
-    throw new Error(
-      "Taxa LivePix inválida."
-    );
+    throw new Error("Taxa LivePix inválida.");
   }
 
   return Math.ceil(
@@ -145,15 +126,11 @@ function amountWithFee(
   );
 }
 
-/* =========================
-   OAUTH2 LIVEPIX
-========================= */
-
-async function getLivepixAccessToken(
-  env: Env
-) {
+async function getLivepixAccessToken(env: Env) {
+  // CORRIGIDO:
+  // O Cloudflare usa LIVEPIX_CLIENT_ID.
   if (
-    !env.ID_DO_CLIENTE_LIVEPIX ||
+    !env.LIVEPIX_CLIENT_ID ||
     !env.LIVEPIX_CLIENT_SECRET
   ) {
     throw new Error(
@@ -172,16 +149,9 @@ async function getLivepixAccessToken(
 
   const body = new URLSearchParams({
     grant_type: "client_credentials",
-    client_id:
-      env.ID_DO_CLIENTE_LIVEPIX,
-    client_secret:
-      env.LIVEPIX_CLIENT_SECRET,
-
-    // Permissões necessárias:
-    // criar/consultar pagamentos
-    // e trabalhar com webhooks.
-    scope:
-      "payments:read payments:write webhooks"
+    client_id: env.LIVEPIX_CLIENT_ID,
+    client_secret: env.LIVEPIX_CLIENT_SECRET,
+    scope: "payments:write payments:read"
   });
 
   const response = await fetch(
@@ -196,8 +166,7 @@ async function getLivepixAccessToken(
     }
   );
 
-  const data =
-    await response.json<any>();
+  const data = await response.json<any>();
 
   if (
     !response.ok ||
@@ -205,20 +174,16 @@ async function getLivepixAccessToken(
   ) {
     throw new Error(
       data?.error_description ||
-        data?.message ||
-        "Falha ao autenticar no LivePix."
+      data?.message ||
+      "Falha ao autenticar no LivePix."
     );
   }
 
   oauthCache = {
-    accessToken:
-      data.access_token,
+    accessToken: data.access_token,
     expiresAt:
       now +
-      Number(
-        data.expires_in || 3600
-      ) *
-        1000
+      Number(data.expires_in || 3600) * 1000
   };
 
   return data.access_token as string;
@@ -232,8 +197,9 @@ async function livepixRequest(
   const accessToken =
     await getLivepixAccessToken(env);
 
-  const headers =
-    new Headers(init.headers);
+  const headers = new Headers(
+    init.headers
+  );
 
   headers.set(
     "Authorization",
@@ -263,7 +229,7 @@ async function livepixRequest(
     }
   );
 
-  // Token expirou durante a requisição.
+  // Token expirado: gera outro e tenta novamente.
   if (response.status === 401) {
     oauthCache = null;
 
@@ -287,10 +253,6 @@ async function livepixRequest(
   return response;
 }
 
-/* =========================
-   PAGAMENTOS LIVEPIX
-========================= */
-
 async function livepixCreatePayment(
   env: Env,
   amountCents: number,
@@ -302,9 +264,7 @@ async function livepixCreatePayment(
     amountWithFee(amountCents);
 
   const redirectUrl =
-    `${origin}/?paid=${encodeURIComponent(
-      orderId
-    )}`;
+    `${origin}/?paid=${encodeURIComponent(orderId)}`;
 
   const response =
     await livepixRequest(
@@ -313,8 +273,7 @@ async function livepixCreatePayment(
       {
         method: "POST",
         body: JSON.stringify({
-          amount:
-            chargedAmountCents,
+          amount: chargedAmountCents,
           currency: "BRL",
           redirectUrl
         })
@@ -327,14 +286,13 @@ async function livepixCreatePayment(
   if (!response.ok) {
     throw new Error(
       body?.message ||
-        body?.error_description ||
-        body?.error ||
-        "Falha ao criar pagamento LivePix."
+      body?.error_description ||
+      body?.error ||
+      "Falha ao criar pagamento LivePix."
     );
   }
 
-  const payment =
-    body?.data;
+  const payment = body?.data;
 
   if (
     !payment?.reference ||
@@ -357,16 +315,10 @@ async function verifyLivepixPayment(
   env: Env,
   paymentId: string
 ) {
-  if (!paymentId) {
-    return null;
-  }
-
   const response =
     await livepixRequest(
       env,
-      `/payments/${encodeURIComponent(
-        paymentId
-      )}`
+      `/payments/${encodeURIComponent(paymentId)}`
     );
 
   if (!response.ok) {
@@ -383,15 +335,10 @@ async function findLivepixPaymentByReference(
   env: Env,
   reference: string
 ) {
-  if (!reference) {
-    return null;
-  }
-
-  const query =
-    new URLSearchParams({
-      reference,
-      limit: "10"
-    });
+  const query = new URLSearchParams({
+    reference,
+    limit: "10"
+  });
 
   const response =
     await livepixRequest(
@@ -414,31 +361,25 @@ async function findLivepixPaymentByReference(
   return (
     payments.find(
       (payment: any) =>
-        payment?.reference ===
-        reference
+        payment?.reference === reference
     ) ??
+    payments[0] ??
     null
   );
 }
-
-/* =========================
-   ESTOQUE
-========================= */
 
 async function reserveInventory(
   env: Env,
   orderId: string,
   productId: string
 ) {
-  const inventoryId =
-    id("inv");
+  const inventoryId = id("inv");
 
   const result =
     await env.DB.batch([
       env.DB.prepare(
         `UPDATE inventory
-         SET status='reserved',
-             order_id=?
+         SET status='reserved', order_id=?
          WHERE id = (
            SELECT id
            FROM inventory
@@ -462,8 +403,7 @@ async function reserveInventory(
     ]);
 
   const row =
-    result[1]
-      ?.results?.[0] as any;
+    result[1]?.results?.[0] as any;
 
   if (!row) {
     return null;
@@ -472,24 +412,17 @@ async function reserveInventory(
   return row.id as string;
 }
 
-/* =========================
-   CONFIRMAÇÃO DO PAGAMENTO
-========================= */
-
 async function markPaidAndDeliver(
   env: Env,
   payment: any
 ) {
   const reference =
-    String(
-      payment?.reference || ""
-    );
+    String(payment?.reference || "");
 
   if (!reference) {
     return {
       ok: false,
-      reason:
-        "missing_reference"
+      reason: "missing_reference"
     };
   }
 
@@ -506,8 +439,7 @@ async function markPaidAndDeliver(
   if (!order) {
     return {
       ok: false,
-      reason:
-        "order_not_found"
+      reason: "order_not_found"
     };
   }
 
@@ -518,68 +450,38 @@ async function markPaidAndDeliver(
     };
   }
 
-  /*
-   * Primeiro tenta confirmar pelo ID.
-   * Se não conseguir, tenta pela reference.
-   */
-  let verified = null;
+  const verified =
+    payment?.id
+      ? await verifyLivepixPayment(
+          env,
+          String(payment.id)
+        )
+      : await findLivepixPaymentByReference(
+          env,
+          reference
+        );
 
-  if (payment?.id) {
-    verified =
-      await verifyLivepixPayment(
-        env,
-        String(payment.id)
-      );
-  }
-
-  if (!verified) {
-    verified =
-      await findLivepixPaymentByReference(
-        env,
-        reference
-      );
-  }
-
-  if (!verified) {
-    return {
-      ok: false,
-      reason:
-        "payment_not_found"
-    };
-  }
-
-  // Só aceita pagamento que tenha comprovante.
   if (!verified?.proof) {
     return {
       ok: false,
-      reason:
-        "payment_not_verified"
+      reason: "payment_not_verified"
     };
   }
 
-  // Só aceita BRL.
-  if (
-    String(
-      verified.currency
-    ).toUpperCase() !== "BRL"
-  ) {
+  if (verified.currency !== "BRL") {
     return {
       ok: false,
-      reason:
-        "invalid_currency"
+      reason: "invalid_currency"
     };
   }
 
-  // Confere se o valor pago é exatamente
-  // o valor que deveria ser cobrado.
   if (
     Number(verified.amount) !==
     Number(order.amount_cents)
   ) {
     return {
       ok: false,
-      reason:
-        "amount_mismatch"
+      reason: "amount_mismatch"
     };
   }
 
@@ -600,8 +502,7 @@ async function markPaidAndDeliver(
   if (!inventory) {
     return {
       ok: false,
-      reason:
-        "reserved_inventory_not_found"
+      reason: "reserved_inventory_not_found"
     };
   }
 
@@ -623,8 +524,8 @@ async function markPaidAndDeliver(
     ).bind(
       String(
         verified.id ??
-          payment?.id ??
-          ""
+        payment.id ??
+        ""
       ),
       reference,
       order.id
@@ -636,9 +537,7 @@ async function markPaidAndDeliver(
            sold_at=CURRENT_TIMESTAMP
        WHERE id=?
          AND status='reserved'`
-    ).bind(
-      inventory.id
-    )
+    ).bind(inventory.id)
   ]);
 
   return {
@@ -648,43 +547,19 @@ async function markPaidAndDeliver(
   };
 }
 
-/* =========================
-   WEBHOOK LIVEPIX
-========================= */
-
 async function handleLivepixWebhook(
   request: Request,
   env: Env
 ) {
-  let payload: any;
+  const payload =
+    await request.json<any>();
 
-  try {
-    payload =
-      await request.json<any>();
-  } catch {
-    return json(
-      {
-        error:
-          "Webhook inválido."
-      },
-      400
-    );
-  }
-
-  /*
-   * A LivePix envia:
-   * userId
-   * clientId
-   * event: "new"
-   * resource.id
-   * resource.reference
-   * resource.type
-   */
-
+  // CORRIGIDO:
+  // Usa LIVEPIX_CLIENT_ID.
   if (
     payload?.clientId &&
     payload.clientId !==
-      env.ID_DO_CLIENTE_LIVEPIX
+      env.LIVEPIX_CLIENT_ID
   ) {
     return json(
       {
@@ -695,36 +570,20 @@ async function handleLivepixWebhook(
     );
   }
 
-  // Só pagamentos interessam aqui.
-  if (
-    payload?.event !== "new"
-  ) {
+  if (payload?.event !== "new") {
     return json({
-      status: "ignored"
+      status: "ok"
     });
   }
 
   const resource =
     payload?.resource;
 
-  if (
-    resource?.type &&
-    resource.type !== "payment"
-  ) {
-    return json({
-      status: "ignored"
-    });
-  }
-
   const paymentId =
-    String(
-      resource?.id || ""
-    );
+    String(resource?.id || "");
 
   const reference =
-    String(
-      resource?.reference || ""
-    );
+    String(resource?.reference || "");
 
   if (
     !paymentId &&
@@ -739,32 +598,18 @@ async function handleLivepixWebhook(
     );
   }
 
-  /*
-   * Tenta pelo ID primeiro.
-   * Depois pela reference.
-   */
-  let payment = null;
-
-  if (paymentId) {
-    payment =
-      await verifyLivepixPayment(
-        env,
-        paymentId
-      );
-  }
-
-  if (!payment && reference) {
-    payment =
-      await findLivepixPaymentByReference(
-        env,
-        reference
-      );
-  }
+  const payment =
+    paymentId
+      ? await verifyLivepixPayment(
+          env,
+          paymentId
+        )
+      : await findLivepixPaymentByReference(
+          env,
+          reference
+        );
 
   if (!payment) {
-    /*
-     * Retorna erro para a LivePix tentar novamente.
-     */
     return json(
       {
         error:
@@ -799,15 +644,9 @@ async function handleLivepixWebhook(
   }
 
   return json({
-    status: "ok",
-    orderId:
-      result.orderId ?? null
+    status: "ok"
   });
 }
-
-/* =========================
-   API
-========================= */
 
 async function api(
   request: Request,
@@ -817,10 +656,7 @@ async function api(
   const path =
     url.pathname;
 
-  /* =====================
-     PRODUTOS
-  ===================== */
-
+  // PRODUTOS
   if (
     request.method === "GET" &&
     path === "/api/products"
@@ -828,16 +664,16 @@ async function api(
     const products =
       await env.DB.prepare(
         `SELECT
-           p.id,
-           p.name,
-           p.description,
-           p.price_cents,
-           (
-             SELECT COUNT(*)
-             FROM inventory i
-             WHERE i.product_id=p.id
-               AND i.status='available'
-           ) AS stock
+          p.id,
+          p.name,
+          p.description,
+          p.price_cents,
+          (
+            SELECT COUNT(*)
+            FROM inventory i
+            WHERE i.product_id=p.id
+              AND i.status='available'
+          ) AS stock
          FROM products p
          WHERE p.active=1
          ORDER BY p.created_at DESC`
@@ -848,10 +684,7 @@ async function api(
     );
   }
 
-  /* =====================
-     CHECKOUT
-  ===================== */
-
+  // CHECKOUT
   if (
     request.method === "POST" &&
     path === "/api/checkout"
@@ -863,16 +696,6 @@ async function api(
       String(
         body.productId || ""
       );
-
-    if (!productId) {
-      return json(
-        {
-          error:
-            "Produto não informado."
-        },
-        400
-      );
-    }
 
     const product =
       await env.DB.prepare(
@@ -915,31 +738,24 @@ async function api(
       );
     }
 
-    const baseAmountCents =
-      Number(
-        product.price_cents
-      );
-
     const chargedAmountCents =
       amountWithFee(
-        baseAmountCents
+        Number(
+          product.price_cents
+        )
       );
 
     await env.DB.prepare(
-      `INSERT INTO orders(
+      `INSERT INTO orders
+       (
          id,
          product_id,
          inventory_id,
          amount_cents,
          status
        )
-       VALUES(
-         ?,
-         ?,
-         ?,
-         ?,
-         'pending'
-       )`
+       VALUES
+       (?, ?, ?, ?, 'pending')`
     )
       .bind(
         orderId,
@@ -953,7 +769,9 @@ async function api(
       const payment =
         await livepixCreatePayment(
           env,
-          baseAmountCents,
+          Number(
+            product.price_cents
+          ),
           `ONYX - ${product.name}`,
           orderId,
           url.origin
@@ -972,27 +790,11 @@ async function api(
         )
         .run();
 
-      /*
-       * A API atual do LivePix retorna:
-       * reference
-       * redirectUrl
-       *
-       * O checkout é feito pela redirectUrl.
-       */
       return json(
         {
           orderId,
-
-          // Nome usado pelo frontend atual
           checkout:
             payment.redirectUrl,
-
-          // Alias para facilitar integração
-          paymentUrl:
-            payment.redirectUrl,
-
-          reference:
-            payment.reference,
 
           pixCode: null,
           pixQrCode: null,
@@ -1001,7 +803,10 @@ async function api(
           amountCents:
             chargedAmountCents,
 
-          baseAmountCents,
+          baseAmountCents:
+            Number(
+              product.price_cents
+            ),
 
           feePercent:
             LIVEPIX_FEE_PERCENT
@@ -1009,11 +814,6 @@ async function api(
         201
       );
     } catch (error) {
-      console.error(
-        "Erro criando pagamento LivePix:",
-        error
-      );
-
       await env.DB.batch([
         env.DB.prepare(
           `UPDATE inventory
@@ -1042,15 +842,10 @@ async function api(
     }
   }
 
-  /* =====================
-     CONSULTAR PEDIDO
-  ===================== */
-
+  // PEDIDO
   if (
     request.method === "GET" &&
-    path.startsWith(
-      "/api/order/"
-    )
+    path.startsWith("/api/order/")
   ) {
     const orderId =
       path.split("/").pop()!;
@@ -1058,10 +853,10 @@ async function api(
     const order =
       await env.DB.prepare(
         `SELECT
-           o.id,
-           o.status,
-           o.amount_cents,
-           p.name
+          o.id,
+          o.status,
+          o.amount_cents,
+          p.name
          FROM orders o
          JOIN products p
            ON p.id=o.product_id
@@ -1086,10 +881,8 @@ async function api(
     ) {
       return json({
         id: order.id,
-        status:
-          order.status,
-        product:
-          order.name,
+        status: order.status,
+        product: order.name,
         amountCents:
           order.amount_cents
       });
@@ -1123,18 +916,14 @@ async function api(
       id: order.id,
       status: "paid",
       delivered: true,
-      product:
-        order.name,
+      product: order.name,
       amountCents:
         order.amount_cents,
       account
     });
   }
 
-  /* =====================
-     WEBHOOK
-  ===================== */
-
+  // WEBHOOK LIVEPIX
   if (
     request.method === "POST" &&
     path ===
@@ -1146,14 +935,9 @@ async function api(
     );
   }
 
-  /* =====================
-     ADMIN
-  ===================== */
-
+  // ADMIN
   if (
-    path.startsWith(
-      "/api/admin/"
-    )
+    path.startsWith("/api/admin/")
   ) {
     if (
       !adminAuthorized(
@@ -1171,10 +955,7 @@ async function api(
     }
   }
 
-  /* =====================
-     ADMIN PRODUTOS
-  ===================== */
-
+  // ADMIN PRODUTOS
   if (
     request.method === "GET" &&
     path ===
@@ -1183,19 +964,19 @@ async function api(
     const products =
       await env.DB.prepare(
         `SELECT
-           p.*,
-           (
-             SELECT COUNT(*)
-             FROM inventory i
-             WHERE i.product_id=p.id
-               AND i.status='available'
-           ) stock,
-           (
-             SELECT COUNT(*)
-             FROM inventory i
-             WHERE i.product_id=p.id
-               AND i.status='sold'
-           ) sold
+          p.*,
+          (
+            SELECT COUNT(*)
+            FROM inventory i
+            WHERE i.product_id=p.id
+              AND i.status='available'
+          ) stock,
+          (
+            SELECT COUNT(*)
+            FROM inventory i
+            WHERE i.product_id=p.id
+              AND i.status='sold'
+          ) sold
          FROM products p
          ORDER BY p.created_at DESC`
       ).all();
@@ -1205,6 +986,7 @@ async function api(
     );
   }
 
+  // ADMIN CRIAR PRODUTO
   if (
     request.method === "POST" &&
     path ===
@@ -1217,34 +999,27 @@ async function api(
       id("prd");
 
     await env.DB.prepare(
-      `INSERT INTO products(
+      `INSERT INTO products
+       (
          id,
          name,
          description,
          price_cents,
          active
        )
-       VALUES(
-         ?,
-         ?,
-         ?,
-         ?,
-         1
-       )`
+       VALUES
+       (?, ?, ?, ?, 1)`
     )
       .bind(
         productId,
         String(
-          body.name ||
-            "Produto"
+          body.name || "Produto"
         ),
         String(
-          body.description ||
-            ""
+          body.description || ""
         ),
         Math.round(
-          Number(body.price) *
-            100
+          Number(body.price) * 100
         )
       )
       .run();
@@ -1257,10 +1032,7 @@ async function api(
     );
   }
 
-  /* =====================
-     ADMIN ESTOQUE
-  ===================== */
-
+  // ADMIN ESTOQUE
   if (
     request.method === "POST" &&
     path ===
@@ -1302,18 +1074,15 @@ async function api(
       id("inv");
 
     await env.DB.prepare(
-      `INSERT INTO inventory(
+      `INSERT INTO inventory
+       (
          id,
          product_id,
          account_encrypted,
          status
        )
-       VALUES(
-         ?,
-         ?,
-         ?,
-         'available'
-       )`
+       VALUES
+       (?, ?, ?, 'available')`
     )
       .bind(
         inventoryId,
@@ -1330,10 +1099,7 @@ async function api(
     );
   }
 
-  /* =====================
-     ADMIN PEDIDOS
-  ===================== */
-
+  // ADMIN PEDIDOS
   if (
     request.method === "GET" &&
     path ===
@@ -1342,19 +1108,17 @@ async function api(
     const orders =
       await env.DB.prepare(
         `SELECT
-           o.id,
-           o.status,
-           o.amount_cents,
-           o.livepix_id,
-           o.livepix_reference,
-           o.created_at,
-           o.paid_at,
-           p.name product
+          o.id,
+          o.status,
+          o.amount_cents,
+          o.livepix_id,
+          o.created_at,
+          o.paid_at,
+          p.name product
          FROM orders o
          JOIN products p
            ON p.id=o.product_id
-         ORDER BY
-           o.created_at DESC
+         ORDER BY o.created_at DESC
          LIMIT 100`
       ).all();
 
@@ -1371,10 +1135,6 @@ async function api(
     404
   );
 }
-
-/* =========================
-   WORKER
-========================= */
 
 export default {
   async fetch(
@@ -1396,10 +1156,7 @@ export default {
           url
         );
       } catch (error) {
-        console.error(
-          "Erro interno:",
-          error
-        );
+        console.error(error);
 
         return json(
           {
