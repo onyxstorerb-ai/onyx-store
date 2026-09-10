@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
@@ -214,7 +213,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 650px;
+      min-width: 760px;
     }
 
     th {
@@ -269,6 +268,93 @@
       display: none !important;
     }
 
+    /* AÇÕES DOS PRODUTOS */
+
+    .product-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .edit-btn,
+    .delete-btn {
+      padding: 8px 11px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    .edit-btn {
+      background: #1b1e25;
+      border: 1px solid #30343d;
+    }
+
+    .delete-btn {
+      background: #321616;
+      border: 1px solid #5a2525;
+      color: #ff8a8a;
+    }
+
+    /* MODAL */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .72);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      background: #111318;
+      border: 1px solid #2b3039;
+      border-radius: 18px;
+      padding: 23px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.55);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 5px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+    }
+
+    .close-btn {
+      width: 35px;
+      height: 35px;
+      padding: 0;
+      border-radius: 9px;
+      background: #1b1e25;
+      border: 1px solid #30343d;
+      font-size: 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .save-btn {
+      background: linear-gradient(135deg, #ff7600, #ff5100);
+    }
+
+    .cancel-btn {
+      background: #1b1e25;
+      border: 1px solid #30343d;
+    }
+
     @media (max-width: 700px) {
       .wrap {
         width: min(100% - 20px, 1100px);
@@ -287,9 +373,12 @@
       .box {
         padding: 17px;
       }
+
+      .modal {
+        padding: 18px;
+      }
     }
   </style>
-
 </head>
 
 <body>
@@ -300,312 +389,572 @@
 
   <div id="login">
     <div class="box login-box">
+
       <div class="brand" style="margin-bottom:25px">
         <div class="logo">O</div>
+
         <div>
           <h1>ONYX ADMIN</h1>
           <p class="muted">Painel administrativo</p>
         </div>
       </div>
 
-```
-  <label for="pass">Senha do administrador</label>
-  <input
-    id="pass"
-    type="password"
-    placeholder="Digite sua senha"
-    autocomplete="current-password"
-  >
+      <label for="pass">
+        Senha do administrador
+      </label>
 
-  <div style="height:10px"></div>
+      <input
+        id="pass"
+        type="password"
+        placeholder="Digite sua senha"
+        autocomplete="current-password"
+      >
 
-  <button id="loginBtn" onclick="login()" style="width:100%">
-    Entrar no painel
-  </button>
+      <div style="height:10px"></div>
 
-  <div id="loginStatus" class="status"></div>
-</div>
-```
+      <button
+        id="loginBtn"
+        onclick="login()"
+        style="width:100%"
+      >
+        Entrar no painel
+      </button>
 
+      <div id="loginStatus" class="status"></div>
+
+    </div>
   </div>
+
 
   <!-- PAINEL -->
 
   <div id="panel" class="hidden">
 
-```
-<div class="top">
-  <div class="brand">
-    <div class="logo">O</div>
-    <div>
-      <h1>ONYX ADMIN</h1>
-      <p class="muted">Gerencie sua loja</p>
+    <div class="top">
+
+      <div class="brand">
+
+        <div class="logo">O</div>
+
+        <div>
+          <h1>ONYX ADMIN</h1>
+          <p class="muted">Gerencie sua loja</p>
+        </div>
+
+      </div>
+
+      <div class="actions">
+
+        <button
+          class="secondary"
+          onclick="refresh()"
+        >
+          Atualizar
+        </button>
+
+        <button
+          class="danger"
+          onclick="logout()"
+        >
+          Sair
+        </button>
+
+      </div>
+
     </div>
+
+
+    <div id="status" class="status"></div>
+
+
+    <!-- ESTATÍSTICAS -->
+
+    <div class="stats">
+
+      <div class="stat">
+        <div class="stat-title">
+          Produtos
+        </div>
+
+        <div
+          id="statProducts"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">
+          Estoque disponível
+        </div>
+
+        <div
+          id="statStock"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">
+          Vendas
+        </div>
+
+        <div
+          id="statSold"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- NOVO PRODUTO -->
+
+    <div class="box">
+
+      <h2>➕ Novo produto</h2>
+
+      <div class="row">
+
+        <div>
+
+          <label for="name">
+            Nome do produto
+          </label>
+
+          <input
+            id="name"
+            type="text"
+            placeholder="Ex.: Conta Premium"
+          >
+
+        </div>
+
+        <div>
+
+          <label for="price">
+            Preço
+          </label>
+
+          <input
+            id="price"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="Ex.: 9.90"
+          >
+
+        </div>
+
+      </div>
+
+      <label for="desc">
+        Descrição
+      </label>
+
+      <textarea
+        id="desc"
+        placeholder="Digite uma descrição para o produto..."
+      ></textarea>
+
+      <button onclick="addProduct()">
+        Criar produto
+      </button>
+
+    </div>
+
+
+    <!-- ESTOQUE -->
+
+    <div class="box">
+
+      <h2>📦 Adicionar ao estoque</h2>
+
+      <label for="product">
+        Produto
+      </label>
+
+      <select id="product">
+        <option value="">
+          Carregando produtos...
+        </option>
+      </select>
+
+      <label for="account">
+        Conta / item
+      </label>
+
+      <textarea
+        id="account"
+        placeholder="Ex.: email:senha"
+      ></textarea>
+
+      <button onclick="addStock()">
+        Adicionar ao estoque
+      </button>
+
+    </div>
+
+
+    <!-- PRODUTOS -->
+
+    <div class="box">
+
+      <h2>🛍️ Produtos e estoque</h2>
+
+      <div id="products">
+        <div class="empty">
+          Carregando...
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- PEDIDOS -->
+
+    <div class="box">
+
+      <h2>🧾 Últimos pedidos</h2>
+
+      <div id="orders">
+        <div class="empty">
+          Carregando...
+        </div>
+      </div>
+
+    </div>
+
   </div>
 
-  <div class="actions">
-    <button class="secondary" onclick="refresh()">
-      Atualizar
-    </button>
-
-    <button class="danger" onclick="logout()">
-      Sair
-    </button>
-  </div>
 </div>
 
 
-<div id="status" class="status"></div>
+<!-- MODAL EDITAR PRODUTO -->
 
+<div
+  id="editModal"
+  class="modal-overlay hidden"
+>
 
-<!-- ESTATÍSTICAS -->
-<div class="stats">
+  <div class="modal">
 
-  <div class="stat">
-    <div class="stat-title">Produtos</div>
-    <div id="statProducts" class="stat-value">0</div>
-  </div>
+    <div class="modal-header">
 
-  <div class="stat">
-    <div class="stat-title">Estoque disponível</div>
-    <div id="statStock" class="stat-value">0</div>
-  </div>
+      <h2>✏️ Editar produto</h2>
 
-  <div class="stat">
-    <div class="stat-title">Vendas</div>
-    <div id="statSold" class="stat-value">0</div>
-  </div>
-
-</div>
-
-
-<!-- NOVO PRODUTO -->
-<div class="box">
-
-  <h2>➕ Novo produto</h2>
-
-  <div class="row">
-
-    <div>
-      <label for="name">Nome do produto</label>
-      <input
-        id="name"
-        type="text"
-        placeholder="Ex.: Conta Premium"
+      <button
+        class="close-btn"
+        onclick="closeEditModal()"
       >
+        ×
+      </button>
+
     </div>
 
-    <div>
-      <label for="price">Preço</label>
-      <input
-        id="price"
-        type="number"
-        step="0.01"
-        min="0"
-        placeholder="Ex.: 9.90"
+    <p class="muted">
+      Altere as informações do produto.
+    </p>
+
+    <input
+      id="editId"
+      type="hidden"
+    >
+
+    <label for="editName">
+      Nome do produto
+    </label>
+
+    <input
+      id="editName"
+      type="text"
+      placeholder="Nome do produto"
+    >
+
+    <label for="editPrice">
+      Preço
+    </label>
+
+    <input
+      id="editPrice"
+      type="number"
+      step="0.01"
+      min="0"
+      placeholder="0.00"
+    >
+
+    <label for="editDescription">
+      Descrição
+    </label>
+
+    <textarea
+      id="editDescription"
+      placeholder="Descrição do produto..."
+    ></textarea>
+
+    <div class="modal-actions">
+
+      <button
+        class="cancel-btn"
+        onclick="closeEditModal()"
       >
+        Cancelar
+      </button>
+
+      <button
+        id="saveEditBtn"
+        class="save-btn"
+        onclick="saveEditProduct()"
+      >
+        Salvar alterações
+      </button>
+
     </div>
 
   </div>
 
-  <label for="desc">Descrição</label>
-
-  <textarea
-    id="desc"
-    placeholder="Digite uma descrição para o produto..."
-  ></textarea>
-
-  <button onclick="addProduct()">
-    Criar produto
-  </button>
-
 </div>
 
-
-<!-- ESTOQUE -->
-<div class="box">
-
-  <h2>📦 Adicionar ao estoque</h2>
-
-  <label for="product">Produto</label>
-
-  <select id="product">
-    <option value="">Carregando produtos...</option>
-  </select>
-
-  <label for="account">Conta / item</label>
-
-  <textarea
-    id="account"
-    placeholder="Ex.: email: senha:"
-  ></textarea>
-
-  <button onclick="addStock()">
-    Adicionar ao estoque
-  </button>
-
-</div>
-
-
-<!-- PRODUTOS -->
-<div class="box">
-
-  <h2>🛍️ Produtos e estoque</h2>
-
-  <div id="products">
-    <div class="empty">Carregando...</div>
-  </div>
-
-</div>
-
-
-<!-- PEDIDOS -->
-<div class="box">
-
-  <h2>🧾 Últimos pedidos</h2>
-
-  <div id="orders">
-    <div class="empty">Carregando...</div>
-  </div>
-
-</div>
-```
-
-  </div>
-
-</div>
 
 <script>
-  let pwd = '';
 
-  const $ = id => document.getElementById(id);
+  let pwd = '';
+  let productsCache = [];
+
+  const $ = id =>
+    document.getElementById(id);
+
 
   function headers() {
+
     return {
       'x-admin-password': pwd,
       'content-type': 'application/json'
     };
+
   }
 
-  function showStatus(message, type = 'normal') {
+
+  function showStatus(
+    message,
+    type = 'normal'
+  ) {
+
     const el = $('status');
 
     el.textContent = message;
-    el.className = 'status show';
+
+    el.className =
+      'status show';
 
     if (type === 'error') {
-      el.style.borderColor = '#542222';
-      el.style.color = '#ff8585';
+
+      el.style.borderColor =
+        '#542222';
+
+      el.style.color =
+        '#ff8585';
+
     } else if (type === 'success') {
-      el.style.borderColor = '#244d35';
-      el.style.color = '#6be49a';
+
+      el.style.borderColor =
+        '#244d35';
+
+      el.style.color =
+        '#6be49a';
+
     } else {
-      el.style.borderColor = '#292e38';
-      el.style.color = '#bfc4cc';
+
+      el.style.borderColor =
+        '#292e38';
+
+      el.style.color =
+        '#bfc4cc';
+
     }
 
     setTimeout(() => {
+
       el.classList.remove('show');
+
     }, 3500);
+
   }
 
 
   function showLoginStatus(message) {
-    const el = $('loginStatus');
 
-    el.textContent = message;
-    el.className = 'status show';
+    const el =
+      $('loginStatus');
 
-    el.style.borderColor = '#542222';
-    el.style.color = '#ff8585';
+    el.textContent =
+      message;
+
+    el.className =
+      'status show';
+
+    el.style.borderColor =
+      '#542222';
+
+    el.style.color =
+      '#ff8585';
+
   }
 
 
   async function login() {
 
-    const password = $('pass').value.trim();
+    const password =
+      $('pass').value.trim();
 
     if (!password) {
-      showLoginStatus('Digite a senha do administrador.');
+
+      showLoginStatus(
+        'Digite a senha do administrador.'
+      );
+
       return;
     }
 
-    const btn = $('loginBtn');
+    const btn =
+      $('loginBtn');
 
     btn.disabled = true;
-    btn.textContent = 'Entrando...';
+
+    btn.textContent =
+      'Entrando...';
 
     pwd = password;
 
     try {
 
-      const response = await fetch('/api/admin/products', {
-        headers: headers()
-      });
+      const response =
+        await fetch(
+          '/api/admin/products',
+          {
+            headers: headers()
+          }
+        );
 
       if (!response.ok) {
+
         pwd = '';
-        showLoginStatus('Senha incorreta.');
+
+        showLoginStatus(
+          'Senha incorreta.'
+        );
+
         return;
       }
 
-      $('login').classList.add('hidden');
-      $('panel').classList.remove('hidden');
+      $('login')
+        .classList
+        .add('hidden');
+
+      $('panel')
+        .classList
+        .remove('hidden');
 
       await refresh();
 
     } catch (error) {
 
       pwd = '';
-      showLoginStatus('Não foi possível conectar ao servidor.');
+
+      showLoginStatus(
+        'Não foi possível conectar ao servidor.'
+      );
 
     } finally {
 
       btn.disabled = false;
-      btn.textContent = 'Entrar no painel';
+
+      btn.textContent =
+        'Entrar no painel';
 
     }
+
   }
 
 
   async function addProduct() {
 
-    const name = $('name').value.trim();
-    const price = $('price').value.trim();
-    const description = $('desc').value.trim();
+    const name =
+      $('name').value.trim();
+
+    const price =
+      $('price').value.trim();
+
+    const description =
+      $('desc').value.trim();
 
     if (!name) {
-      showStatus('Digite o nome do produto.', 'error');
+
+      showStatus(
+        'Digite o nome do produto.',
+        'error'
+      );
+
       return;
     }
 
-    if (!price || Number(price) <= 0) {
-      showStatus('Digite um preço válido.', 'error');
+    if (
+      !price ||
+      Number(price) <= 0
+    ) {
+
+      showStatus(
+        'Digite um preço válido.',
+        'error'
+      );
+
       return;
     }
 
     try {
 
-      const response = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({
-          name,
-          price,
-          description
-        })
-      });
+      const response =
+        await fetch(
+          '/api/admin/products',
+          {
+            method: 'POST',
+            headers: headers(),
+
+            body: JSON.stringify({
+              name,
+              price,
+              description
+            })
+          }
+        );
 
       if (!response.ok) {
 
-        let message = 'Não foi possível criar o produto.';
+        let message =
+          'Não foi possível criar o produto.';
 
         try {
-          const data = await response.json();
-          if (data.error) message = data.error;
+
+          const data =
+            await response.json();
+
+          if (data.error) {
+            message =
+              data.error;
+          }
+
         } catch {}
 
-        showStatus(message, 'error');
+        showStatus(
+          message,
+          'error'
+        );
+
         return;
       }
 
@@ -613,84 +962,147 @@
       $('price').value = '';
       $('desc').value = '';
 
-      showStatus('Produto criado com sucesso!', 'success');
+      showStatus(
+        'Produto criado com sucesso!',
+        'success'
+      );
 
       await refresh();
 
     } catch (error) {
 
-      showStatus('Erro de conexão.', 'error');
+      showStatus(
+        'Erro de conexão.',
+        'error'
+      );
 
     }
+
   }
 
 
   async function addStock() {
 
-    const productId = $('product').value;
-    const account = $('account').value.trim();
+    const productId =
+      $('product').value;
+
+    const account =
+      $('account').value.trim();
 
     if (!productId) {
-      showStatus('Crie um produto primeiro.', 'error');
+
+      showStatus(
+        'Crie um produto primeiro.',
+        'error'
+      );
+
       return;
     }
 
     if (!account) {
-      showStatus('Digite a conta ou item do estoque.', 'error');
+
+      showStatus(
+        'Digite a conta ou item do estoque.',
+        'error'
+      );
+
       return;
     }
 
     try {
 
-      const response = await fetch('/api/admin/stock', {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({
-          productId,
-          account
-        })
-      });
+      const response =
+        await fetch(
+          '/api/admin/stock',
+          {
+            method: 'POST',
+            headers: headers(),
+
+            body: JSON.stringify({
+              productId,
+              account
+            })
+          }
+        );
 
       if (!response.ok) {
 
-        let message = 'Não foi possível adicionar ao estoque.';
+        let message =
+          'Não foi possível adicionar ao estoque.';
 
         try {
-          const data = await response.json();
-          if (data.error) message = data.error;
+
+          const data =
+            await response.json();
+
+          if (data.error) {
+            message =
+              data.error;
+          }
+
         } catch {}
 
-        showStatus(message, 'error');
+        showStatus(
+          message,
+          'error'
+        );
+
         return;
       }
 
       $('account').value = '';
 
-      showStatus('Item adicionado ao estoque!', 'success');
+      showStatus(
+        'Item adicionado ao estoque!',
+        'success'
+      );
 
       await refresh();
 
     } catch (error) {
 
-      showStatus('Erro de conexão.', 'error');
+      showStatus(
+        'Erro de conexão.',
+        'error'
+      );
 
     }
+
   }
 
 
   function statusBadge(status) {
 
-    const value = String(status || '').toLowerCase();
+    const value =
+      String(status || '')
+        .toLowerCase();
 
     if (value === 'paid') {
-      return '<span class="badge paid">Pago</span>';
+
+      return `
+        <span class="badge paid">
+          Pago
+        </span>
+      `;
+
     }
 
     if (value === 'cancelled') {
-      return '<span class="badge cancelled">Cancelado</span>';
+
+      return `
+        <span class="badge cancelled">
+          Cancelado
+        </span>
+      `;
+
     }
 
-    return '<span class="badge pending">Pendente</span>';
+    return `
+      <span class="badge pending">
+        Pendente
+      </span>
+    `;
+
   }
 
 
@@ -698,26 +1110,45 @@
 
     try {
 
-      const productResponse = await fetch(
-        '/api/admin/products',
-        { headers: headers() }
-      );
+      const productResponse =
+        await fetch(
+          '/api/admin/products',
+          {
+            headers: headers()
+          }
+        );
 
       if (!productResponse.ok) {
-        showStatus('Sessão expirada ou senha inválida.', 'error');
+
+        showStatus(
+          'Sessão expirada ou senha inválida.',
+          'error'
+        );
+
         logout();
+
         return;
       }
 
-      const productData = await productResponse.json();
+      const productData =
+        await productResponse.json();
 
-      const productList = Array.isArray(productData)
-        ? productData
-        : [];
+      const productList =
+        Array.isArray(productData)
+          ? productData
+          : [];
+
+      productsCache =
+        productList;
+
+
+      /* SELECT DE ESTOQUE */
 
       $('product').innerHTML = '';
 
-      if (productList.length === 0) {
+      if (
+        productList.length === 0
+      ) {
 
         $('product').innerHTML =
           '<option value="">Nenhum produto criado</option>';
@@ -726,36 +1157,59 @@
 
         productList.forEach(item => {
 
-          const option = document.createElement('option');
+          const option =
+            document.createElement(
+              'option'
+            );
 
-          option.value = item.id;
+          option.value =
+            item.id;
+
           option.textContent =
             `${item.name} — ${item.stock || 0} disponível`;
 
-          $('product').appendChild(option);
+          $('product')
+            .appendChild(option);
 
         });
 
       }
 
 
+      /* ESTATÍSTICAS */
+
       let totalStock = 0;
       let totalSold = 0;
 
       productList.forEach(item => {
 
-        totalStock += Number(item.stock || 0);
-        totalSold += Number(item.sold || 0);
+        totalStock +=
+          Number(item.stock || 0);
+
+        totalSold +=
+          Number(item.sold || 0);
 
       });
 
 
-      $('statProducts').textContent = productList.length;
-      $('statStock').textContent = totalStock;
-      $('statSold').textContent = totalSold;
+      $('statProducts')
+        .textContent =
+        productList.length;
+
+      $('statStock')
+        .textContent =
+        totalStock;
+
+      $('statSold')
+        .textContent =
+        totalSold;
 
 
-      if (productList.length === 0) {
+      /* TABELA DE PRODUTOS */
+
+      if (
+        productList.length === 0
+      ) {
 
         $('products').innerHTML =
           '<div class="empty">Nenhum produto cadastrado.</div>';
@@ -763,15 +1217,37 @@
       } else {
 
         $('products').innerHTML = `
+
           <div class="table-wrap">
+
             <table>
+
               <thead>
+
                 <tr>
-                  <th>Produto</th>
-                  <th>Disponível</th>
-                  <th>Vendidas</th>
-                  <th>Preço</th>
+
+                  <th>
+                    Produto
+                  </th>
+
+                  <th>
+                    Disponível
+                  </th>
+
+                  <th>
+                    Vendidas
+                  </th>
+
+                  <th>
+                    Preço
+                  </th>
+
+                  <th>
+                    Ações
+                  </th>
+
                 </tr>
+
               </thead>
 
               <tbody>
@@ -781,7 +1257,9 @@
                   <tr>
 
                     <td>
-                      <strong>${escapeHtml(item.name)}</strong>
+                      <strong>
+                        ${escapeHtml(item.name)}
+                      </strong>
                     </td>
 
                     <td>
@@ -796,37 +1274,73 @@
                       R$ ${formatPrice(item.price_cents)}
                     </td>
 
+                    <td>
+
+                      <div class="product-actions">
+
+                        <button
+                          class="edit-btn"
+                          onclick="editProduct('${escapeJs(item.id)}')"
+                        >
+                          ✏️ Editar
+                        </button>
+
+                        <button
+                          class="delete-btn"
+                          onclick="deleteProduct('${escapeJs(item.id)}')"
+                        >
+                          🗑️ Excluir
+                        </button>
+
+                      </div>
+
+                    </td>
+
                   </tr>
 
                 `).join('')}
 
               </tbody>
+
             </table>
+
           </div>
+
         `;
 
       }
 
 
-      const orderResponse = await fetch(
-        '/api/admin/orders',
-        { headers: headers() }
-      );
+      /* PEDIDOS */
+
+      const orderResponse =
+        await fetch(
+          '/api/admin/orders',
+          {
+            headers: headers()
+          }
+        );
 
       if (!orderResponse.ok) {
+
         $('orders').innerHTML =
           '<div class="empty">Não foi possível carregar os pedidos.</div>';
+
         return;
       }
 
-      const orderData = await orderResponse.json();
+      const orderData =
+        await orderResponse.json();
 
-      const orderList = Array.isArray(orderData)
-        ? orderData
-        : [];
+      const orderList =
+        Array.isArray(orderData)
+          ? orderData
+          : [];
 
 
-      if (orderList.length === 0) {
+      if (
+        orderList.length === 0
+      ) {
 
         $('orders').innerHTML =
           '<div class="empty">Nenhum pedido registrado ainda.</div>';
@@ -834,16 +1348,33 @@
       } else {
 
         $('orders').innerHTML = `
+
           <div class="table-wrap">
+
             <table>
 
               <thead>
+
                 <tr>
-                  <th>Produto</th>
-                  <th>Status</th>
-                  <th>Valor</th>
-                  <th>Data</th>
+
+                  <th>
+                    Produto
+                  </th>
+
+                  <th>
+                    Status
+                  </th>
+
+                  <th>
+                    Valor
+                  </th>
+
+                  <th>
+                    Data
+                  </th>
+
                 </tr>
+
               </thead>
 
               <tbody>
@@ -875,42 +1406,343 @@
               </tbody>
 
             </table>
+
           </div>
+
         `;
 
       }
 
     } catch (error) {
 
-      showStatus('Erro ao atualizar o painel.', 'error');
+      showStatus(
+        'Erro ao atualizar o painel.',
+        'error'
+      );
 
     }
+
+  }
+
+
+  /* =========================
+     EDITAR PRODUTO
+  ========================= */
+
+  function editProduct(productId) {
+
+    const product =
+      productsCache.find(
+        item =>
+          String(item.id) ===
+          String(productId)
+      );
+
+    if (!product) {
+
+      showStatus(
+        'Produto não encontrado.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    $('editId').value =
+      product.id;
+
+    $('editName').value =
+      product.name || '';
+
+    $('editDescription').value =
+      product.description || '';
+
+    $('editPrice').value =
+      (
+        Number(product.price_cents || 0) /
+        100
+      ).toFixed(2);
+
+
+    $('editModal')
+      .classList
+      .remove('hidden');
+
+  }
+
+
+  function closeEditModal() {
+
+    $('editModal')
+      .classList
+      .add('hidden');
+
+  }
+
+
+  async function saveEditProduct() {
+
+    const id =
+      $('editId').value;
+
+    const name =
+      $('editName').value.trim();
+
+    const description =
+      $('editDescription').value.trim();
+
+    const price =
+      $('editPrice').value.trim();
+
+
+    if (!id) {
+
+      showStatus(
+        'Produto inválido.',
+        'error'
+      );
+
+      return;
+    }
+
+    if (!name) {
+
+      showStatus(
+        'Digite o nome do produto.',
+        'error'
+      );
+
+      return;
+    }
+
+    if (
+      !price ||
+      Number(price) <= 0
+    ) {
+
+      showStatus(
+        'Digite um preço válido.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    const btn =
+      $('saveEditBtn');
+
+    btn.disabled = true;
+
+    btn.textContent =
+      'Salvando...';
+
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/admin/products/${encodeURIComponent(id)}`,
+          {
+            method: 'PUT',
+            headers: headers(),
+
+            body: JSON.stringify({
+              name,
+              price,
+              description
+            })
+          }
+        );
+
+
+      if (!response.ok) {
+
+        let message =
+          'Não foi possível editar o produto.';
+
+        try {
+
+          const data =
+            await response.json();
+
+          if (data.error) {
+            message =
+              data.error;
+          }
+
+        } catch {}
+
+
+        showStatus(
+          message,
+          'error'
+        );
+
+        return;
+      }
+
+
+      closeEditModal();
+
+      showStatus(
+        'Produto atualizado com sucesso!',
+        'success'
+      );
+
+      await refresh();
+
+    } catch (error) {
+
+      showStatus(
+        'Erro de conexão.',
+        'error'
+      );
+
+    } finally {
+
+      btn.disabled = false;
+
+      btn.textContent =
+        'Salvar alterações';
+
+    }
+
+  }
+
+
+  /* =========================
+     EXCLUIR PRODUTO
+  ========================= */
+
+  async function deleteProduct(productId) {
+
+    const product =
+      productsCache.find(
+        item =>
+          String(item.id) ===
+          String(productId)
+      );
+
+    if (!product) {
+
+      showStatus(
+        'Produto não encontrado.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    const confirmed =
+      confirm(
+        `Tem certeza que deseja excluir o produto "${product.name}"?\n\nEssa ação não pode ser desfeita.`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/admin/products/${encodeURIComponent(productId)}`,
+          {
+            method: 'DELETE',
+            headers: headers()
+          }
+        );
+
+
+      if (!response.ok) {
+
+        let message =
+          'Não foi possível excluir o produto.';
+
+        try {
+
+          const data =
+            await response.json();
+
+          if (data.error) {
+            message =
+              data.error;
+          }
+
+        } catch {}
+
+
+        showStatus(
+          message,
+          'error'
+        );
+
+        return;
+      }
+
+
+      showStatus(
+        'Produto excluído com sucesso!',
+        'success'
+      );
+
+      await refresh();
+
+    } catch (error) {
+
+      showStatus(
+        'Erro de conexão.',
+        'error'
+      );
+
+    }
+
   }
 
 
   function formatPrice(cents) {
 
-    const value = Number(cents || 0) / 100;
+    const value =
+      Number(cents || 0) /
+      100;
 
-    return value.toLocaleString('pt-BR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+    return value.toLocaleString(
+      'pt-BR',
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
+    );
 
   }
 
 
   function formatDate(value) {
 
-    if (!value) return '—';
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-      return value;
+    if (!value) {
+      return '—';
     }
 
-    return date.toLocaleString('pt-BR');
+    const date =
+      new Date(value);
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+
+      return value;
+
+    }
+
+    return date.toLocaleString(
+      'pt-BR'
+    );
 
   }
 
@@ -918,11 +1750,49 @@
   function escapeHtml(value) {
 
     return String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+      .replace(
+        /&/g,
+        '&amp;'
+      )
+      .replace(
+        /</g,
+        '&lt;'
+      )
+      .replace(
+        />/g,
+        '&gt;'
+      )
+      .replace(
+        /"/g,
+        '&quot;'
+      )
+      .replace(
+        /'/g,
+        '&#039;'
+      );
+
+  }
+
+
+  function escapeJs(value) {
+
+    return String(value ?? '')
+      .replace(
+        /\\/g,
+        '\\\\'
+      )
+      .replace(
+        /'/g,
+        "\\'"
+      )
+      .replace(
+        /\n/g,
+        '\\n'
+      )
+      .replace(
+        /\r/g,
+        '\\r'
+      );
 
   }
 
@@ -931,23 +1801,62 @@
 
     pwd = '';
 
+    productsCache = [];
+
     $('pass').value = '';
 
-    $('panel').classList.add('hidden');
-    $('login').classList.remove('hidden');
+    $('panel')
+      .classList
+      .add('hidden');
 
-    $('loginStatus').classList.remove('show');
+    $('login')
+      .classList
+      .remove('hidden');
+
+    $('loginStatus')
+      .classList
+      .remove('show');
+
+    closeEditModal();
 
   }
 
 
-  $('pass').addEventListener('keydown', function(event) {
+  /* ENTER NO LOGIN */
 
-    if (event.key === 'Enter') {
-      login();
+  $('pass').addEventListener(
+    'keydown',
+    function(event) {
+
+      if (
+        event.key === 'Enter'
+      ) {
+
+        login();
+
+      }
+
     }
+  );
 
-  });
+
+  /* FECHAR MODAL CLICANDO FORA */
+
+  $('editModal').addEventListener(
+    'click',
+    function(event) {
+
+      if (
+        event.target ===
+        $('editModal')
+      ) {
+
+        closeEditModal();
+
+      }
+
+    }
+  );
 
 </script>
 
