@@ -10,31 +10,34 @@
   <style>
     :root {
       --bg: #030303;
-      --bg-2: #070707;
-      --bg-3: #0b0b0c;
+      --bg2: #060607;
+      --bg3: #0a0a0c;
 
-      --card: rgba(15,15,16,.82);
-      --card-solid: #0d0d0e;
+      --surface: rgba(14,14,16,.82);
+      --surface2: #101012;
+      --surface3: #151517;
 
-      --line: rgba(255,255,255,.075);
-      --line-strong: rgba(255,255,255,.14);
+      --line: rgba(255,255,255,.065);
+      --line2: rgba(255,255,255,.12);
+      --line3: rgba(255,255,255,.2);
 
-      --text: #f5f5f5;
-      --muted: #88888d;
-      --muted-2: #626268;
+      --text: #f5f5f6;
+      --muted: #85868c;
+      --muted2: #5e5f65;
 
-      --silver: #d9d9dc;
-      --silver-2: #9c9da2;
-      --silver-dark: #55565b;
+      --silver: #e3e3e5;
+      --silver2: #a6a7ac;
+      --silver3: #66676d;
 
-      --green: #43dc82;
-      --red: #ff5e5e;
-      --yellow: #e7c866;
+      --green: #45df85;
+      --yellow: #e4c75f;
+      --red: #ff6161;
 
-      --shadow: 0 30px 90px rgba(0,0,0,.55);
+      --max: 1240px;
+      --radius: 22px;
 
-      --radius: 20px;
-      --max: 1200px;
+      --shadow:
+        0 30px 90px rgba(0,0,0,.55);
     }
 
     * {
@@ -64,24 +67,19 @@
 
       background:
         radial-gradient(
-          ellipse at 50% -15%,
-          rgba(255,255,255,.105),
-          transparent 31%
+          ellipse at 50% -10%,
+          rgba(255,255,255,.095),
+          transparent 32%
         ),
         radial-gradient(
-          ellipse at 5% 25%,
-          rgba(255,255,255,.035),
-          transparent 25%
-        ),
-        radial-gradient(
-          ellipse at 95% 55%,
+          ellipse at 0% 35%,
           rgba(255,255,255,.025),
-          transparent 25%
+          transparent 28%
         ),
         linear-gradient(
           180deg,
           #020202 0%,
-          #050505 45%,
+          #050506 45%,
           #020202 100%
         );
     }
@@ -106,18 +104,18 @@
     }
 
     ::selection {
-      background: rgba(220,220,220,.22);
+      background: rgba(255,255,255,.2);
       color: #fff;
     }
 
     /* =========================================
-       MINERAL BACKGROUND
+       BACKGROUND
     ========================================= */
 
     .ambient {
       position: fixed;
       inset: 0;
-      z-index: -1;
+      z-index: -5;
       overflow: hidden;
       pointer-events: none;
     }
@@ -127,11 +125,11 @@
 
       position: absolute;
 
-      width: 750px;
-      height: 750px;
+      width: 800px;
+      height: 800px;
 
-      top: -520px;
       left: 50%;
+      top: -600px;
 
       transform: translateX(-50%);
 
@@ -140,12 +138,12 @@
       background:
         radial-gradient(
           circle,
-          rgba(255,255,255,.11),
-          rgba(255,255,255,.035) 32%,
+          rgba(255,255,255,.13),
+          rgba(255,255,255,.035) 34%,
           transparent 70%
         );
 
-      filter: blur(25px);
+      filter: blur(30px);
     }
 
     .ambient::after {
@@ -153,10 +151,10 @@
 
       position: absolute;
 
-      width: 550px;
-      height: 550px;
+      width: 650px;
+      height: 650px;
 
-      right: -350px;
+      right: -450px;
       top: 35%;
 
       border-radius: 50%;
@@ -164,18 +162,18 @@
       background:
         radial-gradient(
           circle,
-          rgba(255,255,255,.045),
-          transparent 68%
+          rgba(255,255,255,.04),
+          transparent 70%
         );
 
-      filter: blur(35px);
+      filter: blur(40px);
     }
 
     .grid-bg {
       position: absolute;
       inset: 0;
 
-      opacity: .025;
+      opacity: .022;
 
       background-image:
         linear-gradient(
@@ -188,13 +186,13 @@
           transparent 1px
         );
 
-      background-size: 55px 55px;
+      background-size: 58px 58px;
 
       mask-image:
         linear-gradient(
           to bottom,
           black,
-          transparent 72%
+          transparent 75%
         );
     }
 
@@ -202,14 +200,23 @@
       position: fixed;
       inset: 0;
 
-      z-index: -1;
+      z-index: -4;
 
       pointer-events: none;
 
-      opacity: .025;
+      opacity: .018;
 
       background-image:
         url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+    }
+
+    .container {
+      width: min(
+        var(--max),
+        calc(100% - 36px)
+      );
+
+      margin: auto;
     }
 
     /* =========================================
@@ -228,8 +235,8 @@
       background:
         rgba(3,3,3,.72);
 
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
     }
 
     .header-inner {
@@ -238,14 +245,14 @@
         calc(100% - 36px)
       );
 
-      height: 74px;
+      height: 76px;
 
       margin: auto;
 
       display: flex;
       align-items: center;
 
-      gap: 28px;
+      gap: 30px;
     }
 
     .brand {
@@ -260,29 +267,29 @@
     .brand-mark {
       position: relative;
 
-      width: 39px;
-      height: 39px;
+      width: 40px;
+      height: 40px;
 
       display: grid;
       place-items: center;
 
       border-radius: 12px;
 
-      color: #fff;
+      color: #080808;
 
       font-size: 17px;
-      font-weight: 950;
+      font-weight: 1000;
 
       background:
         linear-gradient(
           145deg,
-          #f1f1f1 0%,
-          #8d8e92 42%,
-          #35363a 100%
+          #fafafa 0%,
+          #a6a7aa 45%,
+          #424348 100%
         );
 
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.55),
+        inset 0 1px 0 rgba(255,255,255,.7),
         0 10px 35px rgba(0,0,0,.5);
     }
 
@@ -295,7 +302,7 @@
       border-radius: 11px;
 
       border:
-        1px solid rgba(255,255,255,.2);
+        1px solid rgba(255,255,255,.28);
     }
 
     .brand-text {
@@ -303,32 +310,30 @@
       font-weight: 950;
 
       letter-spacing: .2em;
-
-      color: #ededee;
     }
 
     .brand-text span {
-      color: #77787d;
+      color: #66676c;
     }
 
     .nav {
       display: flex;
       align-items: center;
 
-      gap: 5px;
+      gap: 4px;
 
       margin-left: auto;
     }
 
     .nav a {
-      padding: 9px 12px;
+      padding: 10px 13px;
 
       border-radius: 10px;
 
-      color: #89898e;
+      color: #85868b;
 
-      font-size: 12px;
-      font-weight: 750;
+      font-size: 11px;
+      font-weight: 800;
 
       transition: .2s ease;
     }
@@ -337,29 +342,24 @@
       color: #fff;
 
       background:
-        rgba(255,255,255,.055);
+        rgba(255,255,255,.05);
     }
 
-    .discord-btn {
+    .nav-discord {
       color: #eee !important;
 
       border:
-        1px solid var(--line);
+        1px solid var(--line2);
 
       background:
-        linear-gradient(
-          135deg,
-          rgba(255,255,255,.07),
-          rgba(255,255,255,.025)
-        );
+        rgba(255,255,255,.04);
     }
 
-    .discord-btn:hover {
-      border-color:
-        rgba(255,255,255,.22);
+    .nav-discord:hover {
+      border-color: var(--line3);
 
       background:
-        rgba(255,255,255,.09) !important;
+        rgba(255,255,255,.08) !important;
     }
 
     /* =========================================
@@ -369,83 +369,54 @@
     .hero {
       position: relative;
 
-      width: min(
-        var(--max),
-        calc(100% - 36px)
-      );
-
-      min-height: 570px;
-
-      margin: auto;
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      text-align: center;
-
-      padding: 95px 0 75px;
+      padding:
+        105px 0 80px;
     }
 
-    .hero::before {
-      content: "";
+    .hero-layout {
+      display: grid;
 
-      position: absolute;
+      grid-template-columns:
+        1.1fr .9fr;
 
-      width: 700px;
-      height: 280px;
+      align-items: center;
 
-      top: 90px;
-      left: 50%;
+      gap: 70px;
+    }
 
-      transform: translateX(-50%);
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          ellipse,
-          rgba(255,255,255,.075),
-          transparent 68%
-        );
-
-      filter: blur(35px);
-
-      pointer-events: none;
+    .hero-content {
+      position: relative;
     }
 
     .hero-badge {
-      position: relative;
-
       display: inline-flex;
       align-items: center;
+
       gap: 9px;
 
-      padding: 8px 13px;
+      padding: 8px 12px;
+
+      border:
+        1px solid rgba(255,255,255,.11);
 
       border-radius: 999px;
 
-      border:
-        1px solid rgba(255,255,255,.12);
+      color: #a7a8ad;
 
       background:
         rgba(255,255,255,.035);
 
-      color: #aaaab0;
-
       font-size: 9px;
       font-weight: 950;
 
-      letter-spacing: .16em;
-
-      margin-bottom: 25px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
 
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.035);
+        inset 0 1px 0 rgba(255,255,255,.04);
     }
 
-    .hero-badge span {
+    .hero-badge i {
       width: 6px;
       height: 6px;
 
@@ -454,37 +425,45 @@
       background: var(--green);
 
       box-shadow:
-        0 0 12px rgba(67,220,130,.7);
+        0 0 14px rgba(69,223,133,.7);
+
+      animation:
+        livePulse 2s infinite;
+    }
+
+    @keyframes livePulse {
+      50% {
+        opacity: .45;
+        transform: scale(.75);
+      }
     }
 
     .hero h1 {
-      position: relative;
+      max-width: 780px;
 
-      max-width: 950px;
-
-      margin: auto;
+      margin-top: 25px;
 
       font-size:
         clamp(
-          45px,
-          7.8vw,
-          88px
+          50px,
+          6.7vw,
+          86px
         );
 
-      line-height: .9;
+      line-height: .91;
 
-      letter-spacing: -.065em;
+      letter-spacing: -.07em;
 
-      font-weight: 950;
+      font-weight: 1000;
     }
 
-    .hero h1 .light {
+    .hero h1 .first {
       display: block;
 
-      color: #e9e9ea;
+      color: #f2f2f3;
     }
 
-    .hero h1 strong {
+    .hero h1 .second {
       display: block;
 
       color: transparent;
@@ -492,11 +471,11 @@
       background:
         linear-gradient(
           105deg,
-          #ffffff 0%,
-          #c9c9cc 24%,
-          #727379 53%,
-          #eeeeef 76%,
-          #77787d 100%
+          #ffffff,
+          #aeb0b4 28%,
+          #5f6065 52%,
+          #eeeeef 74%,
+          #85868b
         );
 
       background-size: 180% auto;
@@ -519,13 +498,11 @@
     }
 
     .hero-description {
-      position: relative;
+      max-width: 610px;
 
-      max-width: 650px;
+      margin-top: 25px;
 
-      margin: 27px auto 0;
-
-      color: #77787d;
+      color: #797a80;
 
       font-size: 14px;
 
@@ -533,141 +510,316 @@
     }
 
     .hero-actions {
-      position: relative;
-
-      margin-top: 31px;
-
       display: flex;
-      justify-content: center;
+
+      flex-wrap: wrap;
 
       gap: 10px;
 
-      flex-wrap: wrap;
+      margin-top: 30px;
     }
 
-    .primary-btn,
-    .secondary-btn {
+    .btn {
+      min-height: 46px;
+
+      padding: 0 19px;
+
       display: inline-flex;
       align-items: center;
       justify-content: center;
 
-      min-height: 45px;
-
-      padding: 0 19px;
-
       border-radius: 11px;
 
-      font-size: 11px;
-      font-weight: 900;
+      font-size: 10px;
+      font-weight: 950;
 
-      border: 1px solid transparent;
-
-      transition: .22s ease;
+      transition:
+        transform .22s ease,
+        border-color .22s ease,
+        background .22s ease,
+        box-shadow .22s ease;
     }
 
-    .primary-btn {
+    .btn-primary {
       color: #080808;
+
+      border:
+        1px solid rgba(255,255,255,.22);
 
       background:
         linear-gradient(
           135deg,
-          #eeeeef,
+          #f2f2f3,
           #9b9ca0
         );
 
       box-shadow:
-        0 13px 35px rgba(0,0,0,.4),
-        inset 0 1px 0 rgba(255,255,255,.65);
+        0 14px 35px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.7);
     }
 
-    .primary-btn:hover {
+    .btn-primary:hover {
       transform: translateY(-2px);
 
       box-shadow:
-        0 18px 45px rgba(0,0,0,.55),
+        0 20px 45px rgba(0,0,0,.5),
         inset 0 1px 0 rgba(255,255,255,.8);
     }
 
-    .secondary-btn {
-      color: #c8c8cc;
+    .btn-secondary {
+      color: #c9cacf;
 
-      border-color:
-        rgba(255,255,255,.1);
+      border:
+        1px solid var(--line2);
 
       background:
         rgba(255,255,255,.035);
     }
 
-    .secondary-btn:hover {
+    .btn-secondary:hover {
       color: #fff;
 
-      border-color:
-        rgba(255,255,255,.2);
+      border-color: var(--line3);
 
       background:
         rgba(255,255,255,.07);
     }
 
-    /* =========================================
-       TRUST STRIP
-    ========================================= */
+    /* HERO VISUAL */
 
-    .trust-strip {
-      width: min(
-        920px,
-        calc(100% - 36px)
-      );
+    .hero-visual {
+      position: relative;
 
-      margin: 0 auto 75px;
+      min-height: 390px;
 
       display: grid;
+      place-items: center;
+    }
+
+    .visual-glow {
+      position: absolute;
+
+      width: 340px;
+      height: 340px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(255,255,255,.11),
+          transparent 67%
+        );
+
+      filter: blur(35px);
+    }
+
+    .onyx-orb {
+      position: relative;
+
+      width: 275px;
+      height: 315px;
+
+      transform:
+        rotate(17deg)
+        skewY(-4deg);
+
+      border-radius:
+        38px 65px 42px 70px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #303136 0%,
+          #0e0f11 22%,
+          #020202 52%,
+          #18191c 75%,
+          #050506 100%
+        );
+
+      box-shadow:
+        -25px 35px 70px rgba(0,0,0,.8),
+        inset 12px 12px 30px rgba(255,255,255,.055),
+        inset -15px -15px 35px rgba(0,0,0,.9);
+
+      animation:
+        orbFloat 6s ease-in-out infinite;
+    }
+
+    .onyx-orb::before {
+      content: "";
+
+      position: absolute;
+
+      inset: 18px;
+
+      border-radius: inherit;
+
+      border:
+        1px solid rgba(255,255,255,.09);
+
+      background:
+        linear-gradient(
+          135deg,
+          transparent 35%,
+          rgba(255,255,255,.05),
+          transparent 62%
+        );
+    }
+
+    .onyx-orb::after {
+      content: "O";
+
+      position: absolute;
+
+      inset: 0;
+
+      display: grid;
+      place-items: center;
+
+      transform: rotate(-17deg);
+
+      color: rgba(255,255,255,.12);
+
+      font-size: 90px;
+      font-weight: 1000;
+
+      text-shadow:
+        0 0 40px rgba(255,255,255,.07);
+    }
+
+    @keyframes orbFloat {
+      0%,100% {
+        transform:
+          translateY(0)
+          rotate(17deg)
+          skewY(-4deg);
+      }
+
+      50% {
+        transform:
+          translateY(-12px)
+          rotate(20deg)
+          skewY(-4deg);
+      }
+    }
+
+    .visual-card {
+      position: absolute;
+
+      min-width: 150px;
+
+      padding: 13px 15px;
+
+      border:
+        1px solid rgba(255,255,255,.1);
+
+      border-radius: 13px;
+
+      background:
+        rgba(10,10,11,.76);
+
+      backdrop-filter: blur(16px);
+
+      box-shadow:
+        0 20px 50px rgba(0,0,0,.5);
+    }
+
+    .visual-card.one {
+      top: 55px;
+      right: 10px;
+    }
+
+    .visual-card.two {
+      bottom: 50px;
+      left: 10px;
+    }
+
+    .visual-card small {
+      display: block;
+
+      color: #5e5f65;
+
+      font-size: 7px;
+      font-weight: 900;
+
+      letter-spacing: .14em;
+    }
+
+    .visual-card strong {
+      display: block;
+
+      margin-top: 4px;
+
+      color: #e5e5e6;
+
+      font-size: 12px;
+    }
+
+    .visual-card .dot {
+      display: inline-block;
+
+      width: 5px;
+      height: 5px;
+
+      margin-right: 5px;
+
+      border-radius: 50%;
+
+      background: var(--green);
+    }
+
+    /* =========================================
+       STORE STATUS
+    ========================================= */
+
+    .status-bar {
+      display: grid;
+
       grid-template-columns:
-        repeat(3,1fr);
+        repeat(4,1fr);
+
+      margin-bottom: 80px;
 
       border:
         1px solid var(--line);
 
       border-radius: 18px;
 
+      overflow: hidden;
+
       background:
         linear-gradient(
           135deg,
           rgba(255,255,255,.045),
-          rgba(255,255,255,.015)
+          rgba(255,255,255,.012)
         );
 
       box-shadow:
-        0 15px 60px rgba(0,0,0,.25);
-
-      overflow: hidden;
+        0 20px 70px rgba(0,0,0,.25);
     }
 
-    .trust-item {
-      position: relative;
+    .status-item {
+      min-height: 84px;
 
-      min-height: 91px;
-
-      padding: 20px;
+      padding: 18px 20px;
 
       display: flex;
       align-items: center;
-      justify-content: center;
 
       gap: 12px;
-
-      text-align: left;
 
       border-right:
         1px solid var(--line);
     }
 
-    .trust-item:last-child {
+    .status-item:last-child {
       border-right: 0;
     }
 
-    .trust-icon {
-      width: 38px;
-      height: 38px;
+    .status-icon {
+      width: 37px;
+      height: 37px;
 
       flex: 0 0 auto;
 
@@ -676,50 +828,37 @@
 
       border-radius: 11px;
 
-      color: #d7d7da;
+      color: #ddd;
 
       border:
-        1px solid rgba(255,255,255,.1);
+        1px solid var(--line2);
 
       background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.08),
-          rgba(255,255,255,.025)
-        );
+        rgba(255,255,255,.045);
+
+      font-size: 14px;
     }
 
-    .trust-text strong {
+    .status-copy strong {
       display: block;
 
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
     }
 
-    .trust-text span {
+    .status-copy span {
       display: block;
 
       margin-top: 3px;
 
-      color: #66676c;
+      color: #616269;
 
-      font-size: 9px;
+      font-size: 8px;
     }
 
     /* =========================================
-       CATALOG
+       SECTION HEADER
     ========================================= */
-
-    .catalog {
-      width: min(
-        var(--max),
-        calc(100% - 36px)
-      );
-
-      margin: auto;
-
-      padding-bottom: 100px;
-    }
 
     .section-head {
       display: flex;
@@ -732,40 +871,70 @@
     }
 
     .eyebrow {
-      color: #88898e;
+      margin-bottom: 7px;
 
-      font-size: 9px;
+      color: #77787d;
+
+      font-size: 8px;
       font-weight: 950;
 
       letter-spacing: .2em;
 
       text-transform: uppercase;
-
-      margin-bottom: 7px;
     }
 
     .section-head h2 {
-      font-size: 32px;
+      font-size: 34px;
 
-      letter-spacing: -.045em;
+      line-height: 1;
 
-      font-weight: 950;
+      letter-spacing: -.05em;
+
+      font-weight: 1000;
     }
 
     .section-head p {
-      color: #66676b;
+      margin-top: 7px;
 
-      font-size: 12px;
+      color: #62636a;
 
-      margin-top: 6px;
+      font-size: 11px;
     }
 
-    /* SEARCH */
+    .catalog-count {
+      padding: 8px 11px;
+
+      border:
+        1px solid var(--line);
+
+      border-radius: 9px;
+
+      color: #85868b;
+
+      background:
+        rgba(255,255,255,.025);
+
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    /* =========================================
+       SEARCH / FILTERS
+    ========================================= */
+
+    .catalog-tools {
+      display: flex;
+      align-items: center;
+
+      gap: 9px;
+
+      margin-bottom: 25px;
+    }
 
     .search-box {
       position: relative;
 
-      width: min(390px,100%);
+      flex: 1;
     }
 
     .search-box svg {
@@ -774,108 +943,96 @@
       left: 14px;
       top: 50%;
 
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
 
       transform: translateY(-50%);
 
-      color: #67686c;
+      color: #5d5e64;
     }
 
     .search-box input {
       width: 100%;
-      height: 44px;
+      height: 43px;
 
-      padding: 0 15px 0 41px;
-
-      border-radius: 12px;
-
-      border:
-        1px solid var(--line);
+      padding: 0 15px 0 40px;
 
       outline: none;
 
       color: #fff;
 
-      background:
-        rgba(255,255,255,.035);
+      border:
+        1px solid var(--line);
 
-      transition: .2s ease;
+      border-radius: 11px;
+
+      background:
+        rgba(255,255,255,.03);
+
+      transition: .2s;
     }
 
     .search-box input::placeholder {
-      color: #595a5f;
+      color: #55565b;
     }
 
     .search-box input:focus {
       border-color:
-        rgba(255,255,255,.22);
+        rgba(255,255,255,.2);
 
       background:
-        rgba(255,255,255,.055);
+        rgba(255,255,255,.05);
 
       box-shadow:
-        0 0 0 3px rgba(255,255,255,.035);
+        0 0 0 3px rgba(255,255,255,.025);
     }
-
-    /* FILTERS */
 
     .filters {
       display: flex;
 
       align-items: center;
 
-      gap: 8px;
+      gap: 7px;
 
-      flex-wrap: wrap;
-
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
     .filter-btn,
     .sort-box {
-      height: 37px;
+      height: 36px;
 
-      padding: 0 13px;
-
-      border-radius: 10px;
+      padding: 0 12px;
 
       border:
         1px solid var(--line);
 
+      border-radius: 9px;
+
+      color: #77787e;
+
       background:
         rgba(255,255,255,.025);
 
-      color: #7d7e83;
+      font-size: 9px;
+      font-weight: 900;
 
-      font-size: 10px;
-      font-weight: 850;
-
-      transition: .2s ease;
+      transition: .2s;
     }
 
     .filter-btn:hover {
       color: #eee;
 
-      border-color:
-        var(--line-strong);
+      border-color: var(--line2);
     }
 
     .filter-btn.active {
       color: #fff;
 
       border-color:
-        rgba(255,255,255,.2);
+        rgba(255,255,255,.19);
 
       background:
-        linear-gradient(
-          135deg,
-          rgba(255,255,255,.1),
-          rgba(255,255,255,.04)
-        );
-
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.05);
+        rgba(255,255,255,.075);
     }
 
     .sort-box {
@@ -883,12 +1040,11 @@
 
       outline: none;
 
-      background:
-        #0d0d0e;
+      background: #0d0d0e;
     }
 
     /* =========================================
-       PRODUCT GRID
+       PRODUCTS
     ========================================= */
 
     .products-grid {
@@ -905,7 +1061,9 @@
 
       min-width: 0;
 
-      padding: 19px;
+      padding: 20px;
+
+      overflow: hidden;
 
       border:
         1px solid var(--line);
@@ -915,15 +1073,12 @@
       background:
         linear-gradient(
           145deg,
-          rgba(255,255,255,.055),
-          rgba(255,255,255,.014) 60%,
-          rgba(0,0,0,.15)
+          rgba(255,255,255,.052),
+          rgba(255,255,255,.013)
         );
 
       box-shadow:
-        0 12px 40px rgba(0,0,0,.2);
-
-      overflow: hidden;
+        0 15px 45px rgba(0,0,0,.22);
 
       transition:
         transform .25s ease,
@@ -931,27 +1086,37 @@
         box-shadow .25s ease;
     }
 
+    .product-card:hover {
+      transform: translateY(-6px);
+
+      border-color:
+        rgba(255,255,255,.17);
+
+      box-shadow:
+        0 28px 70px rgba(0,0,0,.42);
+    }
+
     .product-card::before {
       content: "";
 
       position: absolute;
 
-      width: 250px;
-      height: 150px;
+      width: 260px;
+      height: 180px;
 
-      top: -100px;
-      right: -110px;
+      right: -130px;
+      top: -120px;
 
       border-radius: 50%;
 
       background:
         radial-gradient(
           circle,
-          rgba(255,255,255,.1),
-          transparent 68%
+          rgba(255,255,255,.11),
+          transparent 70%
         );
 
-      filter: blur(20px);
+      filter: blur(22px);
 
       pointer-events: none;
     }
@@ -963,7 +1128,7 @@
 
       inset: 0;
 
-      border-radius: inherit;
+      opacity: 0;
 
       pointer-events: none;
 
@@ -971,23 +1136,11 @@
         linear-gradient(
           120deg,
           transparent 20%,
-          rgba(255,255,255,.035) 50%,
+          rgba(255,255,255,.04) 50%,
           transparent 80%
         );
 
-      opacity: 0;
-
       transition: .3s;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-
-      border-color:
-        rgba(255,255,255,.18);
-
-      box-shadow:
-        0 25px 65px rgba(0,0,0,.4);
     }
 
     .product-card:hover::after {
@@ -995,31 +1148,29 @@
     }
 
     .product-top {
+      position: relative;
+      z-index: 1;
+
       display: flex;
-
       align-items: flex-start;
-
       justify-content: space-between;
 
       gap: 12px;
     }
 
     .product-icon {
-      width: 48px;
-      height: 48px;
+      width: 49px;
+      height: 49px;
 
       display: grid;
       place-items: center;
 
       border-radius: 14px;
 
-      color: #ddd;
-
-      font-size: 18px;
-      font-weight: 950;
+      color: #e4e4e6;
 
       border:
-        1px solid rgba(255,255,255,.11);
+        1px solid var(--line2);
 
       background:
         linear-gradient(
@@ -1030,156 +1181,192 @@
 
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.08);
+
+      font-size: 17px;
+      font-weight: 1000;
     }
 
     .stock-badge {
       padding: 6px 9px;
 
+      border:
+        1px solid rgba(69,223,133,.12);
+
       border-radius: 999px;
 
-      color: #7beaa6;
+      color: #78e9a1;
 
       background:
-        rgba(67,220,130,.055);
+        rgba(69,223,133,.045);
 
-      border:
-        1px solid rgba(67,220,130,.12);
-
-      font-size: 8px;
+      font-size: 7px;
       font-weight: 950;
 
       text-transform: uppercase;
-
-      letter-spacing: .06em;
+      letter-spacing: .07em;
     }
 
     .stock-badge.low {
       color: var(--yellow);
 
       border-color:
-        rgba(231,200,102,.13);
+        rgba(228,199,95,.13);
 
       background:
-        rgba(231,200,102,.045);
+        rgba(228,199,95,.045);
     }
 
     .stock-badge.out {
       color: #ff8585;
 
-      background:
-        rgba(255,94,94,.055);
-
       border-color:
-        rgba(255,94,94,.12);
+        rgba(255,97,97,.13);
+
+      background:
+        rgba(255,97,97,.045);
     }
 
-    .product-info {
-      margin-top: 19px;
+    .product-category {
+      margin-top: 18px;
+
+      color: #5f6065;
+
+      font-size: 7px;
+      font-weight: 950;
+
+      letter-spacing: .14em;
+
+      text-transform: uppercase;
     }
 
     .product-info h3 {
-      font-size: 17px;
+      margin-top: 5px;
+
+      font-size: 18px;
+
+      letter-spacing: -.035em;
 
       font-weight: 950;
-
-      letter-spacing: -.025em;
     }
 
     .product-description {
-      min-height: 43px;
+      min-height: 40px;
 
       margin-top: 8px;
 
-      color: #6d6e73;
+      color: #68696f;
 
-      font-size: 11px;
+      font-size: 10px;
 
       line-height: 1.7;
 
       display: -webkit-box;
-
       -webkit-line-clamp: 2;
-
       -webkit-box-orient: vertical;
 
       overflow: hidden;
     }
 
-    .product-bottom {
+    .product-meta {
       display: flex;
 
-      align-items: flex-end;
+      gap: 7px;
 
+      margin-top: 13px;
+    }
+
+    .meta-pill {
+      padding: 5px 7px;
+
+      color: #66676c;
+
+      border:
+        1px solid var(--line);
+
+      border-radius: 7px;
+
+      background:
+        rgba(255,255,255,.02);
+
+      font-size: 7px;
+      font-weight: 800;
+    }
+
+    .product-bottom {
+      position: relative;
+      z-index: 1;
+
+      display: flex;
+      align-items: flex-end;
       justify-content: space-between;
 
       gap: 15px;
 
-      margin-top: 21px;
-
-      padding-top: 16px;
+      margin-top: 19px;
+      padding-top: 15px;
 
       border-top:
         1px solid var(--line);
     }
 
     .price-label {
-      color: #5e5f64;
+      color: #5b5c62;
 
-      font-size: 8px;
-
+      font-size: 7px;
       font-weight: 900;
 
-      text-transform: uppercase;
-
       letter-spacing: .12em;
+
+      text-transform: uppercase;
     }
 
     .price {
-      margin-top: 3px;
+      margin-top: 2px;
 
-      font-size: 22px;
+      color: #eee;
 
-      font-weight: 950;
+      font-size: 23px;
 
-      letter-spacing: -.05em;
+      letter-spacing: -.055em;
 
-      color: #ededee;
+      font-weight: 1000;
     }
 
     .buy-btn {
-      min-width: 118px;
-      height: 39px;
+      min-width: 123px;
+      height: 40px;
 
       padding: 0 14px;
 
-      border: 1px solid rgba(255,255,255,.16);
+      border:
+        1px solid rgba(255,255,255,.16);
 
       border-radius: 10px;
 
-      color: #090909;
+      color: #080808;
 
       background:
         linear-gradient(
           135deg,
-          #e8e8e9,
+          #eeeeef,
           #96979b
         );
 
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 950;
 
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.55);
+        inset 0 1px 0 rgba(255,255,255,.65);
 
-      transition: .2s ease;
+      transition: .2s;
     }
 
     .buy-btn:hover:not(:disabled) {
       transform: translateY(-2px);
 
       box-shadow:
-        0 10px 28px rgba(0,0,0,.4),
-        inset 0 1px 0 rgba(255,255,255,.7);
+        0 12px 30px rgba(0,0,0,.4),
+        inset 0 1px 0 rgba(255,255,255,.8);
     }
 
     .buy-btn:disabled {
@@ -1187,19 +1374,414 @@
 
       color: #55565b;
 
-      border-color:
-        rgba(255,255,255,.04);
+      border-color: rgba(255,255,255,.04);
 
-      background:
-        #151516;
+      background: #151516;
 
       box-shadow: none;
     }
 
-    /* LOADING */
+    /* =========================================
+       HOW IT WORKS
+    ========================================= */
+
+    .how-section {
+      padding: 110px 0;
+
+      border-top:
+        1px solid var(--line);
+    }
+
+    .center-head {
+      max-width: 600px;
+
+      margin: 0 auto 42px;
+
+      text-align: center;
+    }
+
+    .center-head h2 {
+      font-size: 36px;
+
+      letter-spacing: -.055em;
+
+      font-weight: 1000;
+    }
+
+    .center-head p {
+      margin-top: 9px;
+
+      color: #65666c;
+
+      font-size: 11px;
+
+      line-height: 1.7;
+    }
+
+    .steps {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap: 15px;
+    }
+
+    .step {
+      position: relative;
+
+      min-height: 205px;
+
+      padding: 25px;
+
+      overflow: hidden;
+
+      border:
+        1px solid var(--line);
+
+      border-radius: 19px;
+
+      background:
+        rgba(255,255,255,.018);
+    }
+
+    .step-number {
+      position: absolute;
+
+      right: 20px;
+      top: 10px;
+
+      color: rgba(255,255,255,.035);
+
+      font-size: 70px;
+
+      line-height: 1;
+
+      font-weight: 1000;
+    }
+
+    .step-icon {
+      width: 43px;
+      height: 43px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 12px;
+
+      border:
+        1px solid var(--line2);
+
+      background:
+        rgba(255,255,255,.045);
+
+      color: #ddd;
+
+      font-size: 16px;
+    }
+
+    .step h3 {
+      margin-top: 20px;
+
+      font-size: 15px;
+
+      font-weight: 950;
+    }
+
+    .step p {
+      margin-top: 7px;
+
+      color: #62636a;
+
+      font-size: 10px;
+
+      line-height: 1.75;
+    }
+
+    /* =========================================
+       WHY ONYX
+    ========================================= */
+
+    .why-section {
+      padding: 95px 0;
+
+      border-top:
+        1px solid var(--line);
+
+      border-bottom:
+        1px solid var(--line);
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,.018),
+          rgba(255,255,255,.006)
+        );
+    }
+
+    .why-layout {
+      display: grid;
+
+      grid-template-columns:
+        .8fr 1.2fr;
+
+      gap: 70px;
+
+      align-items: center;
+    }
+
+    .why-title h2 {
+      font-size: 42px;
+
+      line-height: .95;
+
+      letter-spacing: -.06em;
+
+      font-weight: 1000;
+    }
+
+    .why-title p {
+      max-width: 390px;
+
+      margin-top: 17px;
+
+      color: #66676c;
+
+      font-size: 11px;
+
+      line-height: 1.8;
+    }
+
+    .why-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap: 12px;
+    }
+
+    .why-card {
+      padding: 21px;
+
+      border:
+        1px solid var(--line);
+
+      border-radius: 16px;
+
+      background:
+        rgba(0,0,0,.25);
+    }
+
+    .why-card strong {
+      display: block;
+
+      font-size: 13px;
+    }
+
+    .why-card p {
+      margin-top: 6px;
+
+      color: #606168;
+
+      font-size: 9px;
+
+      line-height: 1.7;
+    }
+
+    /* =========================================
+       FAQ
+    ========================================= */
+
+    .faq-section {
+      padding: 100px 0;
+    }
+
+    .faq {
+      max-width: 800px;
+
+      margin: 35px auto 0;
+    }
+
+    details {
+      border-bottom:
+        1px solid var(--line);
+    }
+
+    details:first-child {
+      border-top:
+        1px solid var(--line);
+    }
+
+    summary {
+      position: relative;
+
+      padding: 20px 35px 20px 0;
+
+      list-style: none;
+
+      cursor: pointer;
+
+      color: #d7d7d9;
+
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "+";
+
+      position: absolute;
+
+      right: 5px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      color: #696a70;
+
+      font-size: 18px;
+
+      transition: .2s;
+    }
+
+    details[open] summary::after {
+      transform:
+        translateY(-50%)
+        rotate(45deg);
+    }
+
+    details p {
+      max-width: 700px;
+
+      padding:
+        0 35px 20px 0;
+
+      color: #63646a;
+
+      font-size: 10px;
+
+      line-height: 1.8;
+    }
+
+    /* =========================================
+       FINAL CTA
+    ========================================= */
+
+    .final-cta {
+      padding: 85px 20px;
+
+      text-align: center;
+
+      border-top:
+        1px solid var(--line);
+
+      background:
+        radial-gradient(
+          ellipse at center,
+          rgba(255,255,255,.055),
+          transparent 65%
+        );
+    }
+
+    .final-cta h2 {
+      font-size:
+        clamp(32px,5vw,52px);
+
+      letter-spacing: -.06em;
+
+      font-weight: 1000;
+    }
+
+    .final-cta p {
+      max-width: 540px;
+
+      margin: 11px auto 23px;
+
+      color: #66676d;
+
+      font-size: 11px;
+
+      line-height: 1.7;
+    }
+
+    /* =========================================
+       FOOTER
+    ========================================= */
+
+    footer {
+      border-top:
+        1px solid var(--line);
+
+      padding: 35px 0;
+    }
+
+    .footer-inner {
+      width: min(
+        var(--max),
+        calc(100% - 36px)
+      );
+
+      margin: auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 25px;
+    }
+
+    .footer-brand strong {
+      color: #aaaab0;
+
+      font-size: 11px;
+
+      letter-spacing: .15em;
+    }
+
+    .footer-brand span {
+      display: block;
+
+      margin-top: 5px;
+
+      color: #4f5056;
+
+      font-size: 9px;
+    }
+
+    .footer-links {
+      display: flex;
+
+      gap: 18px;
+    }
+
+    .footer-links a {
+      color: #5e5f65;
+
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .footer-links a:hover {
+      color: #ddd;
+    }
+
+    .footer-copy {
+      color: #44454a;
+
+      font-size: 8px;
+    }
+
+    /* =========================================
+       SKELETON / EMPTY
+    ========================================= */
 
     .skeleton {
-      height: 280px;
+      height: 325px;
 
       border-radius: var(--radius);
 
@@ -1210,7 +1792,7 @@
         linear-gradient(
           90deg,
           rgba(255,255,255,.018),
-          rgba(255,255,255,.065),
+          rgba(255,255,255,.06),
           rgba(255,255,255,.018)
         );
 
@@ -1230,17 +1812,15 @@
       }
     }
 
-    /* EMPTY */
-
     .empty {
       grid-column: 1 / -1;
 
-      padding: 75px 20px;
+      padding: 80px 20px;
 
       text-align: center;
 
       border:
-        1px dashed var(--line);
+        1px dashed var(--line2);
 
       border-radius: 18px;
 
@@ -1248,172 +1828,23 @@
     }
 
     .empty-icon {
-      font-size: 31px;
-
       margin-bottom: 12px;
 
-      opacity: .6;
+      font-size: 30px;
+
+      opacity: .55;
     }
 
     .empty h3 {
-      color: #a2a3a7;
+      color: #a4a5aa;
 
       font-size: 16px;
-
-      margin-bottom: 6px;
     }
 
     .empty p {
-      font-size: 11px;
-    }
-
-    /* =========================================
-       BENEFITS
-    ========================================= */
-
-    .benefits-section {
-      position: relative;
-
-      border-top:
-        1px solid var(--line);
-
-      border-bottom:
-        1px solid var(--line);
-
-      background:
-        linear-gradient(
-          180deg,
-          rgba(255,255,255,.018),
-          rgba(255,255,255,.008)
-        );
-    }
-
-    .benefits {
-      width: min(
-        var(--max),
-        calc(100% - 36px)
-      );
-
-      margin: auto;
-
-      padding: 75px 0;
-
-      display: grid;
-
-      grid-template-columns:
-        repeat(3,1fr);
-
-      gap: 15px;
-    }
-
-    .benefit {
-      position: relative;
-
-      padding: 25px;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 18px;
-
-      background:
-        rgba(0,0,0,.25);
-
-      overflow: hidden;
-    }
-
-    .benefit::before {
-      content: "";
-
-      position: absolute;
-
-      width: 150px;
-      height: 150px;
-
-      top: -100px;
-      right: -70px;
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(255,255,255,.06),
-          transparent 70%
-        );
-
-      filter: blur(15px);
-    }
-
-    .benefit-icon {
-      width: 43px;
-      height: 43px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 12px;
-
-      color: #d4d4d7;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.1),
-          rgba(255,255,255,.025)
-        );
-
-      border:
-        1px solid rgba(255,255,255,.1);
-
-      font-size: 17px;
-
-      margin-bottom: 17px;
-    }
-
-    .benefit h3 {
-      font-size: 15px;
-
-      margin-bottom: 7px;
-    }
-
-    .benefit p {
-      color: #68696e;
-
-      font-size: 11px;
-
-      line-height: 1.75;
-    }
-
-    /* =========================================
-       FOOTER
-    ========================================= */
-
-    footer {
-      width: min(
-        var(--max),
-        calc(100% - 36px)
-      );
-
-      margin: auto;
-
-      padding: 32px 0;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: space-between;
-
-      gap: 15px;
-
-      color: #4f5055;
+      margin-top: 5px;
 
       font-size: 10px;
-    }
-
-    footer strong {
-      color: #797a7f;
     }
 
     /* =========================================
@@ -1434,10 +1865,10 @@
       padding: 18px;
 
       background:
-        rgba(0,0,0,.82);
+        rgba(0,0,0,.86);
 
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
 
     .modal-backdrop.open {
@@ -1448,7 +1879,7 @@
       position: relative;
 
       width: min(
-        510px,
+        530px,
         100%
       );
 
@@ -1458,30 +1889,30 @@
       overflow-y: auto;
 
       border:
-        1px solid rgba(255,255,255,.11);
+        1px solid rgba(255,255,255,.12);
 
-      border-radius: 23px;
+      border-radius: 24px;
 
       background:
         radial-gradient(
           circle at 50% -25%,
-          rgba(255,255,255,.09),
-          transparent 44%
+          rgba(255,255,255,.095),
+          transparent 45%
         ),
-        #090909;
+        #09090a;
 
       box-shadow:
-        0 40px 120px rgba(0,0,0,.8);
+        0 45px 130px rgba(0,0,0,.85);
 
       animation:
-        modalIn .22s ease;
+        modalIn .23s ease;
     }
 
     @keyframes modalIn {
       from {
         opacity: 0;
         transform:
-          translateY(12px)
+          translateY(15px)
           scale(.985);
       }
 
@@ -1499,8 +1930,10 @@
       top: 16px;
       right: 16px;
 
-      width: 33px;
-      height: 33px;
+      z-index: 5;
+
+      width: 34px;
+      height: 34px;
 
       border:
         1px solid var(--line);
@@ -1513,10 +1946,6 @@
         rgba(255,255,255,.04);
 
       font-size: 17px;
-
-      line-height: 1;
-
-      transition: .2s;
     }
 
     .modal-close:hover {
@@ -1527,38 +1956,116 @@
     }
 
     .modal-head {
-      padding: 28px 27px 20px;
+      padding: 27px 27px 20px;
 
       border-bottom:
         1px solid var(--line);
     }
 
-    .modal-head .eyebrow {
-      margin-bottom: 6px;
-    }
-
     .modal-head h2 {
       padding-right: 35px;
 
-      font-size: 22px;
+      font-size: 23px;
 
-      letter-spacing: -.035em;
+      letter-spacing: -.04em;
     }
 
     .modal-head p {
-      color: #66676c;
+      margin-top: 6px;
 
-      margin-top: 5px;
+      color: #65666b;
 
-      font-size: 11px;
+      font-size: 10px;
+    }
+
+    /* STEPS */
+
+    .checkout-steps {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap: 7px;
+
+      padding: 17px 27px 0;
+    }
+
+    .checkout-step {
+      position: relative;
+
+      text-align: center;
+
+      color: #4e4f55;
+
+      font-size: 7px;
+      font-weight: 900;
+
+      letter-spacing: .08em;
+
+      text-transform: uppercase;
+    }
+
+    .checkout-step::before {
+      content: "";
+
+      display: block;
+
+      width: 24px;
+      height: 24px;
+
+      margin: 0 auto 6px;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid var(--line2);
+
+      border-radius: 50%;
+
+      background:
+        #111113;
+    }
+
+    .checkout-step.active {
+      color: #ddd;
+    }
+
+    .checkout-step.active::before {
+      background:
+        linear-gradient(
+          145deg,
+          #eee,
+          #888
+        );
+
+      border-color:
+        rgba(255,255,255,.25);
+    }
+
+    .checkout-step.done {
+      color: var(--green);
+    }
+
+    .checkout-step.done::before {
+      content: "✓";
+
+      color: #08100c;
+
+      background:
+        var(--green);
+
+      border-color:
+        var(--green);
     }
 
     .modal-body {
-      padding: 23px 27px 27px;
+      padding: 20px 27px 27px;
     }
 
     .order-summary {
-      padding: 16px;
+      padding: 15px;
 
       border:
         1px solid var(--line);
@@ -1573,16 +2080,15 @@
       display: flex;
 
       align-items: center;
-
       justify-content: space-between;
 
       gap: 15px;
 
       padding: 7px 0;
 
-      color: #797a7f;
+      color: #74757b;
 
-      font-size: 11px;
+      font-size: 10px;
     }
 
     .summary-row strong {
@@ -1598,34 +2104,31 @@
 
       border-top:
         1px solid var(--line);
-
-      color: #aaa;
     }
 
     .summary-row.total strong {
       color: #fff;
 
-      font-size: 18px;
+      font-size: 19px;
     }
 
     .payment-status {
-      margin-top: 16px;
+      margin-top: 14px;
 
       padding: 14px;
 
+      display: flex;
+      align-items: center;
+
+      gap: 11px;
+
       border:
-        1px solid rgba(255,255,255,.09);
+        1px solid var(--line2);
 
       border-radius: 13px;
 
       background:
         rgba(255,255,255,.025);
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 11px;
     }
 
     .status-dot {
@@ -1636,11 +2139,10 @@
 
       border-radius: 50%;
 
-      background:
-        #aaa;
+      background: #aaa;
 
       box-shadow:
-        0 0 12px rgba(255,255,255,.25);
+        0 0 12px rgba(255,255,255,.2);
 
       animation:
         pulse 1.5s infinite;
@@ -1655,10 +2157,10 @@
 
     .payment-status.success {
       border-color:
-        rgba(67,220,130,.15);
+        rgba(69,223,133,.16);
 
       background:
-        rgba(67,220,130,.045);
+        rgba(69,223,133,.04);
     }
 
     .payment-status.success .status-dot {
@@ -1666,7 +2168,7 @@
         var(--green);
 
       box-shadow:
-        0 0 12px rgba(67,220,130,.5);
+        0 0 13px rgba(69,223,133,.55);
 
       animation: none;
     }
@@ -1676,28 +2178,28 @@
 
       color: #ddd;
 
-      font-size: 11px;
+      font-size: 10px;
     }
 
     .status-text span {
       display: block;
 
-      color: #64656a;
-
-      font-size: 9px;
-
       margin-top: 3px;
+
+      color: #62636a;
+
+      font-size: 8px;
     }
 
     .payment-btn {
       width: 100%;
 
-      height: 48px;
+      height: 49px;
 
-      margin-top: 13px;
+      margin-top: 12px;
 
       border:
-        1px solid rgba(255,255,255,.15);
+        1px solid rgba(255,255,255,.16);
 
       border-radius: 12px;
 
@@ -1710,14 +2212,13 @@
           #999a9e
         );
 
-      font-size: 11px;
-
+      font-size: 10px;
       font-weight: 950;
 
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.65);
 
-      transition: .2s ease;
+      transition: .2s;
     }
 
     .payment-btn:hover:not(:disabled) {
@@ -1735,49 +2236,140 @@
     }
 
     .payment-note {
-      margin-top: 11px;
+      margin-top: 9px;
 
       text-align: center;
 
-      color: #515258;
+      color: #505157;
 
-      font-size: 9px;
+      font-size: 8px;
 
       line-height: 1.6;
     }
 
-    .delivery {
+    /* =========================================
+       SUCCESS
+    ========================================= */
+
+    .success-screen {
       display: none;
 
-      margin-top: 16px;
+      padding: 13px 0 2px;
+
+      text-align: center;
+
+      animation:
+        successIn .35s ease;
     }
 
-    .delivery.show {
+    .success-screen.show {
       display: block;
     }
 
-    .delivery-title {
-      color: var(--green);
+    @keyframes successIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
 
-      font-size: 12px;
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
+    .success-icon {
+      position: relative;
+
+      width: 76px;
+      height: 76px;
+
+      margin: 0 auto 18px;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid rgba(69,223,133,.3);
+
+      border-radius: 50%;
+
+      color: #06130b;
+
+      background:
+        linear-gradient(
+          145deg,
+          #72eda2,
+          #35bd70
+        );
+
+      font-size: 29px;
+      font-weight: 1000;
+
+      box-shadow:
+        0 0 0 10px rgba(69,223,133,.035),
+        0 0 45px rgba(69,223,133,.18);
+    }
+
+    .success-icon::after {
+      content: "";
+
+      position: absolute;
+      inset: -11px;
+
+      border:
+        1px solid rgba(69,223,133,.08);
+
+      border-radius: 50%;
+    }
+
+    .success-title {
+      color: #69e89a;
+
+      font-size: 10px;
       font-weight: 950;
 
-      margin-bottom: 9px;
+      letter-spacing: .18em;
+    }
+
+    .success-screen h3 {
+      margin-top: 7px;
+
+      color: #f1f1f2;
+
+      font-size: 27px;
+
+      letter-spacing: -.05em;
+
+      font-weight: 1000;
+    }
+
+    .success-screen > p {
+      max-width: 380px;
+
+      margin: 9px auto 18px;
+
+      color: #66676d;
+
+      font-size: 10px;
+
+      line-height: 1.7;
     }
 
     .account-box {
       padding: 15px;
 
+      text-align: left;
+
       border:
-        1px solid rgba(67,220,130,.14);
+        1px solid rgba(69,223,133,.14);
 
       border-radius: 12px;
 
-      background:
-        rgba(67,220,130,.035);
-
       color: #ddd;
+
+      background:
+        rgba(69,223,133,.035);
 
       font-family:
         ui-monospace,
@@ -1785,7 +2377,7 @@
         Menlo,
         monospace;
 
-      font-size: 10px;
+      font-size: 9px;
 
       line-height: 1.65;
 
@@ -1797,23 +2389,100 @@
     .copy-account {
       width: 100%;
 
-      height: 40px;
+      height: 41px;
 
-      margin-top: 9px;
+      margin-top: 8px;
 
       border:
-        1px solid rgba(67,220,130,.14);
+        1px solid rgba(69,223,133,.15);
 
       border-radius: 10px;
 
       color: #83e9aa;
 
       background:
-        rgba(67,220,130,.045);
+        rgba(69,223,133,.045);
 
-      font-size: 10px;
-
+      font-size: 9px;
       font-weight: 900;
+    }
+
+    .feedback-box {
+      margin-top: 17px;
+
+      padding: 16px;
+
+      border:
+        1px solid var(--line);
+
+      border-radius: 14px;
+
+      background:
+        rgba(255,255,255,.025);
+    }
+
+    .feedback-box strong {
+      display: block;
+
+      color: #ddd;
+
+      font-size: 11px;
+    }
+
+    .feedback-box p {
+      margin-top: 5px;
+
+      color: #62636a;
+
+      font-size: 8px;
+
+      line-height: 1.6;
+    }
+
+    .discord-feedback {
+      width: 100%;
+
+      height: 43px;
+
+      margin-top: 12px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      border:
+        1px solid rgba(255,255,255,.15);
+
+      border-radius: 10px;
+
+      color: #090909;
+
+      background:
+        linear-gradient(
+          135deg,
+          #eeeeef,
+          #a1a2a6
+        );
+
+      font-size: 9px;
+      font-weight: 950;
+
+      transition: .2s;
+    }
+
+    .discord-feedback:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 13px 30px rgba(0,0,0,.4);
+    }
+
+    .delivery {
+      display: none;
+    }
+
+    .delivery.show {
+      display: block;
     }
 
     .modal-footer {
@@ -1826,11 +2495,15 @@
 
       text-align: center;
 
-      color: #505157;
+      color: #4f5056;
 
-      font-size: 9px;
+      font-size: 8px;
 
       line-height: 1.7;
+    }
+
+    .modal-footer strong {
+      color: #74757a;
     }
 
     /* =========================================
@@ -1846,7 +2519,6 @@
       z-index: 1000;
 
       display: flex;
-
       flex-direction: column;
 
       gap: 8px;
@@ -1858,7 +2530,7 @@
       padding: 12px 14px;
 
       border:
-        1px solid var(--line-strong);
+        1px solid var(--line2);
 
       border-radius: 12px;
 
@@ -1870,10 +2542,14 @@
       box-shadow:
         var(--shadow);
 
-      font-size: 10px;
+      font-size: 9px;
 
       animation:
         toastIn .2s ease;
+
+      transition:
+        opacity .2s,
+        transform .2s;
     }
 
     @keyframes toastIn {
@@ -1892,92 +2568,136 @@
        RESPONSIVE
     ========================================= */
 
-    @media (max-width: 950px) {
+    @media (max-width: 1000px) {
+
+      .hero-layout {
+        grid-template-columns: 1fr;
+
+        text-align: center;
+      }
+
+      .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hero-description {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-visual {
+        min-height: 330px;
+      }
+
+      .status-bar {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+
+      .status-item:nth-child(2) {
+        border-right: 0;
+      }
+
+      .status-item:nth-child(-n+2) {
+        border-bottom:
+          1px solid var(--line);
+      }
 
       .products-grid {
         grid-template-columns:
           repeat(2,minmax(0,1fr));
       }
 
-      .benefits {
+      .why-layout {
         grid-template-columns: 1fr;
       }
 
+      .why-title {
+        text-align: center;
+      }
+
+      .why-title p {
+        margin-left: auto;
+        margin-right: auto;
+      }
     }
 
     @media (max-width: 700px) {
 
-      .header-inner {
-        width: calc(100% - 22px);
+      .container,
+      .header-inner,
+      .footer-inner {
+        width:
+          calc(100% - 22px);
+      }
 
+      .header-inner {
         height: 64px;
       }
 
-      .nav a:not(.discord-btn) {
+      .nav a:not(.nav-discord) {
         display: none;
       }
 
       .hero {
-        width: calc(100% - 22px);
-
-        min-height: 500px;
-
         padding:
-          65px 0 55px;
+          70px 0 55px;
       }
 
       .hero h1 {
         font-size:
-          clamp(
-            40px,
-            12vw,
-            65px
-          );
+          clamp(42px,12vw,65px);
       }
 
       .hero-description {
         font-size: 12px;
       }
 
-      .trust-strip {
-        width: calc(100% - 22px);
-
-        grid-template-columns: 1fr;
-
-        margin-bottom: 60px;
+      .hero-visual {
+        min-height: 290px;
       }
 
-      .trust-item {
-        min-height: 76px;
+      .onyx-orb {
+        width: 210px;
+        height: 245px;
+      }
 
-        justify-content: flex-start;
+      .visual-card.one {
+        right: 0;
+        top: 25px;
+      }
 
-        border-right: 0;
+      .visual-card.two {
+        left: 0;
+        bottom: 20px;
+      }
+
+      .status-bar {
+        grid-template-columns: 1fr;
+
+        margin-bottom: 65px;
+      }
+
+      .status-item {
+        border-right: 0 !important;
 
         border-bottom:
           1px solid var(--line);
       }
 
-      .trust-item:last-child {
+      .status-item:last-child {
         border-bottom: 0;
       }
 
-      .catalog {
-        width: calc(100% - 22px);
-      }
-
-      .section-head {
+      .catalog-tools {
         flex-direction: column;
-
         align-items: stretch;
-      }
-
-      .search-box {
-        width: 100%;
-      }
-
-      .products-grid {
-        grid-template-columns: 1fr;
       }
 
       .filters {
@@ -1987,38 +2707,52 @@
           repeat(2,1fr);
       }
 
-      .filter-btn,
-      .sort-box {
-        width: 100%;
-      }
-
       .sort-box {
         margin-left: 0;
       }
 
-      .benefits {
-        width: calc(100% - 22px);
-
-        padding: 55px 0;
+      .products-grid {
+        grid-template-columns: 1fr;
       }
 
-      footer {
-        width: calc(100% - 22px);
+      .steps {
+        grid-template-columns: 1fr;
+      }
 
+      .why-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .how-section,
+      .why-section,
+      .faq-section {
+        padding: 75px 0;
+      }
+
+      .center-head h2 {
+        font-size: 30px;
+      }
+
+      .why-title h2 {
+        font-size: 35px;
+      }
+
+      .footer-inner {
         flex-direction: column;
 
         text-align: center;
       }
 
+      .footer-links {
+        order: -1;
+      }
     }
 
     @media (max-width: 390px) {
 
-      .filters {
-        grid-template-columns: 1fr;
-      }
-
       .hero-actions {
+        width: 100%;
+
         flex-direction: column;
       }
 
@@ -2026,16 +2760,30 @@
         width: 100%;
       }
 
-      .product-bottom {
-        align-items: stretch;
+      .filters {
+        grid-template-columns: 1fr;
+      }
 
+      .product-bottom {
         flex-direction: column;
+
+        align-items: stretch;
       }
 
       .buy-btn {
         width: 100%;
       }
 
+      .checkout-steps {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .modal-head,
+      .modal-body {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
     }
   </style>
 </head>
@@ -2049,7 +2797,9 @@
   <div class="grain"></div>
 
 
-  <!-- HEADER -->
+  <!-- =========================================
+       HEADER
+  ========================================== -->
 
   <header>
 
@@ -2074,12 +2824,16 @@
           Produtos
         </a>
 
-        <a href="#benefits">
+        <a href="#how">
           Como funciona
         </a>
 
+        <a href="#faq">
+          FAQ
+        </a>
+
         <a
-          class="discord-btn"
+          class="nav-discord"
           href="https://discord.gg/p9ZmkncQ8q"
           target="_blank"
           rel="noopener noreferrer"
@@ -2094,7 +2848,9 @@
   </header>
 
 
-  <!-- MAIN -->
+  <!-- =========================================
+       MAIN
+  ========================================== -->
 
   <main>
 
@@ -2103,126 +2859,98 @@
 
     <section class="hero">
 
-      <div class="hero-badge">
-        <span></span>
-        ONYX STORE • SISTEMA AUTOMÁTICO
-      </div>
+      <div class="container hero-layout">
+
+        <div class="hero-content">
+
+          <div class="hero-badge">
+            <i></i>
+            ONYX STORE • ONLINE 24/7
+          </div>
 
 
-      <h1>
+          <h1>
 
-        <span class="light">
-          PRODUTOS DIGITAIS
-        </span>
+            <span class="first">
+              PRODUTOS DIGITAIS.
+            </span>
 
-        <strong>
-          SEM COMPLICAÇÃO.
-        </strong>
+            <span class="second">
+              SEM COMPLICAÇÃO.
+            </span>
 
-      </h1>
-
-
-      <p class="hero-description">
-
-        Produtos digitais selecionados,
-        pagamento rápido e entrega automática.
-        Compre em poucos segundos e receba
-        diretamente após a confirmação.
-
-      </p>
+          </h1>
 
 
-      <div class="hero-actions">
+          <p class="hero-description">
 
-        <button
-          class="primary-btn"
-          onclick="
-            document
-              .getElementById('products')
-              .scrollIntoView({
-                behavior:'smooth'
-              })
-          "
-        >
-          Explorar produtos
-        </button>
+            Escolha seu produto, realize o pagamento
+            com segurança e receba automaticamente
+            após a confirmação. Simples, rápido e direto.
+
+          </p>
 
 
-        <a
-          class="secondary-btn"
-          href="https://discord.gg/p9ZmkncQ8q"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Entrar no Discord
-        </a>
+          <div class="hero-actions">
 
-      </div>
+            <button
+              class="btn btn-primary"
+              onclick="
+                document
+                  .getElementById('products')
+                  .scrollIntoView({behavior:'smooth'})
+              "
+            >
+              Explorar produtos
+            </button>
 
-    </section>
 
+            <a
+              class="btn btn-secondary"
+              href="https://discord.gg/p9ZmkncQ8q"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Comunidade Discord
+            </a>
 
-    <!-- TRUST -->
-
-    <section class="trust-strip">
-
-      <div class="trust-item">
-
-        <div class="trust-icon">
-          ⚡
-        </div>
-
-        <div class="trust-text">
-
-          <strong>
-            Entrega automática
-          </strong>
-
-          <span>
-            Produto liberado após confirmação
-          </span>
+          </div>
 
         </div>
 
-      </div>
+
+        <div class="hero-visual">
+
+          <div class="visual-glow"></div>
+
+          <div class="onyx-orb"></div>
 
 
-      <div class="trust-item">
+          <div class="visual-card one">
 
-        <div class="trust-icon">
-          ◈
-        </div>
+            <small>
+              STATUS
+            </small>
 
-        <div class="trust-text">
+            <strong>
+              <span class="dot"></span>
+              Sistema online
+            </strong>
 
-          <strong>
-            Pagamento seguro
-          </strong>
-
-          <span>
-            Processado pelo LivePix
-          </span>
-
-        </div>
-
-      </div>
+          </div>
 
 
-      <div class="trust-item">
+          <div class="visual-card two">
 
-        <div class="trust-icon">
-          24
-        </div>
+            <small>
+              DELIVERY
+            </small>
 
-        <div class="trust-text">
+            <strong>
+              ⚡ AUTOMÁTICO
+            </strong>
 
-          <strong>
-            Disponível 24/7
-          </strong>
-
-          <span>
-            Sistema automático
-          </span>
+          </div>
 
         </div>
 
@@ -2231,10 +2959,106 @@
     </section>
 
 
-    <!-- CATALOG -->
+    <!-- STORE STATUS -->
+
+    <section class="container">
+
+      <div class="status-bar">
+
+        <div class="status-item">
+
+          <div class="status-icon">
+            ⚡
+          </div>
+
+          <div class="status-copy">
+
+            <strong>
+              Entrega automática
+            </strong>
+
+            <span>
+              Receba após a confirmação
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="status-item">
+
+          <div class="status-icon">
+            ◈
+          </div>
+
+          <div class="status-copy">
+
+            <strong>
+              Pagamento seguro
+            </strong>
+
+            <span>
+              Processado pelo LivePix
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="status-item">
+
+          <div class="status-icon">
+            24
+          </div>
+
+          <div class="status-copy">
+
+            <strong>
+              Disponível 24/7
+            </strong>
+
+            <span>
+              Sistema funcionando sempre
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="status-item">
+
+          <div class="status-icon">
+            ✓
+          </div>
+
+          <div class="status-copy">
+
+            <strong>
+              Processo simples
+            </strong>
+
+            <span>
+              Sem burocracia
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         PRODUCTS
+    ========================================== -->
 
     <section
-      class="catalog"
+      class="container"
       id="products"
     >
 
@@ -2251,11 +3075,23 @@
           </h2>
 
           <p>
-            Encontre o produto ideal para você.
+            Escolha o que você procura.
           </p>
 
         </div>
 
+
+        <div
+          class="catalog-count"
+          id="catalogCount"
+        >
+          0 produtos
+        </div>
+
+      </div>
+
+
+      <div class="catalog-tools">
 
         <div class="search-box">
 
@@ -2355,109 +3191,409 @@
     </section>
 
 
-    <!-- BENEFITS -->
+    <!-- =========================================
+         HOW IT WORKS
+    ========================================== -->
 
     <section
-      class="benefits-section"
-      id="benefits"
+      class="how-section"
+      id="how"
     >
 
-      <div class="benefits">
+      <div class="container">
 
+        <div class="center-head">
 
-        <article class="benefit">
-
-          <div class="benefit-icon">
-            ⚡
+          <div class="eyebrow">
+            PROCESSO
           </div>
 
-          <h3>
-            Entrega automática
-          </h3>
+          <h2>
+            Como funciona?
+          </h2>
 
           <p>
-            Depois da confirmação do pagamento,
-            o sistema libera automaticamente
-            o produto adquirido.
+            Comprar na ONYX foi pensado para ser
+            rápido do começo ao fim.
           </p>
 
-        </article>
+        </div>
 
 
-        <article class="benefit">
-
-          <div class="benefit-icon">
-            ◈
-          </div>
-
-          <h3>
-            Pagamento protegido
-          </h3>
-
-          <p>
-            O pagamento é processado através
-            do LivePix, mantendo o processo
-            simples e rápido.
-          </p>
-
-        </article>
+        <div class="steps">
 
 
-        <article class="benefit">
+          <article class="step">
 
-          <div class="benefit-icon">
-            ?
-          </div>
+            <div class="step-number">
+              01
+            </div>
 
-          <h3>
-            Suporte ONYX
-          </h3>
+            <div class="step-icon">
+              ◈
+            </div>
 
-          <p>
-            Caso precise de ajuda com sua compra,
-            nossa equipe está disponível
-            através do Discord.
-          </p>
+            <h3>
+              Escolha seu produto
+            </h3>
 
-        </article>
+            <p>
+              Navegue pelo catálogo, confira
+              o estoque e escolha o produto
+              que deseja adquirir.
+            </p>
 
+          </article>
+
+
+          <article class="step">
+
+            <div class="step-number">
+              02
+            </div>
+
+            <div class="step-icon">
+              $
+            </div>
+
+            <h3>
+              Faça o pagamento
+            </h3>
+
+            <p>
+              Clique em comprar e finalize
+              o pagamento através do checkout
+              seguro do LivePix.
+            </p>
+
+          </article>
+
+
+          <article class="step">
+
+            <div class="step-number">
+              03
+            </div>
+
+            <div class="step-icon">
+              ✓
+            </div>
+
+            <h3>
+              Receba automaticamente
+            </h3>
+
+            <p>
+              Após a confirmação, seu produto
+              é liberado automaticamente
+              dentro da própria compra.
+            </p>
+
+          </article>
+
+
+        </div>
 
       </div>
+
+    </section>
+
+
+    <!-- =========================================
+         WHY ONYX
+    ========================================== -->
+
+    <section class="why-section">
+
+      <div class="container why-layout">
+
+        <div class="why-title">
+
+          <div class="eyebrow">
+            POR QUE ONYX?
+          </div>
+
+          <h2>
+            FEITO PARA<br>
+            SER SIMPLES.
+          </h2>
+
+          <p>
+            Uma experiência de compra limpa,
+            rápida e sem etapas desnecessárias.
+            Você escolhe, paga e recebe.
+          </p>
+
+        </div>
+
+
+        <div class="why-grid">
+
+
+          <article class="why-card">
+
+            <strong>
+              ⚡ Velocidade
+            </strong>
+
+            <p>
+              Sistema automatizado para
+              reduzir o tempo entre pagamento
+              e entrega.
+            </p>
+
+          </article>
+
+
+          <article class="why-card">
+
+            <strong>
+              ◈ Segurança
+            </strong>
+
+            <p>
+              Pagamentos processados através
+              do LivePix durante o checkout.
+            </p>
+
+          </article>
+
+
+          <article class="why-card">
+
+            <strong>
+              ✓ Automação
+            </strong>
+
+            <p>
+              O sistema identifica a confirmação
+              e libera o produto automaticamente.
+            </p>
+
+          </article>
+
+
+          <article class="why-card">
+
+            <strong>
+              ◆ Suporte
+            </strong>
+
+            <p>
+              Precisa de ajuda? Nossa comunidade
+              está disponível através do Discord.
+            </p>
+
+          </article>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         FAQ
+    ========================================== -->
+
+    <section
+      class="faq-section"
+      id="faq"
+    >
+
+      <div class="container">
+
+        <div class="center-head">
+
+          <div class="eyebrow">
+            DÚVIDAS
+          </div>
+
+          <h2>
+            Perguntas frequentes
+          </h2>
+
+          <p>
+            Algumas respostas rápidas antes da sua compra.
+          </p>
+
+        </div>
+
+
+        <div class="faq">
+
+          <details>
+
+            <summary>
+              Como recebo meu produto?
+            </summary>
+
+            <p>
+              Após o pagamento ser confirmado,
+              o sistema libera automaticamente
+              o produto dentro da tela da compra.
+            </p>
+
+          </details>
+
+
+          <details>
+
+            <summary>
+              Qual forma de pagamento é utilizada?
+            </summary>
+
+            <p>
+              O pagamento é realizado através
+              do checkout do LivePix.
+            </p>
+
+          </details>
+
+
+          <details>
+
+            <summary>
+              Quanto tempo demora para receber?
+            </summary>
+
+            <p>
+              A entrega é automática após a
+              confirmação do pagamento pelo sistema.
+            </p>
+
+          </details>
+
+
+          <details>
+
+            <summary>
+              Preciso entrar no Discord para comprar?
+            </summary>
+
+            <p>
+              Não. A compra pode ser realizada
+              diretamente pela loja. O Discord fica
+              disponível para suporte e feedback.
+            </p>
+
+          </details>
+
+
+          <details>
+
+            <summary>
+              Onde peço ajuda caso tenha algum problema?
+            </summary>
+
+            <p>
+              Entre no Discord da ONYX e procure
+              nossa equipe de suporte.
+            </p>
+
+          </details>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         FINAL CTA
+    ========================================== -->
+
+    <section class="final-cta">
+
+      <div class="eyebrow">
+        COMUNIDADE ONYX
+      </div>
+
+      <h2>
+        PRECISOU DE AJUDA?
+      </h2>
+
+      <p>
+        Entre na nossa comunidade, acompanhe novidades
+        e fale com o suporte da ONYX.
+      </p>
+
+
+      <a
+        class="btn btn-primary"
+        href="https://discord.gg/p9ZmkncQ8q"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Entrar no Discord
+      </a>
 
     </section>
 
   </main>
 
 
-  <!-- FOOTER -->
+  <!-- =========================================
+       FOOTER
+  ========================================== -->
 
   <footer>
 
-    <div>
+    <div class="footer-inner">
 
-      <strong>
-        ONYX STORE
-      </strong>
+      <div class="footer-brand">
 
-      <br>
+        <strong>
+          ONYX STORE
+        </strong>
 
-      Produtos digitais com
-      entrega automática.
+        <span>
+          Produtos digitais • Entrega automática
+        </span>
 
-    </div>
+      </div>
 
 
-    <div>
+      <div class="footer-links">
 
-      © 2026 ONYX.
-      Todos os direitos reservados.
+        <a href="#products">
+          Produtos
+        </a>
+
+        <a href="#how">
+          Como funciona
+        </a>
+
+        <a href="#faq">
+          FAQ
+        </a>
+
+        <a
+          href="https://discord.gg/p9ZmkncQ8q"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Discord
+        </a>
+
+      </div>
+
+
+      <div class="footer-copy">
+        © 2026 ONYX.
+      </div>
 
     </div>
 
   </footer>
 
 
-  <!-- CHECKOUT MODAL -->
+  <!-- =========================================
+       CHECKOUT MODAL
+  ========================================== -->
 
   <div
     class="modal-backdrop"
@@ -2494,10 +3630,46 @@
       </div>
 
 
+      <!-- CHECKOUT STEPS -->
+
+      <div
+        class="checkout-steps"
+        id="checkoutSteps"
+      >
+
+        <div
+          class="checkout-step active"
+          id="stepOrder"
+        >
+          Pedido
+        </div>
+
+        <div
+          class="checkout-step"
+          id="stepPayment"
+        >
+          Pagamento
+        </div>
+
+        <div
+          class="checkout-step"
+          id="stepDelivery"
+        >
+          Entrega
+        </div>
+
+      </div>
+
+
       <div class="modal-body">
 
 
-        <div class="order-summary">
+        <!-- ORDER SUMMARY -->
+
+        <div
+          class="order-summary"
+          id="orderSummary"
+        >
 
           <div class="summary-row">
 
@@ -2553,6 +3725,8 @@
         </div>
 
 
+        <!-- PAYMENT -->
+
         <div
           class="payment-status"
           id="paymentStatus"
@@ -2585,37 +3759,78 @@
 
 
         <div class="payment-note">
-
           O pagamento é processado pelo LivePix.
           Não feche esta janela até a confirmação.
-
         </div>
 
+
+        <!-- DELIVERY -->
 
         <div
           class="delivery"
           id="delivery"
         >
 
-          <div class="delivery-title">
-            ✓ Pagamento confirmado!
+          <div class="success-screen" id="successScreen">
+
+            <div class="success-icon">
+              ✓
+            </div>
+
+            <div class="success-title">
+              VENDA APROVADA
+            </div>
+
+            <h3>
+              Compra concluída!
+            </h3>
+
+            <p>
+              Seu pagamento foi confirmado e seu
+              pedido foi entregue com sucesso.
+            </p>
+
+
+            <div
+              class="account-box"
+              id="account"
+            >
+              Seu produto aparecerá aqui.
+            </div>
+
+
+            <button
+              class="copy-account"
+              onclick="copyAccount()"
+            >
+              Copiar produto
+            </button>
+
+
+            <div class="feedback-box">
+
+              <strong>
+                Curtiu sua compra?
+              </strong>
+
+              <p>
+                Manda um feedback pra gente no Discord.
+                Seu comentário ajuda muito a ONYX.
+              </p>
+
+
+              <a
+                class="discord-feedback"
+                href="https://discord.gg/p9ZmkncQ8q"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Entrar no Discord e deixar feedback
+              </a>
+
+            </div>
+
           </div>
-
-
-          <div
-            class="account-box"
-            id="account"
-          >
-            Seu produto aparecerá aqui.
-          </div>
-
-
-          <button
-            class="copy-account"
-            onclick="copyAccount()"
-          >
-            Copiar produto
-          </button>
 
         </div>
 
@@ -2630,7 +3845,7 @@
           <br>
 
           A entrega acontece automaticamente
-          após a confirmação.
+          após a confirmação do pagamento.
 
         </div>
 
@@ -2675,7 +3890,7 @@
 
     /* =========================================
        UTILS
-    ========================================= */
+    ========================================== */
 
     function escapeHtml(value) {
 
@@ -2838,18 +4053,9 @@
         allProducts.length;
 
 
-      const available =
-        allProducts.filter(
-          product =>
-            getStock(product) > 0
-        ).length;
-
-
-      $("#statProducts").textContent =
-        total;
-
-      $("#statAvailable").textContent =
-        available;
+      $("#catalogCount")
+        .textContent =
+        `${total} produto${total === 1 ? "" : "s"}`;
 
     }
 
@@ -3093,6 +4299,10 @@
 
               <div class="product-info">
 
+                <div class="product-category">
+                  ONYX DIGITAL
+                </div>
+
                 <h3>
                   ${escapeHtml(name)}
                 </h3>
@@ -3103,6 +4313,19 @@
                 >
                   ${escapeHtml(description)}
                 </p>
+
+
+                <div class="product-meta">
+
+                  <span class="meta-pill">
+                    ⚡ Automático
+                  </span>
+
+                  <span class="meta-pill">
+                    ◈ Seguro
+                  </span>
+
+                </div>
 
               </div>
 
@@ -3341,6 +4564,23 @@
         );
 
 
+      $("#successScreen")
+        .classList.remove(
+          "show"
+        );
+
+
+      $("#orderSummary")
+        .style.display = "";
+
+
+      $("#checkoutSteps")
+        .style.display = "";
+
+
+      setCheckoutStep("order");
+
+
       currentAccount = "";
 
 
@@ -3449,6 +4689,9 @@
           "Abra o checkout para realizar o pagamento.";
 
 
+        setCheckoutStep("payment");
+
+
         if (
           currentCheckoutUrl
         ) {
@@ -3533,6 +4776,77 @@
         toast(
           error.message ||
           "Erro ao criar pedido."
+        );
+
+      }
+
+    }
+
+
+    /* =========================================
+       CHECKOUT STEPS
+    ========================================= */
+
+    function setCheckoutStep(step) {
+
+      const order =
+        $("#stepOrder");
+
+      const payment =
+        $("#stepPayment");
+
+      const delivery =
+        $("#stepDelivery");
+
+
+      [
+        order,
+        payment,
+        delivery
+      ].forEach(item => {
+
+        item.classList.remove(
+          "active",
+          "done"
+        );
+
+      });
+
+
+      if (step === "order") {
+
+        order.classList.add(
+          "active"
+        );
+
+      }
+
+
+      if (step === "payment") {
+
+        order.classList.add(
+          "done"
+        );
+
+        payment.classList.add(
+          "active"
+        );
+
+      }
+
+
+      if (step === "delivery") {
+
+        order.classList.add(
+          "done"
+        );
+
+        payment.classList.add(
+          "done"
+        );
+
+        delivery.classList.add(
+          "done"
         );
 
       }
@@ -3627,6 +4941,9 @@
           stopPolling();
 
 
+          setCheckoutStep("delivery");
+
+
           $("#paymentStatus")
             .classList.add(
               "success"
@@ -3648,6 +4965,16 @@
             "none";
 
 
+          $("#orderSummary")
+            .style.display =
+            "none";
+
+
+          $("#checkoutSteps")
+            .style.display =
+            "";
+
+
           $("#account")
             .textContent =
             currentAccount ||
@@ -3660,8 +4987,14 @@
             );
 
 
+          $("#successScreen")
+            .classList.add(
+              "show"
+            );
+
+
           toast(
-            "Pagamento confirmado! Produto liberado."
+            "✓ Venda aprovada! Produto liberado."
           );
 
         }
@@ -3716,6 +5049,10 @@
 
     }
 
+
+    /* =========================================
+       COPY
+    ========================================= */
 
     async function copyAccount() {
 
