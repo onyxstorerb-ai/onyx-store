@@ -1,21 +1,60 @@
 <!doctype html>
-
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ONYX Admin</title>
+
+  <title>ONYX ADMIN V2</title>
 
   <style>
+    :root {
+      --bg: #060606;
+      --bg2: #0b0b0c;
+      --card: rgba(17,17,18,.86);
+      --card2: #101011;
+      --line: rgba(255,255,255,.075);
+      --line2: rgba(255,255,255,.13);
+      --text: #f5f5f5;
+      --muted: #85858a;
+      --muted2: #5f5f64;
+      --orange: #ff6500;
+      --orange2: #ff8a00;
+      --green: #39d982;
+      --yellow: #f0c65c;
+      --red: #ff6262;
+      --radius: 17px;
+    }
+
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      background: #08090b;
-      color: #f5f5f5;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255,106,0,.13), transparent 32%),
+        radial-gradient(circle at 100% 40%, rgba(255,106,0,.045), transparent 25%),
+        var(--bg);
+      color: var(--text);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .025;
+      background-image:
+        linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
     }
 
     button,
@@ -25,18 +64,34 @@
       font: inherit;
     }
 
-    .wrap {
-      width: min(1100px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 35px 0 60px;
+    button {
+      cursor: pointer;
     }
 
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 25px;
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    .login-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      width: min(430px, 100%);
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 23px;
+      background:
+        radial-gradient(circle at 50% -30%, rgba(255,106,0,.12), transparent 45%),
+        rgba(15,15,16,.9);
+      box-shadow: 0 35px 100px rgba(0,0,0,.55);
     }
 
     .brand {
@@ -48,163 +103,453 @@
     .logo {
       width: 45px;
       height: 45px;
-      border-radius: 13px;
       display: grid;
       place-items: center;
-      background: linear-gradient(135deg, #ff7a00, #ff4d00);
-      color: #fff;
-      font-weight: 900;
-      font-size: 22px;
-      box-shadow: 0 0 25px rgba(255, 100, 0, .18);
+      border-radius: 13px;
+      color: white;
+      font-size: 21px;
+      font-weight: 950;
+      background: linear-gradient(135deg,var(--orange2),var(--orange));
+      box-shadow: 0 10px 35px rgba(255,106,0,.22);
     }
 
-    h1 {
+    .brand h1 {
       margin: 0;
+      font-size: 19px;
+      letter-spacing: .08em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .login-title {
+      margin-top: 35px;
       font-size: 25px;
-      letter-spacing: .5px;
+      letter-spacing: -.035em;
     }
 
-    h2 {
-      margin: 0 0 18px;
-      font-size: 18px;
+    .login-description {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+      margin: 7px 0 25px;
     }
 
-    .muted {
-      color: #8f949d;
-      margin: 5px 0 0;
-      font-size: 14px;
-    }
-
-    .box {
-      background: #111318;
-      border: 1px solid #242832;
-      border-radius: 16px;
-      padding: 22px;
-      margin: 16px 0;
-      box-shadow: 0 8px 35px rgba(0,0,0,.18);
-    }
-
-    .login-box {
-      max-width: 480px;
-      margin: 70px auto;
+    label {
+      display: block;
+      margin: 13px 0 7px;
+      color: #b8b8bc;
+      font-size: 11px;
+      font-weight: 800;
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      background: #090a0d;
-      color: #fff;
-      border: 1px solid #30343d;
-      border-radius: 10px;
-      padding: 12px 13px;
       outline: none;
+      border: 1px solid var(--line2);
+      border-radius: 11px;
+      background: #090909;
+      color: white;
+      padding: 12px 13px;
       transition: .2s;
     }
 
     input:focus,
     textarea:focus,
     select:focus {
-      border-color: #ff6a00;
-      box-shadow: 0 0 0 3px rgba(255,106,0,.08);
+      border-color: rgba(255,106,0,.5);
+      box-shadow: 0 0 0 3px rgba(255,106,0,.07);
     }
 
     textarea {
-      min-height: 95px;
+      min-height: 100px;
       resize: vertical;
     }
 
-    label {
-      display: block;
-      color: #b8bcc5;
-      font-size: 13px;
-      font-weight: 700;
-      margin: 10px 0 6px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    button {
-      background: linear-gradient(135deg, #ff7600, #ff5100);
-      color: #fff;
+    .primary-btn {
+      width: 100%;
       border: 0;
-      border-radius: 10px;
-      padding: 12px 17px;
-      font-weight: 800;
-      cursor: pointer;
+      border-radius: 11px;
+      padding: 13px 16px;
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
+      background: linear-gradient(135deg,var(--orange2),var(--orange));
+      box-shadow: 0 12px 30px rgba(255,106,0,.16);
       transition: .2s;
     }
 
-    button:hover {
+    .primary-btn:hover {
       transform: translateY(-1px);
-      filter: brightness(1.08);
+      box-shadow: 0 16px 35px rgba(255,106,0,.25);
     }
 
-    button:disabled {
+    .primary-btn:disabled {
       opacity: .55;
       cursor: not-allowed;
       transform: none;
     }
 
-    .secondary {
-      background: #1b1e25;
-      border: 1px solid #30343d;
+    /* =========================
+       APP
+    ========================= */
+
+    .app {
+      width: min(1240px, calc(100% - 32px));
+      margin: auto;
+      padding: 25px 0 60px;
     }
 
-    .danger {
-      background: #2a1515;
-      border: 1px solid #542222;
-    }
-
-    .actions {
+    .topbar {
       display: flex;
-      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-right {
+      display: flex;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .status {
-      display: none;
-      margin: 0 0 15px;
-      padding: 12px 14px;
+    .top-btn {
+      height: 38px;
+      padding: 0 13px;
       border-radius: 10px;
-      background: #15181e;
-      border: 1px solid #292e38;
-      color: #bfc4cc;
-      font-size: 14px;
+      border: 1px solid var(--line);
+      color: #c7c7ca;
+      background: rgba(255,255,255,.035);
+      font-size: 11px;
+      font-weight: 800;
+      transition: .2s;
     }
 
-    .status.show {
-      display: block;
+    .top-btn:hover {
+      color: white;
+      border-color: var(--line2);
+      background: rgba(255,255,255,.07);
     }
+
+    .logout-btn {
+      color: #ff8585;
+      border-color: rgba(255,80,80,.14);
+      background: rgba(255,80,80,.04);
+    }
+
+    /* =========================
+       WELCOME
+    ========================= */
+
+    .welcome {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 35px 0 25px;
+    }
+
+    .eyebrow {
+      color: var(--orange2);
+      font-size: 9px;
+      font-weight: 950;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .welcome h2 {
+      margin: 0;
+      font-size: 31px;
+      letter-spacing: -.045em;
+    }
+
+    .welcome p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .live {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #8ce9b1;
+      font-size: 10px;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(57,217,130,.13);
+      background: rgba(57,217,130,.045);
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(57,217,130,.7);
+    }
+
+    /* =========================
+       STATS
+    ========================= */
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(4,1fr);
+      gap: 12px;
     }
 
     .stat {
-      background: #111318;
-      border: 1px solid #242832;
-      border-radius: 14px;
-      padding: 18px;
+      position: relative;
+      padding: 19px;
+      min-height: 120px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+      overflow: hidden;
     }
 
-    .stat-title {
-      color: #8f949d;
-      font-size: 13px;
-      margin-bottom: 8px;
+    .stat::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      right: -55px;
+      bottom: -55px;
+      border-radius: 50%;
+      background: rgba(255,106,0,.08);
+      filter: blur(10px);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
     }
 
     .stat-value {
-      font-size: 25px;
+      margin-top: 11px;
+      font-size: 28px;
+      font-weight: 950;
+      letter-spacing: -.045em;
+    }
+
+    .stat-sub {
+      margin-top: 3px;
+      color: var(--muted2);
+      font-size: 9px;
+    }
+
+    /* =========================
+       LAYOUT
+    ========================= */
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      padding: 21px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.14);
+    }
+
+    .card.full {
+      grid-column: 1 / -1;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: -.02em;
+    }
+
+    .card-description {
+      color: var(--muted2);
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .icon-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: #ff9c60;
+      background: rgba(255,106,0,.08);
+      border: 1px solid rgba(255,106,0,.13);
+      font-size: 15px;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 170px;
+      gap: 12px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .action-btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 15px;
+      color: white;
+      background: linear-gradient(135deg,var(--orange2),var(--orange));
+      font-size: 11px;
       font-weight: 900;
     }
+
+    .action-btn.secondary {
+      color: #aaa;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.035);
+    }
+
+    .action-btn.danger {
+      color: #ff8b8b;
+      border: 1px solid rgba(255,80,80,.15);
+      background: rgba(255,80,80,.045);
+    }
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    .search {
+      width: 240px;
+    }
+
+    .search input {
+      height: 37px;
+      padding: 0 11px;
+      font-size: 11px;
+    }
+
+    /* =========================
+       PRODUCT CARDS
+    ========================= */
+
+    .products-list {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 10px;
+    }
+
+    .product-item {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      transition: .2s;
+    }
+
+    .product-item:hover {
+      border-color: var(--line2);
+      background: rgba(255,255,255,.035);
+    }
+
+    .product-main {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .product-name {
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .product-desc {
+      color: var(--muted2);
+      font-size: 10px;
+      line-height: 1.55;
+      margin-top: 5px;
+    }
+
+    .product-price {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .product-meta {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 13px;
+      padding-top: 11px;
+      border-top: 1px solid var(--line);
+    }
+
+    .mini-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 7px;
+      color: #999;
+      background: rgba(255,255,255,.035);
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .mini-badge.good {
+      color: #70e5a0;
+      background: rgba(57,217,130,.06);
+    }
+
+    .mini-badge.warning {
+      color: #f2ce68;
+      background: rgba(240,198,92,.06);
+    }
+
+    .mini-badge.empty-stock {
+      color: #ff7d7d;
+      background: rgba(255,80,80,.05);
+    }
+
+    /* =========================
+       TABLE
+    ========================= */
 
     .table-wrap {
       width: 100%;
@@ -213,707 +558,833 @@
 
     table {
       width: 100%;
-      border-collapse: collapse;
       min-width: 650px;
+      border-collapse: collapse;
     }
 
     th {
-      color: #8f949d;
-      font-size: 12px;
+      color: #68686d;
+      font-size: 9px;
+      font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: .5px;
+      letter-spacing: .09em;
     }
 
     td,
     th {
       padding: 13px 10px;
-      border-bottom: 1px solid #252932;
       text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+
+    td {
+      color: #bdbdc1;
+      font-size: 11px;
     }
 
     tr:last-child td {
       border-bottom: 0;
     }
 
-    .badge {
+    .status-badge {
       display: inline-flex;
       padding: 5px 9px;
       border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 9px;
+      font-weight: 900;
       text-transform: uppercase;
     }
 
-    .paid {
-      background: #12321f;
-      color: #65e69a;
+    .status-paid {
+      color: #6ce59c;
+      background: rgba(57,217,130,.08);
     }
 
-    .pending {
-      background: #342b12;
-      color: #f2c75c;
+    .status-pending {
+      color: #f2cb62;
+      background: rgba(240,198,92,.08);
     }
 
-    .cancelled {
-      background: #351616;
+    .status-cancelled {
       color: #ff7777;
+      background: rgba(255,80,80,.08);
     }
+
+    /* =========================
+       EMPTY / LOADING
+    ========================= */
 
     .empty {
-      padding: 25px 10px;
+      padding: 35px 15px;
       text-align: center;
-      color: #777d87;
+      color: var(--muted2);
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      font-size: 11px;
     }
 
-    .hidden {
-      display: none !important;
+    .loading {
+      position: relative;
+      height: 90px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255,255,255,.025);
     }
 
-    @media (max-width: 700px) {
-      .wrap {
-        width: min(100% - 20px, 1100px);
-        padding-top: 20px;
+    .loading::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.05),
+        transparent
+      );
+      transform: translateX(-100%);
+      animation: loading 1.3s infinite;
+    }
+
+    @keyframes loading {
+      to {
+        transform: translateX(100%);
+      }
+    }
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    .alert {
+      display: none;
+      margin: 14px 0;
+      padding: 11px 13px;
+      border-radius: 11px;
+      font-size: 11px;
+      border: 1px solid var(--line);
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert.success {
+      color: #71e6a1;
+      background: rgba(57,217,130,.05);
+      border-color: rgba(57,217,130,.15);
+    }
+
+    .alert.error {
+      color: #ff8585;
+      background: rgba(255,80,80,.05);
+      border-color: rgba(255,80,80,.15);
+    }
+
+    .login-alert {
+      margin-top: 12px;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+      padding: 25px 0 0;
+      margin-top: 25px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      color: #505055;
+      font-size: 9px;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    .toast-container {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      max-width: 330px;
+      padding: 12px 14px;
+      border: 1px solid var(--line2);
+      border-radius: 11px;
+      color: #ddd;
+      background: #111;
+      box-shadow: 0 15px 50px rgba(0,0,0,.45);
+      font-size: 10px;
+      animation: toastIn .2s ease;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(7px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 950px) {
+      .stats {
+        grid-template-columns: repeat(2,1fr);
       }
 
-      .row,
-      .stats {
+      .grid {
         grid-template-columns: 1fr;
       }
 
-      .top {
+      .card.full {
+        grid-column: auto;
+      }
+
+      .products-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .app {
+        width: calc(100% - 20px);
+        padding-top: 15px;
+      }
+
+      .topbar {
         align-items: flex-start;
       }
 
-      .box {
-        padding: 17px;
+      .topbar-right {
+        justify-content: flex-end;
+      }
+
+      .topbar-right .top-btn:first-child {
+        display: none;
+      }
+
+      .welcome {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: 25px;
+      }
+
+      .welcome h2 {
+        font-size: 26px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stat {
+        min-height: 105px;
+        padding: 15px;
+      }
+
+      .stat-value {
+        font-size: 23px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .card-head {
+        flex-direction: column;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .stats {
+        grid-template-columns: 1fr;
       }
     }
   </style>
-
 </head>
 
 <body>
 
-<div class="wrap">
+<!-- =========================
+     LOGIN
+========================= -->
 
-  <!-- LOGIN -->
+<section id="loginScreen" class="login-screen">
 
-  <div id="login">
-    <div class="box login-box">
-      <div class="brand" style="margin-bottom:25px">
-        <div class="logo">O</div>
-        <div>
-          <h1>ONYX ADMIN</h1>
-          <p class="muted">Painel administrativo</p>
-        </div>
+  <div class="login-card">
+
+    <div class="brand">
+
+      <div class="logo">O</div>
+
+      <div>
+        <h1>ONYX ADMIN</h1>
+        <p>Painel administrativo V2</p>
       </div>
 
-```
-  <label for="pass">Senha do administrador</label>
-  <input
-    id="pass"
-    type="password"
-    placeholder="Digite sua senha"
-    autocomplete="current-password"
-  >
-
-  <div style="height:10px"></div>
-
-  <button id="loginBtn" onclick="login()" style="width:100%">
-    Entrar no painel
-  </button>
-
-  <div id="loginStatus" class="status"></div>
-</div>
-```
-
-  </div>
-
-  <!-- PAINEL -->
-
-  <div id="panel" class="hidden">
-
-```
-<div class="top">
-  <div class="brand">
-    <div class="logo">O</div>
-    <div>
-      <h1>ONYX ADMIN</h1>
-      <p class="muted">Gerencie sua loja</p>
     </div>
-  </div>
 
-  <div class="actions">
-    <button class="secondary" onclick="refresh()">
-      Atualizar
+    <h2 class="login-title">
+      Bem-vindo de volta.
+    </h2>
+
+    <p class="login-description">
+      Acesse o painel para gerenciar produtos,
+      estoque e acompanhar os pedidos da sua loja.
+    </p>
+
+    <label for="password">
+      Senha do administrador
+    </label>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Digite sua senha"
+      autocomplete="current-password"
+    >
+
+    <div style="height:12px"></div>
+
+    <button
+      id="loginButton"
+      class="primary-btn"
+      onclick="login()"
+    >
+      Entrar no painel
     </button>
 
-    <button class="danger" onclick="logout()">
-      Sair
-    </button>
-  </div>
-</div>
+    <div
+      id="loginAlert"
+      class="alert login-alert"
+    ></div>
 
-
-<div id="status" class="status"></div>
-
-
-<!-- ESTATÍSTICAS -->
-<div class="stats">
-
-  <div class="stat">
-    <div class="stat-title">Produtos</div>
-    <div id="statProducts" class="stat-value">0</div>
   </div>
 
-  <div class="stat">
-    <div class="stat-title">Estoque disponível</div>
-    <div id="statStock" class="stat-value">0</div>
+</section>
+
+
+<!-- =========================
+     APP
+========================= -->
+
+<main id="app" class="app hidden">
+
+  <!-- TOPBAR -->
+
+  <div class="topbar">
+
+    <div class="brand">
+
+      <div class="logo">O</div>
+
+      <div>
+        <h1>ONYX ADMIN</h1>
+        <p>Painel de gerenciamento</p>
+      </div>
+
+    </div>
+
+    <div class="topbar-right">
+
+      <button
+        class="top-btn"
+        onclick="openStore()"
+      >
+        Ver loja
+      </button>
+
+      <button
+        class="top-btn"
+        onclick="refresh()"
+        id="refreshButton"
+      >
+        ↻ Atualizar
+      </button>
+
+      <button
+        class="top-btn logout-btn"
+        onclick="logout()"
+      >
+        Sair
+      </button>
+
+    </div>
+
   </div>
 
-  <div class="stat">
-    <div class="stat-title">Vendas</div>
-    <div id="statSold" class="stat-value">0</div>
-  </div>
 
-</div>
+  <!-- WELCOME -->
 
-
-<!-- NOVO PRODUTO -->
-<div class="box">
-
-  <h2>➕ Novo produto</h2>
-
-  <div class="row">
+  <section class="welcome">
 
     <div>
-      <label for="name">Nome do produto</label>
-      <input
-        id="name"
-        type="text"
-        placeholder="Ex.: Conta Premium"
+
+      <div class="eyebrow">
+        DASHBOARD
+      </div>
+
+      <h2>
+        Controle da sua loja.
+      </h2>
+
+      <p>
+        Gerencie seu catálogo, estoque e acompanhe suas vendas.
+      </p>
+
+    </div>
+
+    <div class="live">
+      <span class="live-dot"></span>
+      SISTEMA ONLINE
+    </div>
+
+  </section>
+
+
+  <div id="globalAlert" class="alert"></div>
+
+
+  <!-- STATS -->
+
+  <section class="stats">
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Produtos
+      </div>
+
+      <div
+        id="statProducts"
+        class="stat-value"
       >
+        0
+      </div>
+
+      <div class="stat-sub">
+        cadastrados na loja
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Estoque
+      </div>
+
+      <div
+        id="statStock"
+        class="stat-value"
+      >
+        0
+      </div>
+
+      <div class="stat-sub">
+        itens disponíveis
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Vendidos
+      </div>
+
+      <div
+        id="statSold"
+        class="stat-value"
+      >
+        0
+      </div>
+
+      <div class="stat-sub">
+        unidades vendidas
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Faturamento
+      </div>
+
+      <div
+        id="statRevenue"
+        class="stat-value"
+      >
+        R$ 0,00
+      </div>
+
+      <div class="stat-sub">
+        pedidos pagos carregados
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FORMS -->
+
+  <section class="grid">
+
+
+    <!-- NOVO PRODUTO -->
+
+    <div class="card">
+
+      <div class="card-head">
+
+        <div class="icon-title">
+
+          <div class="section-icon">
+            +
+          </div>
+
+          <div>
+            <div class="card-title">
+              Novo produto
+            </div>
+
+            <div class="card-description">
+              Cadastre um novo produto na loja.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div>
+
+          <label for="productName">
+            Nome
+          </label>
+
+          <input
+            id="productName"
+            type="text"
+            placeholder="Ex.: Conta Premium"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="productPrice">
+            Preço
+          </label>
+
+          <input
+            id="productPrice"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="9.90"
+          >
+
+        </div>
+
+      </div>
+
+
+      <label for="productDescription">
+        Descrição
+      </label>
+
+      <textarea
+        id="productDescription"
+        placeholder="Descrição exibida para os clientes..."
+      ></textarea>
+
+
+      <div class="form-actions">
+
+        <button
+          class="action-btn"
+          onclick="addProduct()"
+          id="addProductButton"
+        >
+          Criar produto
+        </button>
+
+        <button
+          class="action-btn secondary"
+          onclick="clearProductForm()"
+        >
+          Limpar
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ESTOQUE -->
+
+    <div class="card">
+
+      <div class="card-head">
+
+        <div class="icon-title">
+
+          <div class="section-icon">
+            +
+          </div>
+
+          <div>
+            <div class="card-title">
+              Adicionar estoque
+            </div>
+
+            <div class="card-description">
+              Adicione uma conta/item disponível para venda.
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <label for="stockProduct">
+        Produto
+      </label>
+
+      <select id="stockProduct">
+        <option value="">
+          Carregando produtos...
+        </option>
+      </select>
+
+
+      <label for="stockAccount">
+        Conta / item
+      </label>
+
+      <textarea
+        id="stockAccount"
+        placeholder="Ex.: email:senha"
+      ></textarea>
+
+
+      <div class="form-actions">
+
+        <button
+          class="action-btn"
+          onclick="addStock()"
+          id="addStockButton"
+        >
+          Adicionar estoque
+        </button>
+
+        <button
+          class="action-btn secondary"
+          onclick="clearStockForm()"
+        >
+          Limpar
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUTOS -->
+
+    <div class="card full">
+
+      <div class="card-head">
+
+        <div class="icon-title">
+
+          <div class="section-icon">
+            ◈
+          </div>
+
+          <div>
+            <div class="card-title">
+              Produtos
+            </div>
+
+            <div class="card-description">
+              Visão geral do catálogo e disponibilidade.
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="search">
+
+          <input
+            id="productSearch"
+            type="search"
+            placeholder="Pesquisar produto..."
+          >
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="products"
+        class="products-list"
+      >
+
+        <div class="loading"></div>
+        <div class="loading"></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- PEDIDOS -->
+
+    <div class="card full">
+
+      <div class="card-head">
+
+        <div class="icon-title">
+
+          <div class="section-icon">
+            #
+          </div>
+
+          <div>
+            <div class="card-title">
+              Pedidos recentes
+            </div>
+
+            <div class="card-description">
+              Acompanhe os últimos pedidos realizados na loja.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="search">
+
+          <input
+            id="orderSearch"
+            type="search"
+            placeholder="Pesquisar pedido..."
+          >
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="orders"
+        class="table-wrap"
+      >
+
+        <div class="empty">
+          Carregando pedidos...
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <footer>
+
+    <div>
+      <strong>ONYX ADMIN V2</strong>
+      · Painel administrativo
     </div>
 
     <div>
-      <label for="price">Preço</label>
-      <input
-        id="price"
-        type="number"
-        step="0.01"
-        min="0"
-        placeholder="Ex.: 9.90"
-      >
+      ONYX STORE · 2026
     </div>
 
-  </div>
+  </footer>
 
-  <label for="desc">Descrição</label>
-
-  <textarea
-    id="desc"
-    placeholder="Digite uma descrição para o produto..."
-  ></textarea>
-
-  <button onclick="addProduct()">
-    Criar produto
-  </button>
-
-</div>
+</main>
 
 
-<!-- ESTOQUE -->
-<div class="box">
+<!-- TOAST -->
 
-  <h2>📦 Adicionar ao estoque</h2>
+<div
+  id="toastContainer"
+  class="toast-container"
+></div>
 
-  <label for="product">Produto</label>
-
-  <select id="product">
-    <option value="">Carregando produtos...</option>
-  </select>
-
-  <label for="account">Conta / item</label>
-
-  <textarea
-    id="account"
-    placeholder="Ex.: email: senha:"
-  ></textarea>
-
-  <button onclick="addStock()">
-    Adicionar ao estoque
-  </button>
-
-</div>
-
-
-<!-- PRODUTOS -->
-<div class="box">
-
-  <h2>🛍️ Produtos e estoque</h2>
-
-  <div id="products">
-    <div class="empty">Carregando...</div>
-  </div>
-
-</div>
-
-
-<!-- PEDIDOS -->
-<div class="box">
-
-  <h2>🧾 Últimos pedidos</h2>
-
-  <div id="orders">
-    <div class="empty">Carregando...</div>
-  </div>
-
-</div>
-```
-
-  </div>
-
-</div>
 
 <script>
-  let pwd = '';
 
-  const $ = id => document.getElementById(id);
+  let password = '';
+
+  let productsData = [];
+  let ordersData = [];
+
+
+  const $ = id =>
+    document.getElementById(id);
+
+
+  /* =========================
+     API
+  ========================= */
 
   function headers() {
+
     return {
-      'x-admin-password': pwd,
+      'x-admin-password': password,
       'content-type': 'application/json'
     };
-  }
-
-  function showStatus(message, type = 'normal') {
-    const el = $('status');
-
-    el.textContent = message;
-    el.className = 'status show';
-
-    if (type === 'error') {
-      el.style.borderColor = '#542222';
-      el.style.color = '#ff8585';
-    } else if (type === 'success') {
-      el.style.borderColor = '#244d35';
-      el.style.color = '#6be49a';
-    } else {
-      el.style.borderColor = '#292e38';
-      el.style.color = '#bfc4cc';
-    }
-
-    setTimeout(() => {
-      el.classList.remove('show');
-    }, 3500);
-  }
-
-
-  function showLoginStatus(message) {
-    const el = $('loginStatus');
-
-    el.textContent = message;
-    el.className = 'status show';
-
-    el.style.borderColor = '#542222';
-    el.style.color = '#ff8585';
-  }
-
-
-  async function login() {
-
-    const password = $('pass').value.trim();
-
-    if (!password) {
-      showLoginStatus('Digite a senha do administrador.');
-      return;
-    }
-
-    const btn = $('loginBtn');
-
-    btn.disabled = true;
-    btn.textContent = 'Entrando...';
-
-    pwd = password;
-
-    try {
-
-      const response = await fetch('/api/admin/products', {
-        headers: headers()
-      });
-
-      if (!response.ok) {
-        pwd = '';
-        showLoginStatus('Senha incorreta.');
-        return;
-      }
-
-      $('login').classList.add('hidden');
-      $('panel').classList.remove('hidden');
-
-      await refresh();
-
-    } catch (error) {
-
-      pwd = '';
-      showLoginStatus('Não foi possível conectar ao servidor.');
-
-    } finally {
-
-      btn.disabled = false;
-      btn.textContent = 'Entrar no painel';
-
-    }
-  }
-
-
-  async function addProduct() {
-
-    const name = $('name').value.trim();
-    const price = $('price').value.trim();
-    const description = $('desc').value.trim();
-
-    if (!name) {
-      showStatus('Digite o nome do produto.', 'error');
-      return;
-    }
-
-    if (!price || Number(price) <= 0) {
-      showStatus('Digite um preço válido.', 'error');
-      return;
-    }
-
-    try {
-
-      const response = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({
-          name,
-          price,
-          description
-        })
-      });
-
-      if (!response.ok) {
-
-        let message = 'Não foi possível criar o produto.';
-
-        try {
-          const data = await response.json();
-          if (data.error) message = data.error;
-        } catch {}
-
-        showStatus(message, 'error');
-        return;
-      }
-
-      $('name').value = '';
-      $('price').value = '';
-      $('desc').value = '';
-
-      showStatus('Produto criado com sucesso!', 'success');
-
-      await refresh();
-
-    } catch (error) {
-
-      showStatus('Erro de conexão.', 'error');
-
-    }
-  }
-
-
-  async function addStock() {
-
-    const productId = $('product').value;
-    const account = $('account').value.trim();
-
-    if (!productId) {
-      showStatus('Crie um produto primeiro.', 'error');
-      return;
-    }
-
-    if (!account) {
-      showStatus('Digite a conta ou item do estoque.', 'error');
-      return;
-    }
-
-    try {
-
-      const response = await fetch('/api/admin/stock', {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({
-          productId,
-          account
-        })
-      });
-
-      if (!response.ok) {
-
-        let message = 'Não foi possível adicionar ao estoque.';
-
-        try {
-          const data = await response.json();
-          if (data.error) message = data.error;
-        } catch {}
-
-        showStatus(message, 'error');
-        return;
-      }
-
-      $('account').value = '';
-
-      showStatus('Item adicionado ao estoque!', 'success');
-
-      await refresh();
-
-    } catch (error) {
-
-      showStatus('Erro de conexão.', 'error');
-
-    }
-  }
-
-
-  function statusBadge(status) {
-
-    const value = String(status || '').toLowerCase();
-
-    if (value === 'paid') {
-      return '<span class="badge paid">Pago</span>';
-    }
-
-    if (value === 'cancelled') {
-      return '<span class="badge cancelled">Cancelado</span>';
-    }
-
-    return '<span class="badge pending">Pendente</span>';
-  }
-
-
-  async function refresh() {
-
-    try {
-
-      const productResponse = await fetch(
-        '/api/admin/products',
-        { headers: headers() }
-      );
-
-      if (!productResponse.ok) {
-        showStatus('Sessão expirada ou senha inválida.', 'error');
-        logout();
-        return;
-      }
-
-      const productData = await productResponse.json();
-
-      const productList = Array.isArray(productData)
-        ? productData
-        : [];
-
-      $('product').innerHTML = '';
-
-      if (productList.length === 0) {
-
-        $('product').innerHTML =
-          '<option value="">Nenhum produto criado</option>';
-
-      } else {
-
-        productList.forEach(item => {
-
-          const option = document.createElement('option');
-
-          option.value = item.id;
-          option.textContent =
-            `${item.name} — ${item.stock || 0} disponível`;
-
-          $('product').appendChild(option);
-
-        });
-
-      }
-
-
-      let totalStock = 0;
-      let totalSold = 0;
-
-      productList.forEach(item => {
-
-        totalStock += Number(item.stock || 0);
-        totalSold += Number(item.sold || 0);
-
-      });
-
-
-      $('statProducts').textContent = productList.length;
-      $('statStock').textContent = totalStock;
-      $('statSold').textContent = totalSold;
-
-
-      if (productList.length === 0) {
-
-        $('products').innerHTML =
-          '<div class="empty">Nenhum produto cadastrado.</div>';
-
-      } else {
-
-        $('products').innerHTML = `
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Disponível</th>
-                  <th>Vendidas</th>
-                  <th>Preço</th>
-                </tr>
-              </thead>
-
-              <tbody>
-
-                ${productList.map(item => `
-
-                  <tr>
-
-                    <td>
-                      <strong>${escapeHtml(item.name)}</strong>
-                    </td>
-
-                    <td>
-                      ${Number(item.stock || 0)}
-                    </td>
-
-                    <td>
-                      ${Number(item.sold || 0)}
-                    </td>
-
-                    <td>
-                      R$ ${formatPrice(item.price_cents)}
-                    </td>
-
-                  </tr>
-
-                `).join('')}
-
-              </tbody>
-            </table>
-          </div>
-        `;
-
-      }
-
-
-      const orderResponse = await fetch(
-        '/api/admin/orders',
-        { headers: headers() }
-      );
-
-      if (!orderResponse.ok) {
-        $('orders').innerHTML =
-          '<div class="empty">Não foi possível carregar os pedidos.</div>';
-        return;
-      }
-
-      const orderData = await orderResponse.json();
-
-      const orderList = Array.isArray(orderData)
-        ? orderData
-        : [];
-
-
-      if (orderList.length === 0) {
-
-        $('orders').innerHTML =
-          '<div class="empty">Nenhum pedido registrado ainda.</div>';
-
-      } else {
-
-        $('orders').innerHTML = `
-          <div class="table-wrap">
-            <table>
-
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Status</th>
-                  <th>Valor</th>
-                  <th>Data</th>
-                </tr>
-              </thead>
-
-              <tbody>
-
-                ${orderList.map(item => `
-
-                  <tr>
-
-                    <td>
-                      ${escapeHtml(item.product || '—')}
-                    </td>
-
-                    <td>
-                      ${statusBadge(item.status)}
-                    </td>
-
-                    <td>
-                      R$ ${formatPrice(item.amount_cents)}
-                    </td>
-
-                    <td>
-                      ${formatDate(item.created_at)}
-                    </td>
-
-                  </tr>
-
-                `).join('')}
-
-              </tbody>
-
-            </table>
-          </div>
-        `;
-
-      }
-
-    } catch (error) {
-
-      showStatus('Erro ao atualizar o painel.', 'error');
-
-    }
-  }
-
-
-  function formatPrice(cents) {
-
-    const value = Number(cents || 0) / 100;
-
-    return value.toLocaleString('pt-BR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
 
   }
 
 
-  function formatDate(value) {
-
-    if (!value) return '—';
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-      return value;
-    }
-
-    return date.toLocaleString('pt-BR');
-
-  }
-
+  /* =========================
+     UTILS
+  ========================= */
 
   function escapeHtml(value) {
 
@@ -927,27 +1398,987 @@
   }
 
 
-  function logout() {
+  function money(cents) {
 
-    pwd = '';
+    const value =
+      Number(cents || 0) / 100;
 
-    $('pass').value = '';
-
-    $('panel').classList.add('hidden');
-    $('login').classList.remove('hidden');
-
-    $('loginStatus').classList.remove('show');
+    return value.toLocaleString(
+      'pt-BR',
+      {
+        style: 'currency',
+        currency: 'BRL'
+      }
+    );
 
   }
 
 
-  $('pass').addEventListener('keydown', function(event) {
+  function formatDate(value) {
 
-    if (event.key === 'Enter') {
-      login();
+    if (!value) {
+      return '—';
     }
 
-  });
+    const date =
+      new Date(value);
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+      return String(value);
+    }
+
+    return date.toLocaleString(
+      'pt-BR',
+      {
+        dateStyle: 'short',
+        timeStyle: 'short'
+      }
+    );
+
+  }
+
+
+  function toast(message) {
+
+    const container =
+      $('toastContainer');
+
+    const item =
+      document.createElement('div');
+
+    item.className = 'toast';
+    item.textContent = message;
+
+    container.appendChild(item);
+
+    setTimeout(() => {
+
+      item.style.opacity = '0';
+      item.style.transform =
+        'translateY(7px)';
+
+      setTimeout(
+        () => item.remove(),
+        200
+      );
+
+    }, 2800);
+
+  }
+
+
+  function showAlert(
+    message,
+    type = 'success'
+  ) {
+
+    const el =
+      $('globalAlert');
+
+    el.textContent = message;
+
+    el.className =
+      `alert show ${type}`;
+
+    setTimeout(() => {
+
+      el.classList.remove('show');
+
+    }, 3500);
+
+  }
+
+
+  function showLoginAlert(message) {
+
+    const el =
+      $('loginAlert');
+
+    el.textContent = message;
+
+    el.className =
+      'alert login-alert show error';
+
+  }
+
+
+  /* =========================
+     LOGIN
+  ========================= */
+
+  async function login() {
+
+    const value =
+      $('password').value.trim();
+
+    if (!value) {
+
+      showLoginAlert(
+        'Digite a senha do administrador.'
+      );
+
+      return;
+    }
+
+    const button =
+      $('loginButton');
+
+    button.disabled = true;
+    button.textContent =
+      'Entrando...';
+
+    password = value;
+
+    try {
+
+      const response =
+        await fetch(
+          '/api/admin/products',
+          {
+            headers: headers(),
+            cache: 'no-store'
+          }
+        );
+
+      if (!response.ok) {
+
+        password = '';
+
+        showLoginAlert(
+          'Senha incorreta.'
+        );
+
+        return;
+      }
+
+      $('loginScreen')
+        .classList.add('hidden');
+
+      $('app')
+        .classList.remove('hidden');
+
+      await refresh();
+
+    } catch (error) {
+
+      password = '';
+
+      showLoginAlert(
+        'Não foi possível conectar ao servidor.'
+      );
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent =
+        'Entrar no painel';
+
+    }
+
+  }
+
+
+  /* =========================
+     LOAD DATA
+  ========================= */
+
+  async function refresh() {
+
+    const refreshButton =
+      $('refreshButton');
+
+    refreshButton.disabled = true;
+    refreshButton.textContent =
+      'Atualizando...';
+
+    try {
+
+      const productResponse =
+        await fetch(
+          '/api/admin/products',
+          {
+            headers: headers(),
+            cache: 'no-store'
+          }
+        );
+
+
+      if (!productResponse.ok) {
+
+        logout();
+
+        showLoginAlert(
+          'Sua sessão expirou.'
+        );
+
+        return;
+      }
+
+
+      const productData =
+        await productResponse.json();
+
+
+      productsData =
+        Array.isArray(productData)
+          ? productData
+          : [];
+
+
+      renderProductSelect();
+      renderProducts();
+      updateStats();
+
+
+      const orderResponse =
+        await fetch(
+          '/api/admin/orders',
+          {
+            headers: headers(),
+            cache: 'no-store'
+          }
+        );
+
+
+      if (orderResponse.ok) {
+
+        const orderData =
+          await orderResponse.json();
+
+        ordersData =
+          Array.isArray(orderData)
+            ? orderData
+            : [];
+
+      } else {
+
+        ordersData = [];
+
+      }
+
+
+      renderOrders();
+      updateStats();
+
+
+      toast(
+        'Painel atualizado.'
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      showAlert(
+        'Erro ao atualizar o painel.',
+        'error'
+      );
+
+    } finally {
+
+      refreshButton.disabled = false;
+      refreshButton.textContent =
+        '↻ Atualizar';
+
+    }
+
+  }
+
+
+  /* =========================
+     STATS
+  ========================= */
+
+  function updateStats() {
+
+    let stock = 0;
+    let sold = 0;
+    let revenue = 0;
+
+
+    productsData.forEach(product => {
+
+      stock += Number(
+        product.stock || 0
+      );
+
+      sold += Number(
+        product.sold || 0
+      );
+
+    });
+
+
+    ordersData.forEach(order => {
+
+      if (
+        String(order.status)
+          .toLowerCase() === 'paid'
+      ) {
+
+        revenue += Number(
+          order.amount_cents || 0
+        );
+
+      }
+
+    });
+
+
+    $('statProducts').textContent =
+      productsData.length;
+
+    $('statStock').textContent =
+      stock;
+
+    $('statSold').textContent =
+      sold;
+
+    $('statRevenue').textContent =
+      money(revenue);
+
+  }
+
+
+  /* =========================
+     PRODUCT SELECT
+  ========================= */
+
+  function renderProductSelect() {
+
+    const select =
+      $('stockProduct');
+
+    if (!productsData.length) {
+
+      select.innerHTML =
+        '<option value="">Nenhum produto cadastrado</option>';
+
+      return;
+    }
+
+
+    select.innerHTML =
+      productsData
+        .map(product => {
+
+          const stock =
+            Number(product.stock || 0);
+
+          return `
+            <option value="${escapeHtml(product.id)}">
+              ${escapeHtml(product.name)}
+              — ${stock} disponível${stock === 1 ? '' : 'is'}
+            </option>
+          `;
+
+        })
+        .join('');
+
+  }
+
+
+  /* =========================
+     PRODUCTS
+  ========================= */
+
+  function renderProducts() {
+
+    const container =
+      $('products');
+
+    const search =
+      $('productSearch')
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    let list =
+      [...productsData];
+
+
+    if (search) {
+
+      list =
+        list.filter(product => {
+
+          return String(
+            product.name || ''
+          )
+            .toLowerCase()
+            .includes(search);
+
+        });
+
+    }
+
+
+    if (!list.length) {
+
+      container.innerHTML = `
+        <div class="empty">
+          Nenhum produto encontrado.
+        </div>
+      `;
+
+      return;
+    }
+
+
+    container.innerHTML =
+      list.map(product => {
+
+        const stock =
+          Number(product.stock || 0);
+
+        const sold =
+          Number(product.sold || 0);
+
+        const price =
+          money(product.price_cents);
+
+
+        let stockClass =
+          'good';
+
+        let stockText =
+          `${stock} disponível${stock === 1 ? '' : 'is'}`;
+
+
+        if (stock === 0) {
+
+          stockClass =
+            'empty-stock';
+
+          stockText =
+            'Esgotado';
+
+        } else if (stock <= 5) {
+
+          stockClass =
+            'warning';
+
+        }
+
+
+        return `
+          <article class="product-item">
+
+            <div class="product-main">
+
+              <div>
+
+                <div class="product-name">
+                  ${escapeHtml(product.name)}
+                </div>
+
+                <div class="product-desc">
+                  ${escapeHtml(
+                    product.description ||
+                    'Sem descrição.'
+                  )}
+                </div>
+
+              </div>
+
+              <div class="product-price">
+                ${price}
+              </div>
+
+            </div>
+
+            <div class="product-meta">
+
+              <span class="mini-badge ${stockClass}">
+                ${stockText}
+              </span>
+
+              <span class="mini-badge">
+                ${sold} vendido${sold === 1 ? '' : 's'}
+              </span>
+
+              <span class="mini-badge">
+                ID: ${escapeHtml(product.id)}
+              </span>
+
+            </div>
+
+          </article>
+        `;
+
+      })
+      .join('');
+
+  }
+
+
+  /* =========================
+     ORDERS
+  ========================= */
+
+  function statusBadge(status) {
+
+    const value =
+      String(status || '')
+        .toLowerCase();
+
+
+    if (value === 'paid') {
+
+      return `
+        <span class="status-badge status-paid">
+          Pago
+        </span>
+      `;
+
+    }
+
+
+    if (value === 'cancelled') {
+
+      return `
+        <span class="status-badge status-cancelled">
+          Cancelado
+        </span>
+      `;
+
+    }
+
+
+    return `
+      <span class="status-badge status-pending">
+        Pendente
+      </span>
+    `;
+
+  }
+
+
+  function renderOrders() {
+
+    const container =
+      $('orders');
+
+    const search =
+      $('orderSearch')
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    let list =
+      [...ordersData];
+
+
+    if (search) {
+
+      list =
+        list.filter(order => {
+
+          const text = [
+            order.id,
+            order.product,
+            order.status
+          ]
+            .join(' ')
+            .toLowerCase();
+
+          return text.includes(search);
+
+        });
+
+    }
+
+
+    if (!list.length) {
+
+      container.innerHTML = `
+        <div class="empty">
+          Nenhum pedido encontrado.
+        </div>
+      `;
+
+      return;
+    }
+
+
+    container.innerHTML = `
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Pedido</th>
+            <th>Produto</th>
+            <th>Status</th>
+            <th>Valor</th>
+            <th>Data</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${list.map(order => `
+
+            <tr>
+
+              <td>
+                <strong>
+                  ${escapeHtml(
+                    order.id || '—'
+                  )}
+                </strong>
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  order.product || '—'
+                )}
+              </td>
+
+              <td>
+                ${statusBadge(
+                  order.status
+                )}
+              </td>
+
+              <td>
+                ${money(
+                  order.amount_cents
+                )}
+              </td>
+
+              <td>
+                ${formatDate(
+                  order.created_at
+                )}
+              </td>
+
+            </tr>
+
+          `).join('')}
+
+        </tbody>
+
+      </table>
+
+    `;
+
+  }
+
+
+  /* =========================
+     ADD PRODUCT
+  ========================= */
+
+  async function addProduct() {
+
+    const name =
+      $('productName')
+        .value
+        .trim();
+
+    const price =
+      $('productPrice')
+        .value
+        .trim();
+
+    const description =
+      $('productDescription')
+        .value
+        .trim();
+
+
+    if (!name) {
+
+      showAlert(
+        'Digite o nome do produto.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    if (
+      !price ||
+      Number(price) <= 0
+    ) {
+
+      showAlert(
+        'Digite um preço válido.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    const button =
+      $('addProductButton');
+
+    button.disabled = true;
+    button.textContent =
+      'Criando...';
+
+
+    try {
+
+      const response =
+        await fetch(
+          '/api/admin/products',
+          {
+            method: 'POST',
+            headers: headers(),
+            body: JSON.stringify({
+              name,
+              price,
+              description
+            })
+          }
+        );
+
+
+      const data =
+        await response.json()
+          .catch(() => ({}));
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          'Não foi possível criar o produto.'
+        );
+
+      }
+
+
+      clearProductForm();
+
+      showAlert(
+        'Produto criado com sucesso!'
+      );
+
+      await refresh();
+
+    } catch (error) {
+
+      showAlert(
+        error.message ||
+        'Erro ao criar produto.',
+        'error'
+      );
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent =
+        'Criar produto';
+
+    }
+
+  }
+
+
+  /* =========================
+     ADD STOCK
+  ========================= */
+
+  async function addStock() {
+
+    const productId =
+      $('stockProduct').value;
+
+    const account =
+      $('stockAccount')
+        .value
+        .trim();
+
+
+    if (!productId) {
+
+      showAlert(
+        'Selecione um produto.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    if (!account) {
+
+      showAlert(
+        'Digite o item do estoque.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    const button =
+      $('addStockButton');
+
+    button.disabled = true;
+    button.textContent =
+      'Adicionando...';
+
+
+    try {
+
+      const response =
+        await fetch(
+          '/api/admin/stock',
+          {
+            method: 'POST',
+            headers: headers(),
+            body: JSON.stringify({
+              productId,
+              account
+            })
+          }
+        );
+
+
+      const data =
+        await response.json()
+          .catch(() => ({}));
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          'Não foi possível adicionar o estoque.'
+        );
+
+      }
+
+
+      clearStockForm();
+
+      showAlert(
+        'Item adicionado ao estoque!'
+      );
+
+      await refresh();
+
+    } catch (error) {
+
+      showAlert(
+        error.message ||
+        'Erro ao adicionar estoque.',
+        'error'
+      );
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent =
+        'Adicionar estoque';
+
+    }
+
+  }
+
+
+  /* =========================
+     CLEAR FORMS
+  ========================= */
+
+  function clearProductForm() {
+
+    $('productName').value = '';
+    $('productPrice').value = '';
+    $('productDescription').value = '';
+
+  }
+
+
+  function clearStockForm() {
+
+    $('stockAccount').value = '';
+
+  }
+
+
+  /* =========================
+     STORE
+  ========================= */
+
+  function openStore() {
+
+    window.open(
+      '/',
+      '_blank',
+      'noopener,noreferrer'
+    );
+
+  }
+
+
+  /* =========================
+     LOGOUT
+  ========================= */
+
+  function logout() {
+
+    password = '';
+
+    $('password').value = '';
+
+    $('app')
+      .classList.add('hidden');
+
+    $('loginScreen')
+      .classList.remove('hidden');
+
+    $('loginAlert')
+      .classList.remove('show');
+
+  }
+
+
+  /* =========================
+     SEARCH
+  ========================= */
+
+  $('productSearch')
+    .addEventListener(
+      'input',
+      renderProducts
+    );
+
+
+  $('orderSearch')
+    .addEventListener(
+      'input',
+      renderOrders
+    );
+
+
+  $('password')
+    .addEventListener(
+      'keydown',
+      event => {
+
+        if (
+          event.key === 'Enter'
+        ) {
+          login();
+        }
+
+      }
+    );
 
 </script>
 
