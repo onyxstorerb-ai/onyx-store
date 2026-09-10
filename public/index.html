@@ -1,99 +1,1307 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ONYX Store</title>
-<style>
-:root{--bg:#08090b;--card:#111318;--line:#242730;--text:#f5f5f5;--muted:#a4a7af;--accent:#ff6a00}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#171a21,#08090b 55%);color:var(--text);font-family:Inter,system-ui,Arial;min-height:100vh}
-header{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;background:#08090bdd;backdrop-filter:blur(16px);z-index:5}
-.logo{font-size:25px;font-weight:900;letter-spacing:4px}.logo span{color:var(--accent)}
-main{width:min(1100px,92%);margin:50px auto}.hero{padding:30px 0 45px}.hero h1{font-size:clamp(38px,7vw,72px);margin:0 0 12px}.hero p{color:var(--muted);font-size:17px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}.card{background:linear-gradient(145deg,#151820,#0d0f13);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 18px 50px #0005}.card h2{margin:0 0 8px}.desc{color:var(--muted);min-height:48px}.price{font-size:28px;font-weight:800;margin:18px 0}.stock{font-size:13px;color:#8ee5b1}.btn{border:0;border-radius:12px;padding:13px 18px;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;width:100%}.btn:disabled{opacity:.5;cursor:not-allowed}
-#modal{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:center;justify-content:center;padding:20px}.modal{width:min(520px,100%);background:#111318;border:1px solid var(--line);border-radius:20px;padding:25px}.close{float:right;background:none;color:#aaa;border:0;font-size:25px;cursor:pointer}.pix{width:220px;height:220px;display:block;margin:20px auto;object-fit:contain;background:white;border-radius:10px}.copy{width:100%;background:#0a0b0e;color:#fff;border:1px solid var(--line);padding:12px;border-radius:10px}
-#discord{position:fixed;right:20px;bottom:20px;background:#5865F2;color:#fff;text-decoration:none;padding:13px 18px;border-radius:999px;font-weight:900;box-shadow:0 10px 30px #0008;z-index:50}
-.success{display:none}.account{white-space:pre-wrap;background:#090a0c;border:1px solid #282b34;border-radius:12px;padding:15px;font-family:ui-monospace,monospace}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ONYX STORE</title>
+  <meta name="description" content="ONYX STORE - Produtos digitais com entrega automática.">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #070707;
+      --bg2: #0d0d0d;
+      --card: #111111;
+      --card2: #151515;
+      --border: #242424;
+      --text: #ffffff;
+      --muted: #929292;
+      --orange: #ff6a00;
+      --orange2: #ff8a00;
+      --danger: #ff4545;
+      --green: #35d07f;
+    }
+
+    body {
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255,106,0,.14), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* HEADER */
+
+    header {
+      width: 100%;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      background: rgba(7,7,7,.85);
+      backdrop-filter: blur(14px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: auto;
+      height: 74px;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 2px;
+    }
+
+    .logo-mark {
+      width: 35px;
+      height: 35px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--orange), var(--orange2));
+      display: grid;
+      place-items: center;
+      color: #080808;
+      font-weight: 1000;
+      box-shadow: 0 0 25px rgba(255,106,0,.2);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    nav a {
+      color: #bcbcbc;
+      font-size: 14px;
+      padding: 10px 15px;
+      border-radius: 9px;
+      transition: .2s;
+    }
+
+    nav a:hover {
+      color: white;
+      background: #151515;
+    }
+
+    .discord-btn {
+      background: #fff;
+      color: #080808 !important;
+      font-weight: 700;
+    }
+
+    .discord-btn:hover {
+      background: #e8e8e8 !important;
+    }
+
+    /* HERO */
+
+    .hero {
+      max-width: 1200px;
+      margin: auto;
+      padding: 85px 22px 55px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border: 1px solid rgba(255,106,0,.25);
+      background: rgba(255,106,0,.07);
+      color: #ff9142;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(53,208,127,.8);
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 8vw, 82px);
+      line-height: .95;
+      letter-spacing: -4px;
+      font-weight: 950;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(90deg, #fff, #ff7620);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: 25px auto 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* STORE */
+
+    .store {
+      max-width: 1200px;
+      margin: auto;
+      padding: 25px 22px 100px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+
+    .section-title h2 {
+      font-size: 25px;
+    }
+
+    .section-title span {
+      color: #777;
+      font-size: 13px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .product {
+      background: linear-gradient(145deg, #121212, #0d0d0d);
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: .25s;
+    }
+
+    .product::before {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      background: rgba(255,106,0,.08);
+      filter: blur(60px);
+      top: -90px;
+      right: -60px;
+      pointer-events: none;
+    }
+
+    .product:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,106,0,.4);
+      box-shadow: 0 15px 50px rgba(0,0,0,.3);
+    }
+
+    .product-icon {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: #1c1c1c;
+      border: 1px solid #292929;
+      font-size: 21px;
+      margin-bottom: 18px;
+    }
+
+    .product h3 {
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+
+    .product-description {
+      color: #888;
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 42px;
+    }
+
+    .product-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .price small {
+      display: block;
+      color: #777;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .price strong {
+      font-size: 23px;
+    }
+
+    .stock {
+      color: #63db9b;
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    .stock.empty {
+      color: #ff5959;
+    }
+
+    .buy-btn {
+      border: 0;
+      background: linear-gradient(135deg, var(--orange), var(--orange2));
+      color: #090909;
+      font-weight: 850;
+      padding: 12px 17px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .buy-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 25px rgba(255,106,0,.2);
+    }
+
+    .buy-btn:disabled {
+      cursor: not-allowed;
+      background: #292929;
+      color: #777;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* FEATURES */
+
+    .features {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 22px 80px;
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 15px;
+    }
+
+    .feature {
+      border: 1px solid var(--border);
+      background: #0e0e0e;
+      border-radius: 15px;
+      padding: 22px;
+    }
+
+    .feature-icon {
+      font-size: 22px;
+      margin-bottom: 13px;
+    }
+
+    .feature h3 {
+      font-size: 15px;
+      margin-bottom: 7px;
+    }
+
+    .feature p {
+      color: #777;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+
+    footer {
+      border-top: 1px solid #181818;
+      padding: 30px 22px;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+
+    footer strong {
+      color: #aaa;
+    }
+
+    /* MODAL */
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-bg.active {
+      display: flex;
+    }
+
+    .modal {
+      width: min(480px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #111;
+      border: 1px solid #292929;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 25px 100px rgba(0,0,0,.6);
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      right: 17px;
+      top: 15px;
+      border: 0;
+      background: #1c1c1c;
+      color: #aaa;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 17px;
+    }
+
+    .modal h2 {
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .modal-subtitle {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 22px;
+    }
+
+    .order-box {
+      background: #0b0b0b;
+      border: 1px solid #202020;
+      border-radius: 13px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .order-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 7px 0;
+      font-size: 13px;
+    }
+
+    .order-row span:first-child {
+      color: #777;
+    }
+
+    .order-row strong {
+      text-align: right;
+    }
+
+    .payment-area {
+      margin-top: 18px;
+      text-align: center;
+    }
+
+    .qr {
+      max-width: 230px;
+      width: 100%;
+      margin: 10px auto 15px;
+      border-radius: 12px;
+      background: white;
+      padding: 10px;
+      display: none;
+    }
+
+    .pix-code {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #282828;
+      background: #090909;
+      color: #aaa;
+      border-radius: 9px;
+      font-size: 11px;
+      word-break: break-all;
+      text-align: left;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .copy-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      background: #202020;
+      border: 1px solid #303030;
+      color: white;
+      border-radius: 9px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .checkout-btn {
+      display: none;
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 10px;
+      background: white;
+      color: #080808;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .status {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #181818;
+      color: #aaa;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .status.success {
+      color: #65df9b;
+      border: 1px solid rgba(53,208,127,.2);
+      background: rgba(53,208,127,.05);
+    }
+
+    .status.error {
+      color: #ff6868;
+      border: 1px solid rgba(255,69,69,.2);
+      background: rgba(255,69,69,.05);
+    }
+
+    .delivery {
+      display: none;
+      margin-top: 18px;
+    }
+
+    .delivery h3 {
+      color: #62dc98;
+      margin-bottom: 10px;
+    }
+
+    .account {
+      background: #080808;
+      border: 1px solid #282828;
+      border-radius: 10px;
+      padding: 15px;
+      color: #ddd;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .loading {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #333;
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* TOAST */
+
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #171717;
+      border: 1px solid #303030;
+      color: white;
+      padding: 13px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      z-index: 300;
+      transition: .3s;
+      opacity: 0;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 850px) {
+      .products {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner {
+        height: 65px;
+      }
+
+      nav a:not(.discord-btn) {
+        display: none;
+      }
+
+      .hero {
+        padding: 65px 18px 40px;
+      }
+
+      .hero h1 {
+        letter-spacing: -2px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .store {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      .products {
+        grid-template-columns: 1fr;
+      }
+
+      .product-bottom {
+        align-items: center;
+      }
+
+      .features {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<header><div class="logo">ONYX<span>.</span></div><div>STORE</div></header>
-<main>
-<section class="hero"><h1>ONYX STORE</h1><p>Contas digitais com entrega automática após a confirmação do pagamento.</p></section>
-<section id="products" class="grid"></section>
-</main>
 
-<a id="discord" href="#" target="_blank" rel="noopener">Entrar no Discord</a>
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark">O</div>
+      ONYX
+    </a>
 
-<div id="modal">
-<div class="modal">
-<button class="close" onclick="closeModal()">×</button>
-<div id="checkoutView">
-<h2 id="modalTitle">Pagamento</h2>
-<p id="modalText">Gerando sua cobrança...</p>
-<img id="qr" class="pix" style="display:none">
-<input id="pix" class="copy" readonly style="display:none">
-<br><br><button id="copyBtn" class="btn" style="display:none" onclick="copyPix()">Copiar Pix</button>
-<p id="checkoutLink"></p>
+    <nav>
+      <a href="#produtos">Produtos</a>
+      <a class="discord-btn" id="discordLink" href="#" target="_blank">
+        Discord
+      </a>
+    </nav>
+  </div>
+</header>
+
+
+<section class="hero">
+
+  <div class="badge">
+    <span class="badge-dot"></span>
+    LOJA ONLINE
+  </div>
+
+  <h1>
+    BEM-VINDO À<br>
+    <span>ONYX STORE.</span>
+  </h1>
+
+  <p>
+    Produtos digitais com pagamento rápido e entrega automática
+    após a confirmação do pagamento.
+  </p>
+
+</section>
+
+
+<section class="store" id="produtos">
+
+  <div class="section-title">
+    <div>
+      <h2>Produtos</h2>
+      <span>Escolha o produto que deseja comprar.</span>
+    </div>
+  </div>
+
+  <div class="products" id="products">
+
+    <div style="grid-column:1/-1;text-align:center;padding:50px;color:#777;">
+      <div class="loading"></div>
+      Carregando produtos...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="features">
+
+  <div class="feature">
+    <div class="feature-icon">⚡</div>
+    <h3>Entrega automática</h3>
+    <p>
+      Após a confirmação do pagamento, seu produto é liberado automaticamente.
+    </p>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">🔒</div>
+    <h3>Compra segura</h3>
+    <p>
+      Os dados dos produtos ficam protegidos no sistema da ONYX.
+    </p>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">💬</div>
+    <h3>Suporte</h3>
+    <p>
+      Precisa de ajuda? Entre no nosso Discord para falar com a equipe.
+    </p>
+  </div>
+
+</section>
+
+
+<footer>
+  <strong>ONYX STORE</strong><br><br>
+  © 2026 ONYX. Todos os direitos reservados.
+</footer>
+
+
+<!-- CHECKOUT MODAL -->
+
+<div class="modal-bg" id="modalBg">
+
+  <div class="modal">
+
+    <button class="close" onclick="closeModal()">×</button>
+
+    <h2 id="modalTitle">Finalizar compra</h2>
+
+    <p class="modal-subtitle">
+      Complete o pagamento para receber seu produto.
+    </p>
+
+    <div class="order-box">
+
+      <div class="order-row">
+        <span>Produto</span>
+        <strong id="orderProduct">-</strong>
+      </div>
+
+      <div class="order-row">
+        <span>Valor</span>
+        <strong id="orderPrice">-</strong>
+      </div>
+
+      <div class="order-row">
+        <span>Pedido</span>
+        <strong id="orderId">-</strong>
+      </div>
+
+    </div>
+
+    <div class="payment-area" id="paymentArea">
+
+      <div class="loading"></div>
+
+      <div class="status" id="status">
+        Criando cobrança...
+      </div>
+
+      <img id="qr" class="qr" alt="QR Code Pix">
+
+      <div id="pixCode" class="pix-code"></div>
+
+      <button id="copyBtn" class="copy-btn" onclick="copyPix()">
+        Copiar código Pix
+      </button>
+
+      <button id="checkoutBtn" class="checkout-btn">
+        Abrir pagamento
+      </button>
+
+    </div>
+
+
+    <div class="delivery" id="delivery">
+
+      <h3>✓ Pagamento confirmado!</h3>
+
+      <p style="color:#888;font-size:13px;margin-bottom:12px;">
+        Seu produto foi liberado:
+      </p>
+
+      <div class="account" id="account"></div>
+
+      <button
+        class="copy-btn"
+        style="display:block"
+        onclick="copyAccount()">
+        Copiar produto
+      </button>
+
+    </div>
+
+  </div>
+
 </div>
-<div class="success" id="success">
-<h2>Compra confirmada! ✅</h2>
-<p>Obrigado pela sua compra! ❤️</p>
-<p>Confira os dados da conta abaixo.</p>
-<div id="account" class="account"></div>
-<p>📸 Entre na conta, tire um print para guardar o comprovante e, se puder, deixe seu feedback no nosso servidor do Discord.</p>
-<a id="successDiscord" class="btn" style="display:block;text-align:center;text-decoration:none" target="_blank">Dar feedback no Discord</a>
-</div>
-</div>
-</div>
+
+
+<div class="toast" id="toast"></div>
+
 
 <script>
-let currentOrder=null;
-const money=c=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(c/100);
-async function load(){
-  const [p, cfg] = await Promise.all([
-    fetch('/api/products').then(r=>r.json()),
-    Promise.resolve({discord:'https://discord.gg/SEU_SERVIDOR'})
-  ]);
-  document.getElementById('discord').href=cfg.discord;
-  document.getElementById('successDiscord').href=cfg.discord;
-  const box=document.getElementById('products');
-  box.innerHTML=p.map(x=>`<article class="card">
-    <h2>${esc(x.name)}</h2><div class="desc">${esc(x.description||'')}</div>
-    <div class="price">${money(x.price_cents)}</div>
-    <div class="stock">${x.stock} disponível(is)</div><br>
-    <button class="btn" ${x.stock<1?'disabled':''} onclick="buy('${x.id}')">${x.stock<1?'Sem estoque':'Comprar agora'}</button>
-  </article>`).join('');
-}
-async function buy(productId){
-  openModal(); document.getElementById('modalText').textContent='Criando cobrança...';
-  const r=await fetch('/api/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({productId})});
-  const d=await r.json();
-  if(!r.ok){document.getElementById('modalText').textContent=d.error||'Não foi possível criar a cobrança.';return}
-  currentOrder=d.orderId;
-  document.getElementById('modalText').textContent='Pague via Pix. Assim que o pagamento for confirmado, sua conta aparecerá aqui.';
-  if(d.pixQrCode){document.getElementById('qr').src='data:image/png;base64,'+d.pixQrCode;document.getElementById('qr').style.display='block'}
-  if(d.pixCode){document.getElementById('pix').value=d.pixCode;document.getElementById('pix').style.display='block';document.getElementById('copyBtn').style.display='block'}
-  document.getElementById('checkoutLink').innerHTML=`<a href="${d.checkout}" target="_blank" style="color:#ff8b3d">Abrir checkout da LivePix</a>`;
-  poll();
-}
-async function poll(){
-  if(!currentOrder)return;
-  const r=await fetch('/api/order/'+encodeURIComponent(currentOrder)); const d=await r.json();
-  if(d.status==='paid' && d.delivered){showSuccess(d.account);return}
-  setTimeout(poll,3000);
-}
-function showSuccess(account){
-  document.getElementById('checkoutView').style.display='none';
-  document.getElementById('success').style.display='block';
-  document.getElementById('account').textContent=account;
-  load();
-}
-function copyPix(){navigator.clipboard.writeText(document.getElementById('pix').value);document.getElementById('copyBtn').textContent='Copiado! ✓';}
-function openModal(){document.getElementById('modal').style.display='flex';document.getElementById('checkoutView').style.display='block';document.getElementById('success').style.display='none';document.getElementById('qr').style.display='none';document.getElementById('pix').style.display='none';document.getElementById('copyBtn').style.display='none';document.getElementById('checkoutLink').innerHTML='';}
-function closeModal(){document.getElementById('modal').style.display='none'}
-function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-load();
+
+  let currentOrderId = null;
+  let currentPixCode = null;
+  let currentAccount = null;
+  let polling = null;
+
+
+  /* -------------------------
+     CONFIGURAÇÃO
+  ------------------------- */
+
+  const DISCORD_URL = "https://discord.gg/SEU_SERVIDOR";
+
+
+  document.getElementById("discordLink").href = DISCORD_URL;
+
+
+  /* -------------------------
+     UTILIDADES
+  ------------------------- */
+
+  function money(cents) {
+
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    }).format(Number(cents || 0) / 100);
+
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+  }
+
+
+  function toast(message) {
+
+    const el = document.getElementById("toast");
+
+    el.textContent = message;
+    el.classList.add("show");
+
+    setTimeout(() => {
+      el.classList.remove("show");
+    }, 2500);
+
+  }
+
+
+  /* -------------------------
+     PRODUTOS
+  ------------------------- */
+
+  async function loadProducts() {
+
+    const container = document.getElementById("products");
+
+    try {
+
+      const response = await fetch("/api/products");
+
+      if (!response.ok) {
+        throw new Error("Não foi possível carregar os produtos.");
+      }
+
+      const products = await response.json();
+
+      if (!products.length) {
+
+        container.innerHTML = `
+          <div style="
+            grid-column:1/-1;
+            text-align:center;
+            padding:60px 20px;
+            color:#777;
+          ">
+            <div style="font-size:35px;margin-bottom:15px;">📦</div>
+            <h3 style="color:#aaa;margin-bottom:8px;">
+              Nenhum produto disponível
+            </h3>
+            <p>
+              Os produtos aparecerão aqui assim que forem adicionados.
+            </p>
+          </div>
+        `;
+
+        return;
+      }
+
+
+      container.innerHTML = products.map(product => {
+
+        const stock = Number(product.stock || 0);
+        const available = stock > 0;
+
+        return `
+
+          <article class="product">
+
+            <div class="product-icon">
+              ◈
+            </div>
+
+            <h3>
+              ${escapeHtml(product.name)}
+            </h3>
+
+            <p class="product-description">
+              ${escapeHtml(product.description || "Produto digital da ONYX.")}
+            </p>
+
+            <div class="product-bottom">
+
+              <div class="price">
+
+                <small>A partir de</small>
+
+                <strong>
+                  ${money(product.price_cents)}
+                </strong>
+
+                <div class="stock ${available ? "" : "empty"}">
+                  ${available
+                    ? `${stock} disponível${stock === 1 ? "" : "is"}`
+                    : "Sem estoque"}
+                </div>
+
+              </div>
+
+              <button
+                class="buy-btn"
+                ${available ? "" : "disabled"}
+                onclick='buyProduct(${JSON.stringify(product.id)})'
+              >
+                ${available ? "Comprar" : "Indisponível"}
+              </button>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }).join("");
+
+    } catch (error) {
+
+      container.innerHTML = `
+        <div style="
+          grid-column:1/-1;
+          text-align:center;
+          padding:50px;
+          color:#ff6565;
+        ">
+          Não foi possível carregar os produtos.
+          <br><br>
+          <button
+            class="buy-btn"
+            onclick="loadProducts()">
+            Tentar novamente
+          </button>
+        </div>
+      `;
+
+    }
+
+  }
+
+
+  /* -------------------------
+     COMPRAR
+  ------------------------- */
+
+  async function buyProduct(productId) {
+
+    const modal = document.getElementById("modalBg");
+
+    modal.classList.add("active");
+
+    document.getElementById("modalTitle").textContent =
+      "Finalizar compra";
+
+    document.getElementById("paymentArea").style.display = "block";
+
+    document.getElementById("delivery").style.display = "none";
+
+    document.getElementById("qr").style.display = "none";
+
+    document.getElementById("pixCode").style.display = "none";
+
+    document.getElementById("copyBtn").style.display = "none";
+
+    document.getElementById("checkoutBtn").style.display = "none";
+
+    document.getElementById("status").className = "status";
+
+    document.getElementById("status").textContent =
+      "Criando cobrança...";
+
+    document.getElementById("orderProduct").textContent = "Carregando...";
+    document.getElementById("orderPrice").textContent = "-";
+    document.getElementById("orderId").textContent = "-";
+
+    try {
+
+      const response = await fetch("/api/products");
+
+      const products = await response.json();
+
+      const product = products.find(p => p.id === productId);
+
+      if (product) {
+
+        document.getElementById("orderProduct").textContent =
+          product.name;
+
+        document.getElementById("orderPrice").textContent =
+          money(product.price_cents);
+
+      }
+
+      const checkoutResponse = await fetch("/api/checkout", {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          productId
+        })
+
+      });
+
+
+      const data = await checkoutResponse.json();
+
+
+      if (!checkoutResponse.ok) {
+        throw new Error(data.error || "Erro ao criar cobrança.");
+      }
+
+
+      currentOrderId = data.orderId;
+
+      document.getElementById("orderId").textContent =
+        currentOrderId;
+
+
+      document.getElementById("status").textContent =
+        "Aguardando pagamento...";
+
+
+      /*
+        PIX CODE
+      */
+
+      if (data.pixCode) {
+
+        currentPixCode = data.pixCode;
+
+        const pix = document.getElementById("pixCode");
+
+        pix.textContent = data.pixCode;
+        pix.style.display = "block";
+
+        document.getElementById("copyBtn").style.display =
+          "block";
+
+      }
+
+
+      /*
+        QR CODE
+      */
+
+      if (data.pixQrCode) {
+
+        const qr = document.getElementById("qr");
+
+        let qrSource = data.pixQrCode;
+
+        if (
+          typeof qrSource === "string" &&
+          !qrSource.startsWith("data:image") &&
+          !qrSource.startsWith("http")
+        ) {
+          qrSource =
+            "data:image/png;base64," + qrSource;
+        }
+
+        qr.src = qrSource;
+        qr.style.display = "block";
+
+      }
+
+
+      /*
+        CHECKOUT
+      */
+
+      if (data.checkout) {
+
+        const button =
+          document.getElementById("checkoutBtn");
+
+        button.style.display = "block";
+
+        button.onclick = () => {
+          window.open(
+            data.checkout,
+            "_blank",
+            "noopener,noreferrer"
+          );
+        };
+
+      }
+
+
+      startPolling(currentOrderId);
+
+
+    } catch (error) {
+
+      document.getElementById("status").className =
+        "status error";
+
+      document.getElementById("status").textContent =
+        error.message || "Erro ao criar pagamento.";
+
+    }
+
+  }
+
+
+  /* -------------------------
+     VERIFICAR PEDIDO
+  ------------------------- */
+
+  function startPolling(orderId) {
+
+    if (polling) {
+      clearInterval(polling);
+    }
+
+    checkOrder(orderId);
+
+    polling = setInterval(() => {
+
+      checkOrder(orderId);
+
+    }, 3000);
+
+  }
+
+
+  async function checkOrder(orderId) {
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/order/${encodeURIComponent(orderId)}`
+        );
+
+      const order = await response.json();
+
+
+      if (!response.ok) {
+        return;
+      }
+
+
+      if (order.status === "paid" && order.delivered) {
+
+        if (polling) {
+          clearInterval(polling);
+          polling = null;
+        }
+
+
+        currentAccount = order.account;
+
+
+        document.getElementById("paymentArea").style.display =
+          "none";
+
+        document.getElementById("delivery").style.display =
+          "block";
+
+        document.getElementById("account").textContent =
+          order.account;
+
+
+        document.getElementById("modalTitle").textContent =
+          "Pedido concluído";
+
+        toast("Pagamento confirmado!");
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  }
+
+
+  /* -------------------------
+     COPIAR PIX
+  ------------------------- */
+
+  async function copyPix() {
+
+    if (!currentPixCode) return;
+
+    try {
+
+      await navigator.clipboard.writeText(currentPixCode);
+
+      toast("Código Pix copiado!");
+
+    } catch {
+
+      toast("Não foi possível copiar automaticamente.");
+
+    }
+
+  }
+
+
+  /* -------------------------
+     COPIAR PRODUTO
+  ------------------------- */
+
+  async function copyAccount() {
+
+    if (!currentAccount) return;
+
+    try {
+
+      await navigator.clipboard.writeText(currentAccount);
+
+      toast("Produto copiado!");
+
+    } catch {
+
+      toast("Não foi possível copiar automaticamente.");
+
+    }
+
+  }
+
+
+  /* -------------------------
+     FECHAR MODAL
+  ------------------------- */
+
+  function closeModal() {
+
+    document.getElementById("modalBg").classList.remove("active");
+
+    if (polling) {
+
+      clearInterval(polling);
+
+      polling = null;
+
+    }
+
+  }
+
+
+  document
+    .getElementById("modalBg")
+    .addEventListener("click", function(event) {
+
+      if (event.target === this) {
+        closeModal();
+      }
+
+    });
+
+
+  /* -------------------------
+     INICIALIZAÇÃO
+  ------------------------- */
+
+  loadProducts();
+
 </script>
+
 </body>
 </html>
