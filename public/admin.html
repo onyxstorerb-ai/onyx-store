@@ -4,25 +4,34 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title>ONYX ADMIN V2</title>
+  <title>ONYX ADMIN</title>
 
   <style>
     :root {
-      --bg: #060606;
-      --bg2: #0b0b0c;
-      --card: rgba(17,17,18,.86);
-      --card2: #101011;
-      --line: rgba(255,255,255,.075);
-      --line2: rgba(255,255,255,.13);
-      --text: #f5f5f5;
-      --muted: #85858a;
-      --muted2: #5f5f64;
-      --orange: #ff6500;
-      --orange2: #ff8a00;
-      --green: #39d982;
-      --yellow: #f0c65c;
-      --red: #ff6262;
-      --radius: 17px;
+      --bg: #050506;
+      --bg2: #090a0c;
+      --surface: #0d0e10;
+      --surface2: #111216;
+      --surface3: #16171b;
+
+      --line: rgba(255,255,255,.065);
+      --line2: rgba(255,255,255,.12);
+      --line3: rgba(255,255,255,.18);
+
+      --text: #f4f4f5;
+      --text2: #c7c8cc;
+      --muted: #85878d;
+      --muted2: #5d6067;
+
+      --onyx: #aeb2b9;
+      --onyx2: #e4e6e9;
+
+      --green: #51e59a;
+      --yellow: #e9c967;
+      --red: #ff6969;
+
+      --radius: 18px;
+      --shadow: 0 25px 70px rgba(0,0,0,.28);
     }
 
     * {
@@ -36,12 +45,33 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background:
-        radial-gradient(circle at 50% -10%, rgba(255,106,0,.13), transparent 32%),
-        radial-gradient(circle at 100% 40%, rgba(255,106,0,.045), transparent 25%),
-        var(--bg);
       color: var(--text);
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 50% -15%,
+          rgba(220,225,235,.075),
+          transparent 32%
+        ),
+        radial-gradient(
+          circle at 100% 25%,
+          rgba(170,175,185,.035),
+          transparent 25%
+        ),
+        radial-gradient(
+          circle at 0% 75%,
+          rgba(255,255,255,.025),
+          transparent 28%
+        ),
+        var(--bg);
     }
 
     body::before {
@@ -49,12 +79,40 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: .025;
+      opacity: .028;
+
       background-image:
-        linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: linear-gradient(to bottom, black, transparent 80%);
+        linear-gradient(
+          120deg,
+          rgba(255,255,255,.7) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          300deg,
+          rgba(255,255,255,.35) 1px,
+          transparent 1px
+        );
+
+      background-size: 80px 80px;
+      mask-image:
+        linear-gradient(
+          to bottom,
+          black,
+          transparent 85%
+        );
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(255,255,255,.035),
+          transparent 35%
+        );
     }
 
     button,
@@ -80,70 +138,115 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 20px;
+      padding: 22px;
     }
 
     .login-card {
-      width: min(430px, 100%);
-      padding: 30px;
-      border: 1px solid var(--line);
-      border-radius: 23px;
+      position: relative;
+      width: min(450px, 100%);
+      padding: 32px;
+
+      border: 1px solid var(--line2);
+      border-radius: 25px;
+
       background:
-        radial-gradient(circle at 50% -30%, rgba(255,106,0,.12), transparent 45%),
-        rgba(15,15,16,.9);
-      box-shadow: 0 35px 100px rgba(0,0,0,.55);
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.055),
+          rgba(255,255,255,.018)
+        ),
+        rgba(9,10,12,.92);
+
+      box-shadow:
+        0 40px 120px rgba(0,0,0,.62),
+        inset 0 1px 0 rgba(255,255,255,.045);
+
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      top: -160px;
+      left: 50%;
+      transform: translateX(-50%);
+
+      background: rgba(225,228,235,.075);
+      filter: blur(55px);
+      border-radius: 50%;
     }
 
     .brand {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
     .logo {
-      width: 45px;
-      height: 45px;
+      position: relative;
+      width: 46px;
+      height: 46px;
+
       display: grid;
       place-items: center;
-      border-radius: 13px;
-      color: white;
+
+      border-radius: 14px;
+
+      color: #08090a;
       font-size: 21px;
-      font-weight: 950;
-      background: linear-gradient(135deg,var(--orange2),var(--orange));
-      box-shadow: 0 10px 35px rgba(255,106,0,.22);
+      font-weight: 1000;
+
+      background:
+        linear-gradient(
+          145deg,
+          #f2f3f4,
+          #9a9ea5 48%,
+          #555961
+        );
+
+      box-shadow:
+        0 12px 35px rgba(255,255,255,.09),
+        inset 0 1px 1px rgba(255,255,255,.65);
     }
 
     .brand h1 {
       margin: 0;
-      font-size: 19px;
-      letter-spacing: .08em;
+      font-size: 18px;
+      letter-spacing: .1em;
     }
 
     .brand p {
       margin: 4px 0 0;
       color: var(--muted);
-      font-size: 11px;
+      font-size: 10px;
     }
 
     .login-title {
-      margin-top: 35px;
-      font-size: 25px;
-      letter-spacing: -.035em;
+      margin: 38px 0 0;
+      font-size: 28px;
+      letter-spacing: -.05em;
     }
 
     .login-description {
+      margin: 8px 0 25px;
+
       color: var(--muted);
       font-size: 12px;
       line-height: 1.7;
-      margin: 7px 0 25px;
     }
 
     label {
       display: block;
-      margin: 13px 0 7px;
-      color: #b8b8bc;
-      font-size: 11px;
-      font-weight: 800;
+      margin: 14px 0 7px;
+
+      color: #b9bbc0;
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .04em;
+      text-transform: uppercase;
     }
 
     input,
@@ -151,42 +254,81 @@
     select {
       width: 100%;
       outline: none;
+
       border: 1px solid var(--line2);
-      border-radius: 11px;
-      background: #090909;
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.035),
+          rgba(255,255,255,.012)
+        ),
+        #08090a;
+
       color: white;
-      padding: 12px 13px;
-      transition: .2s;
+
+      padding: 13px 14px;
+
+      transition:
+        border-color .2s,
+        box-shadow .2s,
+        background .2s;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #50535a;
     }
 
     input:focus,
     textarea:focus,
     select:focus {
-      border-color: rgba(255,106,0,.5);
-      box-shadow: 0 0 0 3px rgba(255,106,0,.07);
+      border-color: rgba(220,225,235,.32);
+
+      box-shadow:
+        0 0 0 3px rgba(220,225,235,.045),
+        0 10px 30px rgba(0,0,0,.15);
     }
 
     textarea {
-      min-height: 100px;
+      min-height: 105px;
       resize: vertical;
     }
 
     .primary-btn {
       width: 100%;
-      border: 0;
-      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 12px;
+
       padding: 13px 16px;
-      color: white;
-      font-size: 12px;
-      font-weight: 900;
-      background: linear-gradient(135deg,var(--orange2),var(--orange));
-      box-shadow: 0 12px 30px rgba(255,106,0,.16);
+
+      color: #090a0b;
+      font-size: 11px;
+      font-weight: 950;
+
+      background:
+        linear-gradient(
+          145deg,
+          #f0f1f3,
+          #b8bbc0 50%,
+          #858991
+        );
+
+      box-shadow:
+        0 15px 35px rgba(255,255,255,.07),
+        inset 0 1px 1px rgba(255,255,255,.7);
+
       transition: .2s;
     }
 
     .primary-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 35px rgba(255,106,0,.25);
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+
+      box-shadow:
+        0 20px 45px rgba(255,255,255,.1),
+        inset 0 1px 1px rgba(255,255,255,.8);
     }
 
     .primary-btn:disabled {
@@ -200,48 +342,102 @@
     ========================= */
 
     .app {
-      width: min(1240px, calc(100% - 32px));
+      width: min(1320px, calc(100% - 34px));
       margin: auto;
-      padding: 25px 0 60px;
+      padding: 22px 0 65px;
     }
 
     .topbar {
+      position: sticky;
+      top: 12px;
+      z-index: 50;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      padding-bottom: 22px;
-      border-bottom: 1px solid var(--line);
+
+      padding: 12px 14px;
+
+      border: 1px solid var(--line);
+      border-radius: 17px;
+
+      background:
+        rgba(8,9,11,.82);
+
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+
+      box-shadow:
+        0 20px 55px rgba(0,0,0,.2),
+        inset 0 1px 0 rgba(255,255,255,.035);
+    }
+
+    .topbar .brand {
+      padding-left: 2px;
+    }
+
+    .topbar .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      font-size: 17px;
+    }
+
+    .topbar .brand h1 {
+      font-size: 14px;
+    }
+
+    .topbar .brand p {
+      font-size: 9px;
     }
 
     .topbar-right {
       display: flex;
-      gap: 8px;
+      align-items: center;
+      gap: 7px;
       flex-wrap: wrap;
     }
 
     .top-btn {
-      height: 38px;
+      height: 36px;
+
       padding: 0 13px;
+
       border-radius: 10px;
       border: 1px solid var(--line);
-      color: #c7c7ca;
-      background: rgba(255,255,255,.035);
-      font-size: 11px;
-      font-weight: 800;
+
+      color: #bfc1c5;
+      background: rgba(255,255,255,.025);
+
+      font-size: 10px;
+      font-weight: 850;
+
       transition: .2s;
     }
 
     .top-btn:hover {
       color: white;
       border-color: var(--line2);
-      background: rgba(255,255,255,.07);
+      background: rgba(255,255,255,.065);
+      transform: translateY(-1px);
+    }
+
+    .top-btn:disabled {
+      opacity: .55;
+      cursor: wait;
     }
 
     .logout-btn {
-      color: #ff8585;
-      border-color: rgba(255,80,80,.14);
-      background: rgba(255,80,80,.04);
+      color: #ff8989;
+      border-color: rgba(255,80,80,.12);
+      background: rgba(255,80,80,.035);
+    }
+
+    .logout-btn:hover {
+      color: #ffaaaa;
+      border-color: rgba(255,80,80,.25);
+      background: rgba(255,80,80,.065);
     }
 
     /* =========================
@@ -249,30 +445,69 @@
     ========================= */
 
     .welcome {
+      position: relative;
+
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 20px;
-      padding: 35px 0 25px;
+
+      padding: 48px 4px 30px;
+    }
+
+    .welcome::before {
+      content: "";
+
+      position: absolute;
+      width: 330px;
+      height: 180px;
+
+      top: 0;
+      left: 0;
+
+      background: rgba(220,225,235,.035);
+      filter: blur(75px);
+      pointer-events: none;
     }
 
     .eyebrow {
-      color: var(--orange2);
+      position: relative;
+
+      color: #aeb2b8;
       font-size: 9px;
       font-weight: 950;
-      letter-spacing: .18em;
+      letter-spacing: .22em;
       text-transform: uppercase;
-      margin-bottom: 7px;
+
+      margin-bottom: 9px;
     }
 
     .welcome h2 {
+      position: relative;
+
       margin: 0;
-      font-size: 31px;
-      letter-spacing: -.045em;
+
+      font-size: clamp(28px,4vw,40px);
+      line-height: 1;
+      letter-spacing: -.055em;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ffffff,
+          #a9adb4
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .welcome p {
-      margin: 6px 0 0;
+      position: relative;
+
+      margin: 9px 0 0;
+
       color: var(--muted);
       font-size: 12px;
     }
@@ -280,22 +515,67 @@
     .live {
       display: flex;
       align-items: center;
-      gap: 7px;
-      color: #8ce9b1;
-      font-size: 10px;
-      font-weight: 850;
-      padding: 8px 11px;
+      gap: 8px;
+
+      padding: 9px 12px;
+
       border-radius: 999px;
-      border: 1px solid rgba(57,217,130,.13);
-      background: rgba(57,217,130,.045);
+      border: 1px solid rgba(81,229,154,.13);
+
+      color: #83e9b0;
+      background: rgba(81,229,154,.035);
+
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .08em;
     }
 
     .live-dot {
       width: 6px;
       height: 6px;
+
       border-radius: 50%;
+
       background: var(--green);
-      box-shadow: 0 0 10px rgba(57,217,130,.7);
+      box-shadow:
+        0 0 0 3px rgba(81,229,154,.08),
+        0 0 14px rgba(81,229,154,.75);
+    }
+
+    /* =========================
+       ALERT
+    ========================= */
+
+    .alert {
+      display: none;
+
+      margin: 0 0 14px;
+      padding: 12px 14px;
+
+      border-radius: 12px;
+      border: 1px solid var(--line);
+
+      font-size: 10px;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert.success {
+      color: #79e8a7;
+      background: rgba(81,229,154,.04);
+      border-color: rgba(81,229,154,.13);
+    }
+
+    .alert.error {
+      color: #ff8888;
+      background: rgba(255,80,80,.04);
+      border-color: rgba(255,80,80,.13);
+    }
+
+    .login-alert {
+      margin-top: 12px;
     }
 
     /* =========================
@@ -310,43 +590,109 @@
 
     .stat {
       position: relative;
-      padding: 19px;
-      min-height: 120px;
+      min-height: 142px;
+
+      padding: 20px;
+
+      overflow: hidden;
+
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
-      overflow: hidden;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.052),
+          rgba(255,255,255,.014)
+        ),
+        rgba(10,11,13,.78);
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.035),
+        0 15px 45px rgba(0,0,0,.12);
+
+      transition:
+        transform .25s,
+        border-color .25s,
+        background .25s;
+    }
+
+    .stat:hover {
+      transform: translateY(-3px);
+      border-color: var(--line2);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.065),
+          rgba(255,255,255,.018)
+        ),
+        rgba(10,11,13,.85);
     }
 
     .stat::after {
       content: "";
+
       position: absolute;
-      width: 100px;
-      height: 100px;
-      right: -55px;
-      bottom: -55px;
+
+      width: 150px;
+      height: 150px;
+
+      right: -90px;
+      bottom: -90px;
+
       border-radius: 50%;
-      background: rgba(255,106,0,.08);
-      filter: blur(10px);
+
+      background: rgba(220,225,235,.055);
+      filter: blur(18px);
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .stat-icon {
+      width: 30px;
+      height: 30px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 9px;
+
+      color: #bfc2c8;
+      background: rgba(255,255,255,.045);
+      border: 1px solid var(--line);
+
+      font-size: 12px;
     }
 
     .stat-label {
       color: var(--muted);
-      font-size: 10px;
-      font-weight: 800;
+      font-size: 9px;
+      font-weight: 900;
+
       text-transform: uppercase;
-      letter-spacing: .08em;
+      letter-spacing: .11em;
     }
 
     .stat-value {
-      margin-top: 11px;
-      font-size: 28px;
+      margin-top: 13px;
+
+      font-size: 29px;
       font-weight: 950;
-      letter-spacing: -.045em;
+      letter-spacing: -.055em;
+    }
+
+    #statRevenue {
+      font-size: 24px;
     }
 
     .stat-sub {
-      margin-top: 3px;
+      margin-top: 4px;
       color: var(--muted2);
       font-size: 9px;
     }
@@ -359,15 +705,49 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
+
       margin-top: 14px;
     }
 
     .card {
+      position: relative;
+
+      padding: 22px;
+
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: var(--card);
-      padding: 21px;
-      box-shadow: 0 12px 40px rgba(0,0,0,.14);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.04),
+          rgba(255,255,255,.012)
+        ),
+        rgba(10,11,13,.78);
+
+      box-shadow:
+        var(--shadow),
+        inset 0 1px 0 rgba(255,255,255,.025);
+
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+
+      position: absolute;
+      top: 0;
+      left: 15%;
+      width: 70%;
+      height: 1px;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,.11),
+          transparent
+        );
     }
 
     .card.full {
@@ -379,37 +759,54 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 15px;
-      margin-bottom: 18px;
+
+      margin-bottom: 20px;
     }
 
     .card-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 900;
-      letter-spacing: -.02em;
+      letter-spacing: -.025em;
     }
 
     .card-description {
       color: var(--muted2);
       font-size: 10px;
+      line-height: 1.5;
       margin-top: 4px;
     }
 
     .icon-title {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 11px;
     }
 
     .section-icon {
-      width: 35px;
-      height: 35px;
+      width: 36px;
+      height: 36px;
+
       display: grid;
       place-items: center;
+
       border-radius: 10px;
-      color: #ff9c60;
-      background: rgba(255,106,0,.08);
-      border: 1px solid rgba(255,106,0,.13);
-      font-size: 15px;
+
+      color: #d5d7db;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.075),
+          rgba(255,255,255,.02)
+        );
+
+      border: 1px solid var(--line2);
+
+      font-size: 14px;
+      font-weight: 900;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06);
     }
 
     /* =========================
@@ -425,29 +822,55 @@
     .form-actions {
       display: flex;
       gap: 8px;
-      margin-top: 13px;
+      margin-top: 14px;
     }
 
     .action-btn {
-      border: 0;
+      border: 1px solid rgba(255,255,255,.18);
       border-radius: 10px;
+
       padding: 11px 15px;
-      color: white;
-      background: linear-gradient(135deg,var(--orange2),var(--orange));
-      font-size: 11px;
-      font-weight: 900;
+
+      color: #08090a;
+
+      background:
+        linear-gradient(
+          145deg,
+          #e7e9eb,
+          #aeb2b8
+        );
+
+      font-size: 10px;
+      font-weight: 950;
+
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.65),
+        0 8px 25px rgba(255,255,255,.035);
+
+      transition: .2s;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .action-btn:disabled {
+      opacity: .5;
+      cursor: wait;
+      transform: none;
     }
 
     .action-btn.secondary {
-      color: #aaa;
-      border: 1px solid var(--line);
+      color: #aaaeb4;
+      border-color: var(--line);
       background: rgba(255,255,255,.035);
+      box-shadow: none;
     }
 
-    .action-btn.danger {
-      color: #ff8b8b;
-      border: 1px solid rgba(255,80,80,.15);
-      background: rgba(255,80,80,.045);
+    .action-btn.secondary:hover {
+      color: white;
+      background: rgba(255,255,255,.065);
     }
 
     /* =========================
@@ -455,17 +878,17 @@
     ========================= */
 
     .search {
-      width: 240px;
+      width: 250px;
     }
 
     .search input {
-      height: 37px;
-      padding: 0 11px;
-      font-size: 11px;
+      height: 38px;
+      padding: 0 12px;
+      font-size: 10px;
     }
 
     /* =========================
-       PRODUCT CARDS
+       PRODUCT LIST
     ========================= */
 
     .products-list {
@@ -475,27 +898,48 @@
     }
 
     .product-item {
-      padding: 15px;
+      position: relative;
+
+      padding: 16px;
+
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255,255,255,.02);
-      transition: .2s;
+      border-radius: 15px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.032),
+          rgba(255,255,255,.012)
+        );
+
+      transition:
+        transform .2s,
+        border-color .2s,
+        background .2s;
     }
 
     .product-item:hover {
+      transform: translateY(-2px);
       border-color: var(--line2);
-      background: rgba(255,255,255,.035);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.052),
+          rgba(255,255,255,.018)
+        );
     }
 
     .product-main {
       display: flex;
       justify-content: space-between;
-      gap: 12px;
+      gap: 15px;
     }
 
     .product-name {
       font-size: 13px;
       font-weight: 900;
+      letter-spacing: -.015em;
     }
 
     .product-desc {
@@ -506,108 +950,151 @@
     }
 
     .product-price {
-      color: #fff;
+      color: #e8e9eb;
       font-size: 13px;
-      font-weight: 900;
+      font-weight: 950;
       white-space: nowrap;
     }
 
     .product-meta {
       display: flex;
-      gap: 7px;
+      gap: 6px;
       flex-wrap: wrap;
-      margin-top: 13px;
+
+      margin-top: 14px;
       padding-top: 11px;
+
       border-top: 1px solid var(--line);
     }
 
     .mini-badge {
       display: inline-flex;
       align-items: center;
+
       padding: 5px 8px;
+
       border-radius: 7px;
-      color: #999;
+
+      color: #8f9298;
       background: rgba(255,255,255,.035);
+
       font-size: 9px;
       font-weight: 800;
     }
 
     .mini-badge.good {
-      color: #70e5a0;
-      background: rgba(57,217,130,.06);
+      color: #6fe3a0;
+      background: rgba(81,229,154,.055);
     }
 
     .mini-badge.warning {
-      color: #f2ce68;
-      background: rgba(240,198,92,.06);
+      color: #ebcc6c;
+      background: rgba(233,201,103,.055);
     }
 
     .mini-badge.empty-stock {
-      color: #ff7d7d;
+      color: #ff7c7c;
       background: rgba(255,80,80,.05);
     }
 
     /* =========================
-       TABLE
+       ORDERS
     ========================= */
 
     .table-wrap {
       width: 100%;
       overflow-x: auto;
+
+      border: 1px solid var(--line);
+      border-radius: 13px;
+
+      background: rgba(0,0,0,.13);
     }
 
     table {
       width: 100%;
-      min-width: 650px;
+      min-width: 700px;
       border-collapse: collapse;
     }
 
     th {
-      color: #68686d;
-      font-size: 9px;
-      font-weight: 900;
+      color: #686b72;
+
+      font-size: 8px;
+      font-weight: 950;
+
       text-transform: uppercase;
-      letter-spacing: .09em;
+      letter-spacing: .11em;
+
+      background: rgba(255,255,255,.018);
     }
 
     td,
     th {
-      padding: 13px 10px;
+      padding: 13px 12px;
       text-align: left;
       border-bottom: 1px solid var(--line);
     }
 
     td {
-      color: #bdbdc1;
-      font-size: 11px;
+      color: #bfc0c4;
+      font-size: 10px;
+    }
+
+    tbody tr {
+      transition: background .15s;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,.025);
     }
 
     tr:last-child td {
       border-bottom: 0;
     }
 
+    td strong {
+      color: #e3e4e6;
+      font-weight: 850;
+    }
+
     .status-badge {
       display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
       padding: 5px 9px;
+
       border-radius: 999px;
-      font-size: 9px;
-      font-weight: 900;
+
+      font-size: 8px;
+      font-weight: 950;
       text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .status-badge::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
     }
 
     .status-paid {
-      color: #6ce59c;
-      background: rgba(57,217,130,.08);
+      color: #69e29b;
+      background: rgba(81,229,154,.07);
     }
 
     .status-pending {
-      color: #f2cb62;
-      background: rgba(240,198,92,.08);
+      color: #edcc69;
+      background: rgba(233,201,103,.07);
     }
 
     .status-cancelled {
       color: #ff7777;
-      background: rgba(255,80,80,.08);
+      background: rgba(255,80,80,.07);
     }
 
     /* =========================
@@ -615,32 +1102,44 @@
     ========================= */
 
     .empty {
-      padding: 35px 15px;
+      padding: 38px 15px;
+
       text-align: center;
+
       color: var(--muted2);
-      border: 1px dashed var(--line);
-      border-radius: 12px;
-      font-size: 11px;
+
+      border: 1px dashed var(--line2);
+      border-radius: 13px;
+
+      font-size: 10px;
     }
 
     .loading {
       position: relative;
-      height: 90px;
-      border-radius: 12px;
+
+      height: 92px;
+
+      border-radius: 13px;
+
       overflow: hidden;
+
       background: rgba(255,255,255,.025);
     }
 
     .loading::after {
       content: "";
+
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,.05),
-        transparent
-      );
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,.055),
+          transparent
+        );
+
       transform: translateX(-100%);
       animation: loading 1.3s infinite;
     }
@@ -652,51 +1151,25 @@
     }
 
     /* =========================
-       STATUS
-    ========================= */
-
-    .alert {
-      display: none;
-      margin: 14px 0;
-      padding: 11px 13px;
-      border-radius: 11px;
-      font-size: 11px;
-      border: 1px solid var(--line);
-    }
-
-    .alert.show {
-      display: block;
-    }
-
-    .alert.success {
-      color: #71e6a1;
-      background: rgba(57,217,130,.05);
-      border-color: rgba(57,217,130,.15);
-    }
-
-    .alert.error {
-      color: #ff8585;
-      background: rgba(255,80,80,.05);
-      border-color: rgba(255,80,80,.15);
-    }
-
-    .login-alert {
-      margin-top: 12px;
-    }
-
-    /* =========================
        FOOTER
     ========================= */
 
     footer {
-      padding: 25px 0 0;
-      margin-top: 25px;
-      border-top: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
       gap: 15px;
-      color: #505055;
+
+      padding: 25px 4px 0;
+      margin-top: 25px;
+
+      border-top: 1px solid var(--line);
+
+      color: #4e5157;
       font-size: 9px;
+    }
+
+    footer strong {
+      color: #70737a;
     }
 
     /* =========================
@@ -705,31 +1178,49 @@
 
     .toast-container {
       position: fixed;
+
       right: 18px;
       bottom: 18px;
+
       z-index: 999;
+
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
     .toast {
-      max-width: 330px;
-      padding: 12px 14px;
+      max-width: 340px;
+
+      padding: 13px 15px;
+
       border: 1px solid var(--line2);
-      border-radius: 11px;
+      border-radius: 12px;
+
       color: #ddd;
-      background: #111;
-      box-shadow: 0 15px 50px rgba(0,0,0,.45);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(30,31,34,.98),
+          rgba(12,13,15,.98)
+        );
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.035);
+
       font-size: 10px;
+
       animation: toastIn .2s ease;
     }
 
     @keyframes toastIn {
       from {
         opacity: 0;
-        transform: translateY(7px);
+        transform: translateY(8px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -737,10 +1228,33 @@
     }
 
     /* =========================
+       SCROLLBAR
+    ========================= */
+
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #070809;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #2a2c30;
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3a3c41;
+    }
+
+    /* =========================
        RESPONSIVE
     ========================= */
 
-    @media (max-width: 950px) {
+    @media (max-width: 1000px) {
+
       .stats {
         grid-template-columns: repeat(2,1fr);
       }
@@ -753,18 +1267,17 @@
         grid-column: auto;
       }
 
-      .products-list {
-        grid-template-columns: 1fr;
-      }
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 700px) {
+
       .app {
-        width: calc(100% - 20px);
-        padding-top: 15px;
+        width: calc(100% - 18px);
+        padding-top: 10px;
       }
 
       .topbar {
+        top: 7px;
         align-items: flex-start;
       }
 
@@ -772,18 +1285,22 @@
         justify-content: flex-end;
       }
 
-      .topbar-right .top-btn:first-child {
+      .topbar .brand p {
         display: none;
+      }
+
+      .top-btn {
+        padding: 0 10px;
       }
 
       .welcome {
         align-items: flex-start;
         flex-direction: column;
-        padding-top: 25px;
+        padding: 35px 2px 23px;
       }
 
       .welcome h2 {
-        font-size: 26px;
+        font-size: 29px;
       }
 
       .stats {
@@ -791,12 +1308,16 @@
       }
 
       .stat {
-        min-height: 105px;
-        padding: 15px;
+        min-height: 120px;
+        padding: 16px;
       }
 
       .stat-value {
-        font-size: 23px;
+        font-size: 24px;
+      }
+
+      #statRevenue {
+        font-size: 19px;
       }
 
       .form-row {
@@ -804,7 +1325,7 @@
       }
 
       .card {
-        padding: 16px;
+        padding: 17px;
       }
 
       .card-head {
@@ -815,16 +1336,47 @@
         width: 100%;
       }
 
+      .products-list {
+        grid-template-columns: 1fr;
+      }
+
       footer {
         flex-direction: column;
         text-align: center;
       }
+
     }
 
-    @media (max-width: 400px) {
+    @media (max-width: 430px) {
+
+      .login-card {
+        padding: 25px 20px;
+      }
+
+      .topbar .brand h1 {
+        font-size: 12px;
+      }
+
+      .topbar-right .top-btn:first-child {
+        display: none;
+      }
+
       .stats {
         grid-template-columns: 1fr;
       }
+
+      .stat {
+        min-height: 110px;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .action-btn {
+        width: 100%;
+      }
+
     }
   </style>
 </head>
@@ -845,7 +1397,7 @@
 
       <div>
         <h1>ONYX ADMIN</h1>
-        <p>Painel administrativo V2</p>
+        <p>Central de gerenciamento</p>
       </div>
 
     </div>
@@ -855,8 +1407,8 @@
     </h2>
 
     <p class="login-description">
-      Acesse o painel para gerenciar produtos,
-      estoque e acompanhar os pedidos da sua loja.
+      Gerencie produtos, estoque e acompanhe
+      o desempenho da ONYX STORE em um só lugar.
     </p>
 
     <label for="password">
@@ -906,7 +1458,7 @@
 
       <div>
         <h1>ONYX ADMIN</h1>
-        <p>Painel de gerenciamento</p>
+        <p>Central de gerenciamento</p>
       </div>
 
     </div>
@@ -917,7 +1469,7 @@
         class="top-btn"
         onclick="openStore()"
       >
-        Ver loja
+        ↗ Ver loja
       </button>
 
       <button
@@ -947,7 +1499,7 @@
     <div>
 
       <div class="eyebrow">
-        DASHBOARD
+        ONYX CONTROL CENTER
       </div>
 
       <h2>
@@ -955,7 +1507,7 @@
       </h2>
 
       <p>
-        Gerencie seu catálogo, estoque e acompanhe suas vendas.
+        Catálogo, estoque e vendas em uma única central.
       </p>
 
     </div>
@@ -977,8 +1529,16 @@
 
     <div class="stat">
 
-      <div class="stat-label">
-        Produtos
+      <div class="stat-top">
+
+        <div class="stat-label">
+          Produtos
+        </div>
+
+        <div class="stat-icon">
+          ◈
+        </div>
+
       </div>
 
       <div
@@ -989,7 +1549,7 @@
       </div>
 
       <div class="stat-sub">
-        cadastrados na loja
+        produtos cadastrados
       </div>
 
     </div>
@@ -997,8 +1557,16 @@
 
     <div class="stat">
 
-      <div class="stat-label">
-        Estoque
+      <div class="stat-top">
+
+        <div class="stat-label">
+          Estoque
+        </div>
+
+        <div class="stat-icon">
+          ◫
+        </div>
+
       </div>
 
       <div
@@ -1017,8 +1585,16 @@
 
     <div class="stat">
 
-      <div class="stat-label">
-        Vendidos
+      <div class="stat-top">
+
+        <div class="stat-label">
+          Vendidos
+        </div>
+
+        <div class="stat-icon">
+          ↗
+        </div>
+
       </div>
 
       <div
@@ -1037,8 +1613,16 @@
 
     <div class="stat">
 
-      <div class="stat-label">
-        Faturamento
+      <div class="stat-top">
+
+        <div class="stat-label">
+          Faturamento
+        </div>
+
+        <div class="stat-icon">
+          R$
+        </div>
+
       </div>
 
       <div
@@ -1057,7 +1641,7 @@
   </section>
 
 
-  <!-- FORMS -->
+  <!-- MAIN GRID -->
 
   <section class="grid">
 
@@ -1075,13 +1659,15 @@
           </div>
 
           <div>
+
             <div class="card-title">
               Novo produto
             </div>
 
             <div class="card-description">
-              Cadastre um novo produto na loja.
+              Adicione um produto ao catálogo da loja.
             </div>
+
           </div>
 
         </div>
@@ -1170,12 +1756,13 @@
           </div>
 
           <div>
+
             <div class="card-title">
               Adicionar estoque
             </div>
 
             <div class="card-description">
-              Adicione uma conta/item disponível para venda.
+              Insira uma nova conta ou item disponível.
             </div>
 
           </div>
@@ -1190,9 +1777,11 @@
       </label>
 
       <select id="stockProduct">
+
         <option value="">
           Carregando produtos...
         </option>
+
       </select>
 
 
@@ -1241,13 +1830,15 @@
           </div>
 
           <div>
+
             <div class="card-title">
-              Produtos
+              Catálogo
             </div>
 
             <div class="card-description">
-              Visão geral do catálogo e disponibilidade.
+              Produtos, estoque disponível e unidades vendidas.
             </div>
+
           </div>
 
         </div>
@@ -1292,16 +1883,19 @@
           </div>
 
           <div>
+
             <div class="card-title">
               Pedidos recentes
             </div>
 
             <div class="card-description">
-              Acompanhe os últimos pedidos realizados na loja.
+              Histórico dos pedidos processados pela loja.
             </div>
+
           </div>
 
         </div>
+
 
         <div class="search">
 
@@ -1335,8 +1929,8 @@
   <footer>
 
     <div>
-      <strong>ONYX ADMIN V2</strong>
-      · Painel administrativo
+      <strong>ONYX ADMIN</strong>
+      · Central de gerenciamento
     </div>
 
     <div>
@@ -1361,6 +1955,7 @@
   let password = '';
 
   let productsData = [];
+
   let ordersData = [];
 
 
@@ -1451,13 +2046,16 @@
       document.createElement('div');
 
     item.className = 'toast';
+
     item.textContent = message;
 
     container.appendChild(item);
 
+
     setTimeout(() => {
 
       item.style.opacity = '0';
+
       item.style.transform =
         'translateY(7px)';
 
@@ -1483,6 +2081,7 @@
 
     el.className =
       `alert show ${type}`;
+
 
     setTimeout(() => {
 
@@ -1513,7 +2112,10 @@
   async function login() {
 
     const value =
-      $('password').value.trim();
+      $('password')
+        .value
+        .trim();
+
 
     if (!value) {
 
@@ -1524,14 +2126,17 @@
       return;
     }
 
+
     const button =
       $('loginButton');
 
     button.disabled = true;
+
     button.textContent =
       'Entrando...';
 
     password = value;
+
 
     try {
 
@@ -1544,6 +2149,7 @@
           }
         );
 
+
       if (!response.ok) {
 
         password = '';
@@ -1555,13 +2161,16 @@
         return;
       }
 
+
       $('loginScreen')
         .classList.add('hidden');
 
       $('app')
         .classList.remove('hidden');
 
+
       await refresh();
+
 
     } catch (error) {
 
@@ -1571,9 +2180,11 @@
         'Não foi possível conectar ao servidor.'
       );
 
+
     } finally {
 
       button.disabled = false;
+
       button.textContent =
         'Entrar no painel';
 
@@ -1591,9 +2202,12 @@
     const refreshButton =
       $('refreshButton');
 
+
     refreshButton.disabled = true;
+
     refreshButton.textContent =
       'Atualizando...';
+
 
     try {
 
@@ -1630,7 +2244,9 @@
 
 
       renderProductSelect();
+
       renderProducts();
+
       updateStats();
 
 
@@ -1662,12 +2278,14 @@
 
 
       renderOrders();
+
       updateStats();
 
 
       toast(
         'Painel atualizado.'
       );
+
 
     } catch (error) {
 
@@ -1678,9 +2296,11 @@
         'error'
       );
 
+
     } finally {
 
       refreshButton.disabled = false;
+
       refreshButton.textContent =
         '↻ Atualizar';
 
@@ -1696,7 +2316,9 @@
   function updateStats() {
 
     let stock = 0;
+
     let sold = 0;
+
     let revenue = 0;
 
 
@@ -1732,11 +2354,14 @@
     $('statProducts').textContent =
       productsData.length;
 
+
     $('statStock').textContent =
       stock;
 
+
     $('statSold').textContent =
       sold;
+
 
     $('statRevenue').textContent =
       money(revenue);
@@ -1753,6 +2378,7 @@
     const select =
       $('stockProduct');
 
+
     if (!productsData.length) {
 
       select.innerHTML =
@@ -1768,6 +2394,7 @@
 
           const stock =
             Number(product.stock || 0);
+
 
           return `
             <option value="${escapeHtml(product.id)}">
@@ -1790,6 +2417,7 @@
 
     const container =
       $('products');
+
 
     const search =
       $('productSearch')
@@ -1831,88 +2459,90 @@
 
 
     container.innerHTML =
-      list.map(product => {
+      list
+        .map(product => {
 
-        const stock =
-          Number(product.stock || 0);
+          const stock =
+            Number(product.stock || 0);
 
-        const sold =
-          Number(product.sold || 0);
+          const sold =
+            Number(product.sold || 0);
 
-        const price =
-          money(product.price_cents);
-
-
-        let stockClass =
-          'good';
-
-        let stockText =
-          `${stock} disponível${stock === 1 ? '' : 'is'}`;
+          const price =
+            money(product.price_cents);
 
 
-        if (stock === 0) {
+          let stockClass =
+            'good';
 
-          stockClass =
-            'empty-stock';
-
-          stockText =
-            'Esgotado';
-
-        } else if (stock <= 5) {
-
-          stockClass =
-            'warning';
-
-        }
+          let stockText =
+            `${stock} disponível${stock === 1 ? '' : 'is'}`;
 
 
-        return `
-          <article class="product-item">
+          if (stock === 0) {
 
-            <div class="product-main">
+            stockClass =
+              'empty-stock';
 
-              <div>
+            stockText =
+              'Esgotado';
 
-                <div class="product-name">
-                  ${escapeHtml(product.name)}
+          } else if (stock <= 5) {
+
+            stockClass =
+              'warning';
+
+          }
+
+
+          return `
+            <article class="product-item">
+
+              <div class="product-main">
+
+                <div>
+
+                  <div class="product-name">
+                    ${escapeHtml(product.name)}
+                  </div>
+
+                  <div class="product-desc">
+                    ${escapeHtml(
+                      product.description ||
+                      'Sem descrição.'
+                    )}
+                  </div>
+
                 </div>
 
-                <div class="product-desc">
-                  ${escapeHtml(
-                    product.description ||
-                    'Sem descrição.'
-                  )}
+                <div class="product-price">
+                  ${price}
                 </div>
 
               </div>
 
-              <div class="product-price">
-                ${price}
+
+              <div class="product-meta">
+
+                <span class="mini-badge ${stockClass}">
+                  ${stockText}
+                </span>
+
+                <span class="mini-badge">
+                  ${sold} vendido${sold === 1 ? '' : 's'}
+                </span>
+
+                <span class="mini-badge">
+                  ID: ${escapeHtml(product.id)}
+                </span>
+
               </div>
 
-            </div>
+            </article>
+          `;
 
-            <div class="product-meta">
-
-              <span class="mini-badge ${stockClass}">
-                ${stockText}
-              </span>
-
-              <span class="mini-badge">
-                ${sold} vendido${sold === 1 ? '' : 's'}
-              </span>
-
-              <span class="mini-badge">
-                ID: ${escapeHtml(product.id)}
-              </span>
-
-            </div>
-
-          </article>
-        `;
-
-      })
-      .join('');
+        })
+        .join('');
 
   }
 
@@ -1964,6 +2594,7 @@
     const container =
       $('orders');
 
+
     const search =
       $('orderSearch')
         .value
@@ -1987,6 +2618,7 @@
           ]
             .join(' ')
             .toLowerCase();
+
 
           return text.includes(search);
 
@@ -2085,10 +2717,12 @@
         .value
         .trim();
 
+
     const price =
       $('productPrice')
         .value
         .trim();
+
 
     const description =
       $('productDescription')
@@ -2124,7 +2758,9 @@
     const button =
       $('addProductButton');
 
+
     button.disabled = true;
+
     button.textContent =
       'Criando...';
 
@@ -2163,11 +2799,14 @@
 
       clearProductForm();
 
+
       showAlert(
         'Produto criado com sucesso!'
       );
 
+
       await refresh();
+
 
     } catch (error) {
 
@@ -2177,9 +2816,11 @@
         'error'
       );
 
+
     } finally {
 
       button.disabled = false;
+
       button.textContent =
         'Criar produto';
 
@@ -2196,6 +2837,7 @@
 
     const productId =
       $('stockProduct').value;
+
 
     const account =
       $('stockAccount')
@@ -2228,7 +2870,9 @@
     const button =
       $('addStockButton');
 
+
     button.disabled = true;
+
     button.textContent =
       'Adicionando...';
 
@@ -2266,11 +2910,14 @@
 
       clearStockForm();
 
+
       showAlert(
         'Item adicionado ao estoque!'
       );
 
+
       await refresh();
+
 
     } catch (error) {
 
@@ -2280,9 +2927,11 @@
         'error'
       );
 
+
     } finally {
 
       button.disabled = false;
+
       button.textContent =
         'Adicionar estoque';
 
@@ -2298,7 +2947,9 @@
   function clearProductForm() {
 
     $('productName').value = '';
+
     $('productPrice').value = '';
+
     $('productDescription').value = '';
 
   }
@@ -2336,11 +2987,14 @@
 
     $('password').value = '';
 
+
     $('app')
       .classList.add('hidden');
 
+
     $('loginScreen')
       .classList.remove('hidden');
+
 
     $('loginAlert')
       .classList.remove('show');
@@ -2374,7 +3028,9 @@
         if (
           event.key === 'Enter'
         ) {
+
           login();
+
         }
 
       }
