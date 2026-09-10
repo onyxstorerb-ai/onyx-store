@@ -240,10 +240,12 @@ async function getLivepixAccessToken(
       LIVEPIX_OAUTH_URL,
       {
         method: "POST",
+
         headers: {
           "Content-Type":
             "application/x-www-form-urlencoded"
         },
+
         body
       }
     );
@@ -531,53 +533,180 @@ async function findLivepixPaymentByReference(
    ESTOQUE
 ========================================================= */
 
-async function reserveInventory(
+/*
+ * O estoque NÃO é reservado no checkout.
+ *
+ * Uma conta só passa de available -> sold
+ * depois que o pagamento foi confirmado.
+ *
+ * A operação usa o próprio pedido como condição
+ * para impedir que dois webhooks confirmem
+ * o mesmo pedido simultaneamente.
+ */
+async function claimInventoryForPaidOrder(
   env: Env,
   orderId: string,
-  productId: string
+  productId: string,
+  paymentId: string,
+  reference: string
 ) {
   const result =
     await env.DB.batch([
+      /*
+       * 1. Pega uma única conta disponível.
+       *
+       * Só pode fazer isso se o pedido ainda
+       * estiver pending.
+       */
       env.DB.prepare(
         `UPDATE inventory
          SET
-           status='reserved',
-           order_id=?
+           status='sold',
+           order_id=?,
+           sold_at=CURRENT_TIMESTAMP
          WHERE id = (
-           SELECT id
-           FROM inventory
-           WHERE product_id=?
-             AND status='available'
-           ORDER BY created_at ASC
+           SELECT i.id
+           FROM inventory i
+           JOIN orders o
+             ON o.id=?
+           WHERE i.product_id=?
+             AND i.status='available'
+             AND o.status='pending'
+           ORDER BY i.created_at ASC
            LIMIT 1
-         )`
+         )
+         AND status='available'`
       ).bind(
+        orderId,
         orderId,
         productId
       ),
 
+      /*
+       * 2. Marca o pedido como pago
+       * somente se uma conta foi atribuída.
+       */
       env.DB.prepare(
-        `SELECT id
-         FROM inventory
-         WHERE order_id=?
-           AND status='reserved'
+        `UPDATE orders
+         SET
+           status='paid',
+           inventory_id=(
+             SELECT id
+             FROM inventory
+             WHERE order_id=?
+               AND status='sold'
+             LIMIT 1
+           ),
+           livepix_id=?,
+           livepix_reference=?,
+           paid_at=CURRENT_TIMESTAMP
+         WHERE id=?
+           AND status='pending'
+           AND EXISTS (
+             SELECT 1
+             FROM inventory
+             WHERE order_id=?
+               AND status='sold'
+           )`
+      ).bind(
+        orderId,
+        paymentId,
+        reference,
+        orderId,
+        orderId
+      ),
+
+      /*
+       * 3. Recupera a conta atribuída.
+       */
+      env.DB.prepare(
+        `SELECT
+           i.id,
+           i.product_id,
+           i.account_encrypted,
+           i.status,
+           i.order_id
+         FROM inventory i
+         WHERE i.order_id=?
+           AND i.status='sold'
+         LIMIT 1`
+      ).bind(
+        orderId
+      ),
+
+      /*
+       * 4. Recupera o estado final do pedido.
+       */
+      env.DB.prepare(
+        `SELECT
+           id,
+           status,
+           inventory_id
+         FROM orders
+         WHERE id=?
          LIMIT 1`
       ).bind(
         orderId
       )
     ]);
 
-  const row =
-    result[1]
+  const inventory =
+    result[2]
       ?.results?.[0] as any;
 
-  if (!row) {
-    return null;
+  const finalOrder =
+    result[3]
+      ?.results?.[0] as any;
+
+  /*
+   * Se o pedido já tinha sido pago,
+   * não entrega uma segunda conta.
+   */
+  if (
+    finalOrder?.status ===
+      "paid" &&
+    !inventory
+  ) {
+    return {
+      ok: true,
+      alreadyPaid: true,
+      orderId
+    };
   }
 
-  return String(
-    row.id
-  );
+  /*
+   * Se não conseguiu pegar estoque,
+   * o pedido continua sem consumo.
+   */
+  if (!inventory) {
+    return {
+      ok: false,
+      reason:
+        "out_of_stock_after_payment"
+    };
+  }
+
+  /*
+   * Confirma que o pedido realmente
+   * terminou como paid.
+   */
+  if (
+    finalOrder?.status !==
+    "paid"
+  ) {
+    return {
+      ok: false,
+      reason:
+        "order_not_paid"
+    };
+  }
+
+  return {
+    ok: true,
+    alreadyPaid: false,
+    inventory,
+    orderId
+  };
 }
 
 /* =========================================================
@@ -611,6 +740,9 @@ async function markPaidAndDeliver(
     };
   }
 
+  /*
+   * Localiza o pedido.
+   */
   let order =
     reference
       ? await env.DB.prepare(
@@ -651,8 +783,10 @@ async function markPaidAndDeliver(
   }
 
   /*
-   * Evita dupla entrega caso o webhook
-   * seja recebido mais de uma vez.
+   * Idempotência:
+   *
+   * Se o pedido já está pago,
+   * nunca tenta pegar outra conta.
    */
   if (
     order.status ===
@@ -712,6 +846,9 @@ async function markPaidAndDeliver(
     };
   }
 
+  /*
+   * Confere moeda.
+   */
   if (
     String(
       verified.currency ||
@@ -726,6 +863,9 @@ async function markPaidAndDeliver(
     };
   }
 
+  /*
+   * Confere valor.
+   */
   const livepixAmount =
     Number(
       verified.amount
@@ -750,39 +890,6 @@ async function markPaidAndDeliver(
     };
   }
 
-  const inventory =
-    await env.DB.prepare(
-      `SELECT *
-       FROM inventory
-       WHERE id=?
-         AND order_id=?
-         AND status='reserved'
-       LIMIT 1`
-    )
-      .bind(
-        order.inventory_id,
-        order.id
-      )
-      .first<any>();
-
-  if (!inventory) {
-    return {
-      ok: false,
-      reason:
-        "reserved_inventory_not_found"
-    };
-  }
-
-  /*
-   * Descriptografa somente depois
-   * de confirmar o pagamento.
-   */
-  const account =
-    await decrypt(
-      inventory.account_encrypted,
-      env.ENCRYPTION_KEY
-    );
-
   const finalPaymentId =
     String(
       verified.id ||
@@ -798,39 +905,55 @@ async function markPaidAndDeliver(
     );
 
   /*
-   * Pedido -> paid
-   * Estoque -> sold
+   * Só agora o estoque é consumido.
+   *
+   * Se não houver conta disponível,
+   * nenhuma conta é removida.
    */
-  await env.DB.batch([
-    env.DB.prepare(
-      `UPDATE orders
-       SET
-         status='paid',
-         livepix_id=?,
-         livepix_reference=?,
-         paid_at=CURRENT_TIMESTAMP
-       WHERE id=?
-         AND status!='paid'`
-    ).bind(
+  const claimed =
+    await claimInventoryForPaidOrder(
+      env,
+      order.id,
+      order.product_id,
       finalPaymentId,
-      finalReference,
-      order.id
-    ),
+      finalReference
+    );
 
-    env.DB.prepare(
-      `UPDATE inventory
-       SET
-         status='sold',
-         sold_at=CURRENT_TIMESTAMP
-       WHERE id=?
-         AND status='reserved'`
-    ).bind(
-      inventory.id
-    )
-  ]);
+  if (!claimed.ok) {
+    return claimed;
+  }
+
+  /*
+   * Webhook repetido.
+   */
+  if (
+    claimed.alreadyPaid
+  ) {
+    return {
+      ok: true,
+      alreadyPaid: true,
+      orderId:
+        order.id
+    };
+  }
+
+  const inventory =
+    claimed.inventory;
+
+  /*
+   * Descriptografa somente depois
+   * da confirmação do pagamento.
+   */
+  const account =
+    await decrypt(
+      inventory.account_encrypted,
+      env.ENCRYPTION_KEY
+    );
 
   return {
     ok: true,
+
+    alreadyPaid: false,
 
     account,
 
@@ -865,6 +988,9 @@ async function handleLivepixWebhook(
     );
   }
 
+  /*
+   * Confere clientId quando enviado.
+   */
   if (
     payload?.clientId &&
     String(
@@ -984,6 +1110,31 @@ async function handleLivepixWebhook(
     return json(
       result,
       404
+    );
+  }
+
+  /*
+   * Pagamento confirmado mas sem estoque.
+   *
+   * Não inventa entrega e não pega
+   * outra conta.
+   */
+  if (
+    result.reason ===
+    "out_of_stock_after_payment"
+  ) {
+    console.error(
+      "Pagamento confirmado sem estoque:",
+      result
+    );
+
+    return json(
+      {
+        ...result,
+        status:
+          "payment_confirmed_no_stock"
+      },
+      409
     );
   }
 
@@ -1125,17 +1276,31 @@ async function api(
       );
     }
 
-    const orderId =
-      id("ord");
+    /*
+     * Apenas verifica se existe estoque.
+     *
+     * NÃO reserva nenhuma conta.
+     */
+    const stock =
+      await env.DB.prepare(
+        `SELECT COUNT(*) AS total
+         FROM inventory
+         WHERE product_id=?
+           AND status='available'`
+      )
+        .bind(
+          product.id
+        )
+        .first<any>();
 
-    const inventoryId =
-      await reserveInventory(
-        env,
-        orderId,
-        product.id
+    const availableStock =
+      Number(
+        stock?.total || 0
       );
 
-    if (!inventoryId) {
+    if (
+      availableStock <= 0
+    ) {
       return json(
         {
           error:
@@ -1145,11 +1310,22 @@ async function api(
       );
     }
 
+    const orderId =
+      id("ord");
+
     const chargedAmountCents =
       amountWithFee(
         baseAmountCents
       );
 
+    /*
+     * Cria o pedido como pending.
+     *
+     * inventory_id fica NULL.
+     *
+     * Portanto:
+     * pending != estoque consumido.
+     */
     try {
       await env.DB.prepare(
         `INSERT INTO orders
@@ -1161,32 +1337,32 @@ async function api(
            status
          )
          VALUES
-         (?, ?, ?, ?, 'pending')`
+         (?, ?, NULL, ?, 'pending')`
       )
         .bind(
           orderId,
           product.id,
-          inventoryId,
           chargedAmountCents
         )
         .run();
     } catch (error) {
-      await env.DB.prepare(
-        `UPDATE inventory
-         SET
-           status='available',
-           order_id=NULL
-         WHERE id=?
-           AND status='reserved'`
-      )
-        .bind(
-          inventoryId
-        )
-        .run();
+      console.error(
+        "Erro ao criar pedido:",
+        error
+      );
 
-      throw error;
+      return json(
+        {
+          error:
+            "Não foi possível criar o pedido."
+        },
+        500
+      );
     }
 
+    /*
+     * Cria cobrança LivePix.
+     */
     try {
       const payment =
         await livepixCreatePayment(
@@ -1242,26 +1418,20 @@ async function api(
         201
       );
     } catch (error) {
-      await env.DB.batch([
-        env.DB.prepare(
-          `UPDATE inventory
-           SET
-             status='available',
-             order_id=NULL
-           WHERE id=?
-             AND status='reserved'`
-        ).bind(
-          inventoryId
-        ),
-
-        env.DB.prepare(
-          `UPDATE orders
-           SET status='cancelled'
-           WHERE id=?`
-        ).bind(
+      /*
+       * Como nenhuma conta foi reservada,
+       * aqui só precisamos cancelar o pedido.
+       */
+      await env.DB.prepare(
+        `UPDATE orders
+         SET status='cancelled'
+         WHERE id=?
+           AND status='pending'`
+      )
+        .bind(
           orderId
         )
-      ]);
+        .run();
 
       console.error(
         "LivePix checkout error:",
@@ -1361,12 +1531,17 @@ async function api(
       });
     }
 
+    /*
+     * Depois do pagamento,
+     * encontra a conta pelo order_id.
+     */
     const inventory =
       await env.DB.prepare(
         `SELECT
           account_encrypted
          FROM inventory
          WHERE order_id=?
+           AND status='sold'
          LIMIT 1`
       )
         .bind(
@@ -1381,6 +1556,12 @@ async function api(
 
         status:
           "paid",
+
+        product:
+          order.name,
+
+        amountCents:
+          order.amount_cents,
 
         delivered:
           false
@@ -1397,10 +1578,6 @@ async function api(
       env.DISCORD_URL ||
       DEFAULT_DISCORD_URL;
 
-    /*
-     * Mensagem que o frontend pode
-     * exibir imediatamente após a aprovação.
-     */
     const thankYouMessage =
 `✅ Pagamento aprovado!
 🔒 Sua conta: ${account}
