@@ -11,7 +11,7 @@
     {
       "binding": "DB",
       "database_name": "onyx-store-db",
-      "database_id": "COLOQUE_O_DATABASE_ID_AQUI",
+      "database_id": "7123ee2d-7b90-4664-b365-2fcc213ee05b",
       "migrations_dir": "migrations"
     }
   ]
