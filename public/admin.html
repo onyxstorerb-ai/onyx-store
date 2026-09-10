@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ONYX Admin</title>
+<style>
+body{margin:0;background:#090a0c;color:#eee;font-family:system-ui;padding:30px}.wrap{max-width:1000px;margin:auto}.box{background:#121419;border:1px solid #262a33;border-radius:16px;padding:20px;margin:16px 0}input,textarea,select{width:100%;box-sizing:border-box;background:#0a0b0e;color:#fff;border:1px solid #30343d;border-radius:9px;padding:11px;margin:6px 0 12px}button{background:#ff6a00;color:white;border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:pointer}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.row{grid-template-columns:1fr}}table{width:100%;border-collapse:collapse}td,th{padding:9px;border-bottom:1px solid #282b32;text-align:left}.muted{color:#999}
+</style></head>
+<body><div class="wrap">
+<h1>ONYX ADMIN</h1><p class="muted">Gerencie produtos e estoque.</p>
+<div class="box" id="login"><h2>Login</h2><input id="pass" type="password" placeholder="Senha do admin"><button onclick="login()">Entrar</button></div>
+<div id="panel" style="display:none">
+<div class="box"><h2>Novo produto</h2><div class="row"><div><input id="name" placeholder="Nome"></div><div><input id="price" type="number" step="0.01" placeholder="Preço"></div></div><textarea id="desc" placeholder="Descrição"></textarea><button onclick="addProduct()">Criar produto</button></div>
+<div class="box"><h2>Adicionar conta ao estoque</h2><select id="product"></select><textarea id="account" placeholder="Ex.: email: senha:"></textarea><button onclick="addStock()">Adicionar ao estoque</button></div>
+<div class="box"><h2>Produtos / estoque</h2><div id="products"></div></div>
+<div class="box"><h2>Últimos pedidos</h2><div id="orders"></div></div>
+</div></div>
+<script>
+let pwd='';
+const H=()=>({'x-admin-password':pwd,'content-type':'application/json'});
+async function login(){pwd=document.getElementById('pass').value;const r=await fetch('/api/admin/products',{headers:H()});if(!r.ok){alert('Senha incorreta');return}document.getElementById('login').style.display='none';document.getElementById('panel').style.display='block';refresh()}
+async function addProduct(){const r=await fetch('/api/admin/products',{method:'POST',headers:H(),body:JSON.stringify({name:name.value,price:price.value,description:desc.value})});if(!r.ok)return alert('Erro');name.value='';price.value='';desc.value='';refresh()}
+async function addStock(){const r=await fetch('/api/admin/stock',{method:'POST',headers:H(),body:JSON.stringify({productId:product.value,account:account.value})});if(!r.ok)return alert((await r.json()).error||'Erro');account.value='';alert('Conta adicionada ao estoque');refresh()}
+async function refresh(){const p=await fetch('/api/admin/products',{headers:H()}).then(r=>r.json());product.innerHTML=p.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');products.innerHTML='<table><tr><th>Produto</th><th>Disponível</th><th>Vendidas</th></tr>'+p.map(x=>`<tr><td>${x.name}</td><td>${x.stock}</td><td>${x.sold}</td></tr>`).join('')+'</table>';const o=await fetch('/api/admin/orders',{headers:H()}).then(r=>r.json());orders.innerHTML='<table><tr><th>Produto</th><th>Status</th><th>Valor</th><th>Data</th></tr>'+o.map(x=>`<tr><td>${x.product}</td><td>${x.status}</td><td>R$ ${(x.amount_cents/100).toFixed(2)}</td><td>${x.created_at}</td></tr>`).join('')+'</table>'}
+</script></body></html>

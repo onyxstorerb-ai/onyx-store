@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ONYX Store</title>
+<style>
+:root{--bg:#08090b;--card:#111318;--line:#242730;--text:#f5f5f5;--muted:#a4a7af;--accent:#ff6a00}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#171a21,#08090b 55%);color:var(--text);font-family:Inter,system-ui,Arial;min-height:100vh}
+header{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;background:#08090bdd;backdrop-filter:blur(16px);z-index:5}
+.logo{font-size:25px;font-weight:900;letter-spacing:4px}.logo span{color:var(--accent)}
+main{width:min(1100px,92%);margin:50px auto}.hero{padding:30px 0 45px}.hero h1{font-size:clamp(38px,7vw,72px);margin:0 0 12px}.hero p{color:var(--muted);font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}.card{background:linear-gradient(145deg,#151820,#0d0f13);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 18px 50px #0005}.card h2{margin:0 0 8px}.desc{color:var(--muted);min-height:48px}.price{font-size:28px;font-weight:800;margin:18px 0}.stock{font-size:13px;color:#8ee5b1}.btn{border:0;border-radius:12px;padding:13px 18px;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;width:100%}.btn:disabled{opacity:.5;cursor:not-allowed}
+#modal{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:center;justify-content:center;padding:20px}.modal{width:min(520px,100%);background:#111318;border:1px solid var(--line);border-radius:20px;padding:25px}.close{float:right;background:none;color:#aaa;border:0;font-size:25px;cursor:pointer}.pix{width:220px;height:220px;display:block;margin:20px auto;object-fit:contain;background:white;border-radius:10px}.copy{width:100%;background:#0a0b0e;color:#fff;border:1px solid var(--line);padding:12px;border-radius:10px}
+#discord{position:fixed;right:20px;bottom:20px;background:#5865F2;color:#fff;text-decoration:none;padding:13px 18px;border-radius:999px;font-weight:900;box-shadow:0 10px 30px #0008;z-index:50}
+.success{display:none}.account{white-space:pre-wrap;background:#090a0c;border:1px solid #282b34;border-radius:12px;padding:15px;font-family:ui-monospace,monospace}
+</style>
+</head>
+<body>
+<header><div class="logo">ONYX<span>.</span></div><div>STORE</div></header>
+<main>
+<section class="hero"><h1>ONYX STORE</h1><p>Contas digitais com entrega automática após a confirmação do pagamento.</p></section>
+<section id="products" class="grid"></section>
+</main>
+
+<a id="discord" href="#" target="_blank" rel="noopener">Entrar no Discord</a>
+
+<div id="modal">
+<div class="modal">
+<button class="close" onclick="closeModal()">×</button>
+<div id="checkoutView">
+<h2 id="modalTitle">Pagamento</h2>
+<p id="modalText">Gerando sua cobrança...</p>
+<img id="qr" class="pix" style="display:none">
+<input id="pix" class="copy" readonly style="display:none">
+<br><br><button id="copyBtn" class="btn" style="display:none" onclick="copyPix()">Copiar Pix</button>
+<p id="checkoutLink"></p>
+</div>
+<div class="success" id="success">
+<h2>Compra confirmada! ✅</h2>
+<p>Obrigado pela sua compra! ❤️</p>
+<p>Confira os dados da conta abaixo.</p>
+<div id="account" class="account"></div>
+<p>📸 Entre na conta, tire um print para guardar o comprovante e, se puder, deixe seu feedback no nosso servidor do Discord.</p>
+<a id="successDiscord" class="btn" style="display:block;text-align:center;text-decoration:none" target="_blank">Dar feedback no Discord</a>
+</div>
+</div>
+</div>
+
+<script>
+let currentOrder=null;
+const money=c=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(c/100);
+async function load(){
+  const [p, cfg] = await Promise.all([
+    fetch('/api/products').then(r=>r.json()),
+    Promise.resolve({discord:'https://discord.gg/SEU_SERVIDOR'})
+  ]);
+  document.getElementById('discord').href=cfg.discord;
+  document.getElementById('successDiscord').href=cfg.discord;
+  const box=document.getElementById('products');
+  box.innerHTML=p.map(x=>`<article class="card">
+    <h2>${esc(x.name)}</h2><div class="desc">${esc(x.description||'')}</div>
+    <div class="price">${money(x.price_cents)}</div>
+    <div class="stock">${x.stock} disponível(is)</div><br>
+    <button class="btn" ${x.stock<1?'disabled':''} onclick="buy('${x.id}')">${x.stock<1?'Sem estoque':'Comprar agora'}</button>
+  </article>`).join('');
+}
+async function buy(productId){
+  openModal(); document.getElementById('modalText').textContent='Criando cobrança...';
+  const r=await fetch('/api/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({productId})});
+  const d=await r.json();
+  if(!r.ok){document.getElementById('modalText').textContent=d.error||'Não foi possível criar a cobrança.';return}
+  currentOrder=d.orderId;
+  document.getElementById('modalText').textContent='Pague via Pix. Assim que o pagamento for confirmado, sua conta aparecerá aqui.';
+  if(d.pixQrCode){document.getElementById('qr').src='data:image/png;base64,'+d.pixQrCode;document.getElementById('qr').style.display='block'}
+  if(d.pixCode){document.getElementById('pix').value=d.pixCode;document.getElementById('pix').style.display='block';document.getElementById('copyBtn').style.display='block'}
+  document.getElementById('checkoutLink').innerHTML=`<a href="${d.checkout}" target="_blank" style="color:#ff8b3d">Abrir checkout da LivePix</a>`;
+  poll();
+}
+async function poll(){
+  if(!currentOrder)return;
+  const r=await fetch('/api/order/'+encodeURIComponent(currentOrder)); const d=await r.json();
+  if(d.status==='paid' && d.delivered){showSuccess(d.account);return}
+  setTimeout(poll,3000);
+}
+function showSuccess(account){
+  document.getElementById('checkoutView').style.display='none';
+  document.getElementById('success').style.display='block';
+  document.getElementById('account').textContent=account;
+  load();
+}
+function copyPix(){navigator.clipboard.writeText(document.getElementById('pix').value);document.getElementById('copyBtn').textContent='Copiado! ✓';}
+function openModal(){document.getElementById('modal').style.display='flex';document.getElementById('checkoutView').style.display='block';document.getElementById('success').style.display='none';document.getElementById('qr').style.display='none';document.getElementById('pix').style.display='none';document.getElementById('copyBtn').style.display='none';document.getElementById('checkoutLink').innerHTML='';}
+function closeModal(){document.getElementById('modal').style.display='none'}
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+load();
+</script>
+</body>
+</html>

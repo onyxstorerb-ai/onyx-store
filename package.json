@@ -1,0 +1,14 @@
+{
+  "name": "onyx-store",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "echo ONYX build ready for Cloudflare Workers",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.33.1"
+  }
+}

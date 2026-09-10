@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "onyx-store",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-10",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "onyx-store-db",
+      "database_id": "COLOQUE_O_DATABASE_ID_AQUI",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
