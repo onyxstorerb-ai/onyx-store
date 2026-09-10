@@ -1,5192 +1,2778 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>ONYX STORE — Produtos Digitais</title>
-  <meta name="description" content="ONYX STORE — produtos digitais com pagamento seguro e entrega automática.">
-
-  <style>
-    :root {
-      --bg: #030303;
-      --bg2: #060607;
-      --bg3: #0a0a0c;
-
-      --surface: rgba(14,14,16,.82);
-      --surface2: #101012;
-      --surface3: #151517;
-
-      --line: rgba(255,255,255,.065);
-      --line2: rgba(255,255,255,.12);
-      --line3: rgba(255,255,255,.2);
-
-      --text: #f5f5f6;
-      --muted: #85868c;
-      --muted2: #5e5f65;
-
-      --silver: #e3e3e5;
-      --silver2: #a6a7ac;
-      --silver3: #66676d;
-
-      --green: #45df85;
-      --yellow: #e4c75f;
-      --red: #ff6161;
-
-      --max: 1240px;
-      --radius: 22px;
-
-      --shadow:
-        0 30px 90px rgba(0,0,0,.55);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      overflow-x: hidden;
-
-      color: var(--text);
-
-      font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-      background:
-        radial-gradient(
-          ellipse at 50% -10%,
-          rgba(255,255,255,.095),
-          transparent 32%
-        ),
-        radial-gradient(
-          ellipse at 0% 35%,
-          rgba(255,255,255,.025),
-          transparent 28%
-        ),
-        linear-gradient(
-          180deg,
-          #020202 0%,
-          #050506 45%,
-          #020202 100%
-        );
-    }
-
-    body.modal-open {
-      overflow: hidden;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    ::selection {
-      background: rgba(255,255,255,.2);
-      color: #fff;
-    }
-
-    /* =========================================
-       BACKGROUND
-    ========================================= */
-
-    .ambient {
-      position: fixed;
-      inset: 0;
-      z-index: -5;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .ambient::before {
-      content: "";
-
-      position: absolute;
-
-      width: 800px;
-      height: 800px;
-
-      left: 50%;
-      top: -600px;
-
-      transform: translateX(-50%);
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(255,255,255,.13),
-          rgba(255,255,255,.035) 34%,
-          transparent 70%
-        );
-
-      filter: blur(30px);
-    }
-
-    .ambient::after {
-      content: "";
-
-      position: absolute;
-
-      width: 650px;
-      height: 650px;
-
-      right: -450px;
-      top: 35%;
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(255,255,255,.04),
-          transparent 70%
-        );
-
-      filter: blur(40px);
-    }
-
-    .grid-bg {
-      position: absolute;
-      inset: 0;
-
-      opacity: .022;
-
-      background-image:
-        linear-gradient(
-          rgba(255,255,255,.7) 1px,
-          transparent 1px
-        ),
-        linear-gradient(
-          90deg,
-          rgba(255,255,255,.7) 1px,
-          transparent 1px
-        );
-
-      background-size: 58px 58px;
-
-      mask-image:
-        linear-gradient(
-          to bottom,
-          black,
-          transparent 75%
-        );
-    }
-
-    .grain {
-      position: fixed;
-      inset: 0;
-
-      z-index: -4;
-
-      pointer-events: none;
-
-      opacity: .018;
-
-      background-image:
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
-    }
-
-    .container {
-      width: min(
-        var(--max),
-        calc(100% - 36px)
-      );
-
-      margin: auto;
-    }
-
-    /* =========================================
-       HEADER
-    ========================================= */
-
-    header {
-      position: sticky;
-      top: 0;
-
-      z-index: 100;
-
-      border-bottom:
-        1px solid rgba(255,255,255,.055);
-
-      background:
-        rgba(3,3,3,.72);
-
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-    }
-
-    .header-inner {
-      width: min(
-        var(--max),
-        calc(100% - 36px)
-      );
-
-      height: 76px;
-
-      margin: auto;
-
-      display: flex;
-      align-items: center;
-
-      gap: 30px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-
-      gap: 11px;
-
-      flex-shrink: 0;
-    }
-
-    .brand-mark {
-      position: relative;
-
-      width: 40px;
-      height: 40px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 12px;
-
-      color: #080808;
-
-      font-size: 17px;
-      font-weight: 1000;
-
-      background:
-        linear-gradient(
-          145deg,
-          #fafafa 0%,
-          #a6a7aa 45%,
-          #424348 100%
-        );
-
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.7),
-        0 10px 35px rgba(0,0,0,.5);
-    }
-
-    .brand-mark::after {
-      content: "";
-
-      position: absolute;
-      inset: 1px;
-
-      border-radius: 11px;
-
-      border:
-        1px solid rgba(255,255,255,.28);
-    }
-
-    .brand-text {
-      font-size: 15px;
-      font-weight: 950;
-
-      letter-spacing: .2em;
-    }
-
-    .brand-text span {
-      color: #66676c;
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-
-      gap: 4px;
-
-      margin-left: auto;
-    }
-
-    .nav a {
-      padding: 10px 13px;
-
-      border-radius: 10px;
-
-      color: #85868b;
-
-      font-size: 11px;
-      font-weight: 800;
-
-      transition: .2s ease;
-    }
-
-    .nav a:hover {
-      color: #fff;
-
-      background:
-        rgba(255,255,255,.05);
-    }
-
-    .nav-discord {
-      color: #eee !important;
-
-      border:
-        1px solid var(--line2);
-
-      background:
-        rgba(255,255,255,.04);
-    }
-
-    .nav-discord:hover {
-      border-color: var(--line3);
-
-      background:
-        rgba(255,255,255,.08) !important;
-    }
-
-    /* =========================================
-       HERO
-    ========================================= */
-
-    .hero {
-      position: relative;
-
-      padding:
-        105px 0 80px;
-    }
-
-    .hero-layout {
-      display: grid;
-
-      grid-template-columns:
-        1.1fr .9fr;
-
-      align-items: center;
-
-      gap: 70px;
-    }
-
-    .hero-content {
-      position: relative;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-
-      gap: 9px;
-
-      padding: 8px 12px;
-
-      border:
-        1px solid rgba(255,255,255,.11);
-
-      border-radius: 999px;
-
-      color: #a7a8ad;
-
-      background:
-        rgba(255,255,255,.035);
-
-      font-size: 9px;
-      font-weight: 950;
-
-      letter-spacing: .14em;
-      text-transform: uppercase;
-
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.04);
-    }
-
-    .hero-badge i {
-      width: 6px;
-      height: 6px;
-
-      border-radius: 50%;
-
-      background: var(--green);
-
-      box-shadow:
-        0 0 14px rgba(69,223,133,.7);
-
-      animation:
-        livePulse 2s infinite;
-    }
-
-    @keyframes livePulse {
-      50% {
-        opacity: .45;
-        transform: scale(.75);
-      }
-    }
-
-    .hero h1 {
-      max-width: 780px;
-
-      margin-top: 25px;
-
-      font-size:
-        clamp(
-          50px,
-          6.7vw,
-          86px
-        );
-
-      line-height: .91;
-
-      letter-spacing: -.07em;
-
-      font-weight: 1000;
-    }
-
-    .hero h1 .first {
-      display: block;
-
-      color: #f2f2f3;
-    }
-
-    .hero h1 .second {
-      display: block;
-
-      color: transparent;
-
-      background:
-        linear-gradient(
-          105deg,
-          #ffffff,
-          #aeb0b4 28%,
-          #5f6065 52%,
-          #eeeeef 74%,
-          #85868b
-        );
-
-      background-size: 180% auto;
-
-      background-clip: text;
-      -webkit-background-clip: text;
-
-      animation:
-        metalShine 7s linear infinite;
-    }
-
-    @keyframes metalShine {
-      0% {
-        background-position: 180% center;
-      }
-
-      100% {
-        background-position: -20% center;
-      }
-    }
-
-    .hero-description {
-      max-width: 610px;
-
-      margin-top: 25px;
-
-      color: #797a80;
-
-      font-size: 14px;
-
-      line-height: 1.8;
-    }
-
-    .hero-actions {
-      display: flex;
-
-      flex-wrap: wrap;
-
-      gap: 10px;
-
-      margin-top: 30px;
-    }
-
-    .btn {
-      min-height: 46px;
-
-      padding: 0 19px;
-
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 11px;
-
-      font-size: 10px;
-      font-weight: 950;
-
-      transition:
-        transform .22s ease,
-        border-color .22s ease,
-        background .22s ease,
-        box-shadow .22s ease;
-    }
-
-    .btn-primary {
-      color: #080808;
-
-      border:
-        1px solid rgba(255,255,255,.22);
-
-      background:
-        linear-gradient(
-          135deg,
-          #f2f2f3,
-          #9b9ca0
-        );
-
-      box-shadow:
-        0 14px 35px rgba(0,0,0,.35),
-        inset 0 1px 0 rgba(255,255,255,.7);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-
-      box-shadow:
-        0 20px 45px rgba(0,0,0,.5),
-        inset 0 1px 0 rgba(255,255,255,.8);
-    }
-
-    .btn-secondary {
-      color: #c9cacf;
-
-      border:
-        1px solid var(--line2);
-
-      background:
-        rgba(255,255,255,.035);
-    }
-
-    .btn-secondary:hover {
-      color: #fff;
-
-      border-color: var(--line3);
-
-      background:
-        rgba(255,255,255,.07);
-    }
-
-    /* HERO VISUAL */
-
-    .hero-visual {
-      position: relative;
-
-      min-height: 390px;
-
-      display: grid;
-      place-items: center;
-    }
-
-    .visual-glow {
-      position: absolute;
-
-      width: 340px;
-      height: 340px;
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(255,255,255,.11),
-          transparent 67%
-        );
-
-      filter: blur(35px);
-    }
-
-    .onyx-orb {
-      position: relative;
-
-      width: 275px;
-      height: 315px;
-
-      transform:
-        rotate(17deg)
-        skewY(-4deg);
-
-      border-radius:
-        38px 65px 42px 70px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #303136 0%,
-          #0e0f11 22%,
-          #020202 52%,
-          #18191c 75%,
-          #050506 100%
-        );
-
-      box-shadow:
-        -25px 35px 70px rgba(0,0,0,.8),
-        inset 12px 12px 30px rgba(255,255,255,.055),
-        inset -15px -15px 35px rgba(0,0,0,.9);
-
-      animation:
-        orbFloat 6s ease-in-out infinite;
-    }
-
-    .onyx-orb::before {
-      content: "";
-
-      position: absolute;
-
-      inset: 18px;
-
-      border-radius: inherit;
-
-      border:
-        1px solid rgba(255,255,255,.09);
-
-      background:
-        linear-gradient(
-          135deg,
-          transparent 35%,
-          rgba(255,255,255,.05),
-          transparent 62%
-        );
-    }
-
-    .onyx-orb::after {
-      content: "O";
-
-      position: absolute;
-
-      inset: 0;
-
-      display: grid;
-      place-items: center;
-
-      transform: rotate(-17deg);
-
-      color: rgba(255,255,255,.12);
-
-      font-size: 90px;
-      font-weight: 1000;
-
-      text-shadow:
-        0 0 40px rgba(255,255,255,.07);
-    }
-
-    @keyframes orbFloat {
-      0%,100% {
-        transform:
-          translateY(0)
-          rotate(17deg)
-          skewY(-4deg);
-      }
-
-      50% {
-        transform:
-          translateY(-12px)
-          rotate(20deg)
-          skewY(-4deg);
-      }
-    }
-
-    .visual-card {
-      position: absolute;
-
-      min-width: 150px;
-
-      padding: 13px 15px;
-
-      border:
-        1px solid rgba(255,255,255,.1);
-
-      border-radius: 13px;
-
-      background:
-        rgba(10,10,11,.76);
-
-      backdrop-filter: blur(16px);
-
-      box-shadow:
-        0 20px 50px rgba(0,0,0,.5);
-    }
-
-    .visual-card.one {
-      top: 55px;
-      right: 10px;
-    }
-
-    .visual-card.two {
-      bottom: 50px;
-      left: 10px;
-    }
-
-    .visual-card small {
-      display: block;
-
-      color: #5e5f65;
-
-      font-size: 7px;
-      font-weight: 900;
-
-      letter-spacing: .14em;
-    }
-
-    .visual-card strong {
-      display: block;
-
-      margin-top: 4px;
-
-      color: #e5e5e6;
-
-      font-size: 12px;
-    }
-
-    .visual-card .dot {
-      display: inline-block;
-
-      width: 5px;
-      height: 5px;
-
-      margin-right: 5px;
-
-      border-radius: 50%;
-
-      background: var(--green);
-    }
-
-    /* =========================================
-       STORE STATUS
-    ========================================= */
-
-    .status-bar {
-      display: grid;
-
-      grid-template-columns:
-        repeat(4,1fr);
-
-      margin-bottom: 80px;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 18px;
-
-      overflow: hidden;
-
-      background:
-        linear-gradient(
-          135deg,
-          rgba(255,255,255,.045),
-          rgba(255,255,255,.012)
-        );
-
-      box-shadow:
-        0 20px 70px rgba(0,0,0,.25);
-    }
-
-    .status-item {
-      min-height: 84px;
-
-      padding: 18px 20px;
-
-      display: flex;
-      align-items: center;
-
-      gap: 12px;
-
-      border-right:
-        1px solid var(--line);
-    }
-
-    .status-item:last-child {
-      border-right: 0;
-    }
-
-    .status-icon {
-      width: 37px;
-      height: 37px;
-
-      flex: 0 0 auto;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 11px;
-
-      color: #ddd;
-
-      border:
-        1px solid var(--line2);
-
-      background:
-        rgba(255,255,255,.045);
-
-      font-size: 14px;
-    }
-
-    .status-copy strong {
-      display: block;
-
-      font-size: 11px;
-      font-weight: 900;
-    }
-
-    .status-copy span {
-      display: block;
-
-      margin-top: 3px;
-
-      color: #616269;
-
-      font-size: 8px;
-    }
-
-    /* =========================================
-       SECTION HEADER
-    ========================================= */
-
-    .section-head {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-
-      gap: 25px;
-
-      margin-bottom: 25px;
-    }
-
-    .eyebrow {
-      margin-bottom: 7px;
-
-      color: #77787d;
-
-      font-size: 8px;
-      font-weight: 950;
-
-      letter-spacing: .2em;
-
-      text-transform: uppercase;
-    }
-
-    .section-head h2 {
-      font-size: 34px;
-
-      line-height: 1;
-
-      letter-spacing: -.05em;
-
-      font-weight: 1000;
-    }
-
-    .section-head p {
-      margin-top: 7px;
-
-      color: #62636a;
-
-      font-size: 11px;
-    }
-
-    .catalog-count {
-      padding: 8px 11px;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 9px;
-
-      color: #85868b;
-
-      background:
-        rgba(255,255,255,.025);
-
-      font-size: 9px;
-      font-weight: 900;
-    }
-
-    /* =========================================
-       SEARCH / FILTERS
-    ========================================= */
-
-    .catalog-tools {
-      display: flex;
-      align-items: center;
-
-      gap: 9px;
-
-      margin-bottom: 25px;
-    }
-
-    .search-box {
-      position: relative;
-
-      flex: 1;
-    }
-
-    .search-box svg {
-      position: absolute;
-
-      left: 14px;
-      top: 50%;
-
-      width: 15px;
-      height: 15px;
-
-      transform: translateY(-50%);
-
-      color: #5d5e64;
-    }
-
-    .search-box input {
-      width: 100%;
-      height: 43px;
-
-      padding: 0 15px 0 40px;
-
-      outline: none;
-
-      color: #fff;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 11px;
-
-      background:
-        rgba(255,255,255,.03);
-
-      transition: .2s;
-    }
-
-    .search-box input::placeholder {
-      color: #55565b;
-    }
-
-    .search-box input:focus {
-      border-color:
-        rgba(255,255,255,.2);
-
-      background:
-        rgba(255,255,255,.05);
-
-      box-shadow:
-        0 0 0 3px rgba(255,255,255,.025);
-    }
-
-    .filters {
-      display: flex;
-
-      align-items: center;
-
-      gap: 7px;
-
-      margin-bottom: 28px;
-    }
-
-    .filter-btn,
-    .sort-box {
-      height: 36px;
-
-      padding: 0 12px;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 9px;
-
-      color: #77787e;
-
-      background:
-        rgba(255,255,255,.025);
-
-      font-size: 9px;
-      font-weight: 900;
-
-      transition: .2s;
-    }
-
-    .filter-btn:hover {
-      color: #eee;
-
-      border-color: var(--line2);
-    }
-
-    .filter-btn.active {
-      color: #fff;
-
-      border-color:
-        rgba(255,255,255,.19);
-
-      background:
-        rgba(255,255,255,.075);
-    }
-
-    .sort-box {
-      margin-left: auto;
-
-      outline: none;
-
-      background: #0d0d0e;
-    }
-
-    /* =========================================
-       PRODUCTS
-    ========================================= */
-
-    .products-grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(3,minmax(0,1fr));
-
-      gap: 15px;
-    }
-
-    .product-card {
-      position: relative;
-
-      min-width: 0;
-
-      padding: 20px;
-
-      overflow: hidden;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: var(--radius);
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.052),
-          rgba(255,255,255,.013)
-        );
-
-      box-shadow:
-        0 15px 45px rgba(0,0,0,.22);
-
-      transition:
-        transform .25s ease,
-        border-color .25s ease,
-        box-shadow .25s ease;
-    }
-
-    .product-card:hover {
-      transform: translateY(-6px);
-
-      border-color:
-        rgba(255,255,255,.17);
-
-      box-shadow:
-        0 28px 70px rgba(0,0,0,.42);
-    }
-
-    .product-card::before {
-      content: "";
-
-      position: absolute;
-
-      width: 260px;
-      height: 180px;
-
-      right: -130px;
-      top: -120px;
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(255,255,255,.11),
-          transparent 70%
-        );
-
-      filter: blur(22px);
-
-      pointer-events: none;
-    }
-
-    .product-card::after {
-      content: "";
-
-      position: absolute;
-
-      inset: 0;
-
-      opacity: 0;
-
-      pointer-events: none;
-
-      background:
-        linear-gradient(
-          120deg,
-          transparent 20%,
-          rgba(255,255,255,.04) 50%,
-          transparent 80%
-        );
-
-      transition: .3s;
-    }
-
-    .product-card:hover::after {
-      opacity: 1;
-    }
-
-    .product-top {
-      position: relative;
-      z-index: 1;
-
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-
-      gap: 12px;
-    }
-
-    .product-icon {
-      width: 49px;
-      height: 49px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 14px;
-
-      color: #e4e4e6;
-
-      border:
-        1px solid var(--line2);
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.1),
-          rgba(255,255,255,.025)
-        );
-
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.08);
-
-      font-size: 17px;
-      font-weight: 1000;
-    }
-
-    .stock-badge {
-      padding: 6px 9px;
-
-      border:
-        1px solid rgba(69,223,133,.12);
-
-      border-radius: 999px;
-
-      color: #78e9a1;
-
-      background:
-        rgba(69,223,133,.045);
-
-      font-size: 7px;
-      font-weight: 950;
-
-      text-transform: uppercase;
-      letter-spacing: .07em;
-    }
-
-    .stock-badge.low {
-      color: var(--yellow);
-
-      border-color:
-        rgba(228,199,95,.13);
-
-      background:
-        rgba(228,199,95,.045);
-    }
-
-    .stock-badge.out {
-      color: #ff8585;
-
-      border-color:
-        rgba(255,97,97,.13);
-
-      background:
-        rgba(255,97,97,.045);
-    }
-
-    .product-category {
-      margin-top: 18px;
-
-      color: #5f6065;
-
-      font-size: 7px;
-      font-weight: 950;
-
-      letter-spacing: .14em;
-
-      text-transform: uppercase;
-    }
-
-    .product-info h3 {
-      margin-top: 5px;
-
-      font-size: 18px;
-
-      letter-spacing: -.035em;
-
-      font-weight: 950;
-    }
-
-    .product-description {
-      min-height: 40px;
-
-      margin-top: 8px;
-
-      color: #68696f;
-
-      font-size: 10px;
-
-      line-height: 1.7;
-
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-
-      overflow: hidden;
-    }
-
-    .product-meta {
-      display: flex;
-
-      gap: 7px;
-
-      margin-top: 13px;
-    }
-
-    .meta-pill {
-      padding: 5px 7px;
-
-      color: #66676c;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 7px;
-
-      background:
-        rgba(255,255,255,.02);
-
-      font-size: 7px;
-      font-weight: 800;
-    }
-
-    .product-bottom {
-      position: relative;
-      z-index: 1;
-
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-
-      gap: 15px;
-
-      margin-top: 19px;
-      padding-top: 15px;
-
-      border-top:
-        1px solid var(--line);
-    }
-
-    .price-label {
-      color: #5b5c62;
-
-      font-size: 7px;
-      font-weight: 900;
-
-      letter-spacing: .12em;
-
-      text-transform: uppercase;
-    }
-
-    .price {
-      margin-top: 2px;
-
-      color: #eee;
-
-      font-size: 23px;
-
-      letter-spacing: -.055em;
-
-      font-weight: 1000;
-    }
-
-    .buy-btn {
-      min-width: 123px;
-      height: 40px;
-
-      padding: 0 14px;
-
-      border:
-        1px solid rgba(255,255,255,.16);
-
-      border-radius: 10px;
-
-      color: #080808;
-
-      background:
-        linear-gradient(
-          135deg,
-          #eeeeef,
-          #96979b
-        );
-
-      font-size: 9px;
-      font-weight: 950;
-
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.65);
-
-      transition: .2s;
-    }
-
-    .buy-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-
-      box-shadow:
-        0 12px 30px rgba(0,0,0,.4),
-        inset 0 1px 0 rgba(255,255,255,.8);
-    }
-
-    .buy-btn:disabled {
-      cursor: not-allowed;
-
-      color: #55565b;
-
-      border-color: rgba(255,255,255,.04);
-
-      background: #151516;
-
-      box-shadow: none;
-    }
-
-    /* =========================================
-       HOW IT WORKS
-    ========================================= */
-
-    .how-section {
-      padding: 110px 0;
-
-      border-top:
-        1px solid var(--line);
-    }
-
-    .center-head {
-      max-width: 600px;
-
-      margin: 0 auto 42px;
-
-      text-align: center;
-    }
-
-    .center-head h2 {
-      font-size: 36px;
-
-      letter-spacing: -.055em;
-
-      font-weight: 1000;
-    }
-
-    .center-head p {
-      margin-top: 9px;
-
-      color: #65666c;
-
-      font-size: 11px;
-
-      line-height: 1.7;
-    }
-
-    .steps {
-      display: grid;
-
-      grid-template-columns:
-        repeat(3,1fr);
-
-      gap: 15px;
-    }
-
-    .step {
-      position: relative;
-
-      min-height: 205px;
-
-      padding: 25px;
-
-      overflow: hidden;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 19px;
-
-      background:
-        rgba(255,255,255,.018);
-    }
-
-    .step-number {
-      position: absolute;
-
-      right: 20px;
-      top: 10px;
-
-      color: rgba(255,255,255,.035);
-
-      font-size: 70px;
-
-      line-height: 1;
-
-      font-weight: 1000;
-    }
-
-    .step-icon {
-      width: 43px;
-      height: 43px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 12px;
-
-      border:
-        1px solid var(--line2);
-
-      background:
-        rgba(255,255,255,.045);
-
-      color: #ddd;
-
-      font-size: 16px;
-    }
-
-    .step h3 {
-      margin-top: 20px;
-
-      font-size: 15px;
-
-      font-weight: 950;
-    }
-
-    .step p {
-      margin-top: 7px;
-
-      color: #62636a;
-
-      font-size: 10px;
-
-      line-height: 1.75;
-    }
-
-    /* =========================================
-       WHY ONYX
-    ========================================= */
-
-    .why-section {
-      padding: 95px 0;
-
-      border-top:
-        1px solid var(--line);
-
-      border-bottom:
-        1px solid var(--line);
-
-      background:
-        linear-gradient(
-          180deg,
-          rgba(255,255,255,.018),
-          rgba(255,255,255,.006)
-        );
-    }
-
-    .why-layout {
-      display: grid;
-
-      grid-template-columns:
-        .8fr 1.2fr;
-
-      gap: 70px;
-
-      align-items: center;
-    }
-
-    .why-title h2 {
-      font-size: 42px;
-
-      line-height: .95;
-
-      letter-spacing: -.06em;
-
-      font-weight: 1000;
-    }
-
-    .why-title p {
-      max-width: 390px;
-
-      margin-top: 17px;
-
-      color: #66676c;
-
-      font-size: 11px;
-
-      line-height: 1.8;
-    }
-
-    .why-grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(2,1fr);
-
-      gap: 12px;
-    }
-
-    .why-card {
-      padding: 21px;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 16px;
-
-      background:
-        rgba(0,0,0,.25);
-    }
-
-    .why-card strong {
-      display: block;
-
-      font-size: 13px;
-    }
-
-    .why-card p {
-      margin-top: 6px;
-
-      color: #606168;
-
-      font-size: 9px;
-
-      line-height: 1.7;
-    }
-
-    /* =========================================
-       FAQ
-    ========================================= */
-
-    .faq-section {
-      padding: 100px 0;
-    }
-
-    .faq {
-      max-width: 800px;
-
-      margin: 35px auto 0;
-    }
-
-    details {
-      border-bottom:
-        1px solid var(--line);
-    }
-
-    details:first-child {
-      border-top:
-        1px solid var(--line);
-    }
-
-    summary {
-      position: relative;
-
-      padding: 20px 35px 20px 0;
-
-      list-style: none;
-
-      cursor: pointer;
-
-      color: #d7d7d9;
-
-      font-size: 12px;
-      font-weight: 850;
-    }
-
-    summary::-webkit-details-marker {
-      display: none;
-    }
-
-    summary::after {
-      content: "+";
-
-      position: absolute;
-
-      right: 5px;
-      top: 50%;
-
-      transform: translateY(-50%);
-
-      color: #696a70;
-
-      font-size: 18px;
-
-      transition: .2s;
-    }
-
-    details[open] summary::after {
-      transform:
-        translateY(-50%)
-        rotate(45deg);
-    }
-
-    details p {
-      max-width: 700px;
-
-      padding:
-        0 35px 20px 0;
-
-      color: #63646a;
-
-      font-size: 10px;
-
-      line-height: 1.8;
-    }
-
-    /* =========================================
-       FINAL CTA
-    ========================================= */
-
-    .final-cta {
-      padding: 85px 20px;
-
-      text-align: center;
-
-      border-top:
-        1px solid var(--line);
-
-      background:
-        radial-gradient(
-          ellipse at center,
-          rgba(255,255,255,.055),
-          transparent 65%
-        );
-    }
-
-    .final-cta h2 {
-      font-size:
-        clamp(32px,5vw,52px);
-
-      letter-spacing: -.06em;
-
-      font-weight: 1000;
-    }
-
-    .final-cta p {
-      max-width: 540px;
-
-      margin: 11px auto 23px;
-
-      color: #66676d;
-
-      font-size: 11px;
-
-      line-height: 1.7;
-    }
-
-    /* =========================================
-       FOOTER
-    ========================================= */
-
-    footer {
-      border-top:
-        1px solid var(--line);
-
-      padding: 35px 0;
-    }
-
-    .footer-inner {
-      width: min(
-        var(--max),
-        calc(100% - 36px)
-      );
-
-      margin: auto;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      gap: 25px;
-    }
-
-    .footer-brand strong {
-      color: #aaaab0;
-
-      font-size: 11px;
-
-      letter-spacing: .15em;
-    }
-
-    .footer-brand span {
-      display: block;
-
-      margin-top: 5px;
-
-      color: #4f5056;
-
-      font-size: 9px;
-    }
-
-    .footer-links {
-      display: flex;
-
-      gap: 18px;
-    }
-
-    .footer-links a {
-      color: #5e5f65;
-
-      font-size: 9px;
-      font-weight: 800;
-    }
-
-    .footer-links a:hover {
-      color: #ddd;
-    }
-
-    .footer-copy {
-      color: #44454a;
-
-      font-size: 8px;
-    }
-
-    /* =========================================
-       SKELETON / EMPTY
-    ========================================= */
-
-    .skeleton {
-      height: 325px;
-
-      border-radius: var(--radius);
-
-      border:
-        1px solid var(--line);
-
-      background:
-        linear-gradient(
-          90deg,
-          rgba(255,255,255,.018),
-          rgba(255,255,255,.06),
-          rgba(255,255,255,.018)
-        );
-
-      background-size: 300% 100%;
-
-      animation:
-        shimmer 1.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0% {
-        background-position: 100% 0;
-      }
-
-      100% {
-        background-position: -100% 0;
-      }
-    }
-
-    .empty {
-      grid-column: 1 / -1;
-
-      padding: 80px 20px;
-
-      text-align: center;
-
-      border:
-        1px dashed var(--line2);
-
-      border-radius: 18px;
-
-      color: #5f6065;
-    }
-
-    .empty-icon {
-      margin-bottom: 12px;
-
-      font-size: 30px;
-
-      opacity: .55;
-    }
-
-    .empty h3 {
-      color: #a4a5aa;
-
-      font-size: 16px;
-    }
-
-    .empty p {
-      margin-top: 5px;
-
-      font-size: 10px;
-    }
-
-    /* =========================================
-       MODAL
-    ========================================= */
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-
-      z-index: 500;
-
-      display: none;
-
-      align-items: center;
-      justify-content: center;
-
-      padding: 18px;
-
-      background:
-        rgba(0,0,0,.86);
-
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal {
-      position: relative;
-
-      width: min(
-        530px,
-        100%
-      );
-
-      max-height:
-        calc(100vh - 36px);
-
-      overflow-y: auto;
-
-      border:
-        1px solid rgba(255,255,255,.12);
-
-      border-radius: 24px;
-
-      background:
-        radial-gradient(
-          circle at 50% -25%,
-          rgba(255,255,255,.095),
-          transparent 45%
-        ),
-        #09090a;
-
-      box-shadow:
-        0 45px 130px rgba(0,0,0,.85);
-
-      animation:
-        modalIn .23s ease;
-    }
-
-    @keyframes modalIn {
-      from {
-        opacity: 0;
-        transform:
-          translateY(15px)
-          scale(.985);
-      }
-
-      to {
-        opacity: 1;
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
-
-    .modal-close {
-      position: absolute;
-
-      top: 16px;
-      right: 16px;
-
-      z-index: 5;
-
-      width: 34px;
-      height: 34px;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 9px;
-
-      color: #999a9f;
-
-      background:
-        rgba(255,255,255,.04);
-
-      font-size: 17px;
-    }
-
-    .modal-close:hover {
-      color: #fff;
-
-      background:
-        rgba(255,255,255,.08);
-    }
-
-    .modal-head {
-      padding: 27px 27px 20px;
-
-      border-bottom:
-        1px solid var(--line);
-    }
-
-    .modal-head h2 {
-      padding-right: 35px;
-
-      font-size: 23px;
-
-      letter-spacing: -.04em;
-    }
-
-    .modal-head p {
-      margin-top: 6px;
-
-      color: #65666b;
-
-      font-size: 10px;
-    }
-
-    /* STEPS */
-
-    .checkout-steps {
-      display: grid;
-
-      grid-template-columns:
-        repeat(3,1fr);
-
-      gap: 7px;
-
-      padding: 17px 27px 0;
-    }
-
-    .checkout-step {
-      position: relative;
-
-      text-align: center;
-
-      color: #4e4f55;
-
-      font-size: 7px;
-      font-weight: 900;
-
-      letter-spacing: .08em;
-
-      text-transform: uppercase;
-    }
-
-    .checkout-step::before {
-      content: "";
-
-      display: block;
-
-      width: 24px;
-      height: 24px;
-
-      margin: 0 auto 6px;
-
-      display: grid;
-      place-items: center;
-
-      border:
-        1px solid var(--line2);
-
-      border-radius: 50%;
-
-      background:
-        #111113;
-    }
-
-    .checkout-step.active {
-      color: #ddd;
-    }
-
-    .checkout-step.active::before {
-      background:
-        linear-gradient(
-          145deg,
-          #eee,
-          #888
-        );
-
-      border-color:
-        rgba(255,255,255,.25);
-    }
-
-    .checkout-step.done {
-      color: var(--green);
-    }
-
-    .checkout-step.done::before {
-      content: "✓";
-
-      color: #08100c;
-
-      background:
-        var(--green);
-
-      border-color:
-        var(--green);
-    }
-
-    .modal-body {
-      padding: 20px 27px 27px;
-    }
-
-    .order-summary {
-      padding: 15px;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 14px;
-
-      background:
-        rgba(255,255,255,.025);
-    }
-
-    .summary-row {
-      display: flex;
-
-      align-items: center;
-      justify-content: space-between;
-
-      gap: 15px;
-
-      padding: 7px 0;
-
-      color: #74757b;
-
-      font-size: 10px;
-    }
-
-    .summary-row strong {
-      color: #ddd;
-
-      text-align: right;
-    }
-
-    .summary-row.total {
-      margin-top: 7px;
-
-      padding-top: 13px;
-
-      border-top:
-        1px solid var(--line);
-    }
-
-    .summary-row.total strong {
-      color: #fff;
-
-      font-size: 19px;
-    }
-
-    .payment-status {
-      margin-top: 14px;
-
-      padding: 14px;
-
-      display: flex;
-      align-items: center;
-
-      gap: 11px;
-
-      border:
-        1px solid var(--line2);
-
-      border-radius: 13px;
-
-      background:
-        rgba(255,255,255,.025);
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-
-      flex: 0 0 auto;
-
-      border-radius: 50%;
-
-      background: #aaa;
-
-      box-shadow:
-        0 0 12px rgba(255,255,255,.2);
-
-      animation:
-        pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      50% {
-        opacity: .4;
-        transform: scale(.8);
-      }
-    }
-
-    .payment-status.success {
-      border-color:
-        rgba(69,223,133,.16);
-
-      background:
-        rgba(69,223,133,.04);
-    }
-
-    .payment-status.success .status-dot {
-      background:
-        var(--green);
-
-      box-shadow:
-        0 0 13px rgba(69,223,133,.55);
-
-      animation: none;
-    }
-
-    .status-text strong {
-      display: block;
-
-      color: #ddd;
-
-      font-size: 10px;
-    }
-
-    .status-text span {
-      display: block;
-
-      margin-top: 3px;
-
-      color: #62636a;
-
-      font-size: 8px;
-    }
-
-    .payment-btn {
-      width: 100%;
-
-      height: 49px;
-
-      margin-top: 12px;
-
-      border:
-        1px solid rgba(255,255,255,.16);
-
-      border-radius: 12px;
-
-      color: #080808;
-
-      background:
-        linear-gradient(
-          135deg,
-          #ededee,
-          #999a9e
-        );
-
-      font-size: 10px;
-      font-weight: 950;
-
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.65);
-
-      transition: .2s;
-    }
-
-    .payment-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-
-      box-shadow:
-        0 14px 35px rgba(0,0,0,.45),
-        inset 0 1px 0 rgba(255,255,255,.8);
-    }
-
-    .payment-btn:disabled {
-      opacity: .45;
-
-      cursor: not-allowed;
-    }
-
-    .payment-note {
-      margin-top: 9px;
-
-      text-align: center;
-
-      color: #505157;
-
-      font-size: 8px;
-
-      line-height: 1.6;
-    }
-
-    /* =========================================
-       SUCCESS
-    ========================================= */
-
-    .success-screen {
-      display: none;
-
-      padding: 13px 0 2px;
-
-      text-align: center;
-
-      animation:
-        successIn .35s ease;
-    }
-
-    .success-screen.show {
-      display: block;
-    }
-
-    @keyframes successIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .success-icon {
-      position: relative;
-
-      width: 76px;
-      height: 76px;
-
-      margin: 0 auto 18px;
-
-      display: grid;
-      place-items: center;
-
-      border:
-        1px solid rgba(69,223,133,.3);
-
-      border-radius: 50%;
-
-      color: #06130b;
-
-      background:
-        linear-gradient(
-          145deg,
-          #72eda2,
-          #35bd70
-        );
-
-      font-size: 29px;
-      font-weight: 1000;
-
-      box-shadow:
-        0 0 0 10px rgba(69,223,133,.035),
-        0 0 45px rgba(69,223,133,.18);
-    }
-
-    .success-icon::after {
-      content: "";
-
-      position: absolute;
-      inset: -11px;
-
-      border:
-        1px solid rgba(69,223,133,.08);
-
-      border-radius: 50%;
-    }
-
-    .success-title {
-      color: #69e89a;
-
-      font-size: 10px;
-      font-weight: 950;
-
-      letter-spacing: .18em;
-    }
-
-    .success-screen h3 {
-      margin-top: 7px;
-
-      color: #f1f1f2;
-
-      font-size: 27px;
-
-      letter-spacing: -.05em;
-
-      font-weight: 1000;
-    }
-
-    .success-screen > p {
-      max-width: 380px;
-
-      margin: 9px auto 18px;
-
-      color: #66676d;
-
-      font-size: 10px;
-
-      line-height: 1.7;
-    }
-
-    .account-box {
-      padding: 15px;
-
-      text-align: left;
-
-      border:
-        1px solid rgba(69,223,133,.14);
-
-      border-radius: 12px;
-
-      color: #ddd;
-
-      background:
-        rgba(69,223,133,.035);
-
-      font-family:
-        ui-monospace,
-        SFMono-Regular,
-        Menlo,
-        monospace;
-
-      font-size: 9px;
-
-      line-height: 1.65;
-
-      white-space: pre-wrap;
-
-      word-break: break-word;
-    }
-
-    .copy-account {
-      width: 100%;
-
-      height: 41px;
-
-      margin-top: 8px;
-
-      border:
-        1px solid rgba(69,223,133,.15);
-
-      border-radius: 10px;
-
-      color: #83e9aa;
-
-      background:
-        rgba(69,223,133,.045);
-
-      font-size: 9px;
-      font-weight: 900;
-    }
-
-    .feedback-box {
-      margin-top: 17px;
-
-      padding: 16px;
-
-      border:
-        1px solid var(--line);
-
-      border-radius: 14px;
-
-      background:
-        rgba(255,255,255,.025);
-    }
-
-    .feedback-box strong {
-      display: block;
-
-      color: #ddd;
-
-      font-size: 11px;
-    }
-
-    .feedback-box p {
-      margin-top: 5px;
-
-      color: #62636a;
-
-      font-size: 8px;
-
-      line-height: 1.6;
-    }
-
-    .discord-feedback {
-      width: 100%;
-
-      height: 43px;
-
-      margin-top: 12px;
-
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-
-      border:
-        1px solid rgba(255,255,255,.15);
-
-      border-radius: 10px;
-
-      color: #090909;
-
-      background:
-        linear-gradient(
-          135deg,
-          #eeeeef,
-          #a1a2a6
-        );
-
-      font-size: 9px;
-      font-weight: 950;
-
-      transition: .2s;
-    }
-
-    .discord-feedback:hover {
-      transform: translateY(-2px);
-
-      box-shadow:
-        0 13px 30px rgba(0,0,0,.4);
-    }
-
-    .delivery {
-      display: none;
-    }
-
-    .delivery.show {
-      display: block;
-    }
-
-    .modal-footer {
-      margin-top: 17px;
-
-      padding-top: 15px;
-
-      border-top:
-        1px solid var(--line);
-
-      text-align: center;
-
-      color: #4f5056;
-
-      font-size: 8px;
-
-      line-height: 1.7;
-    }
-
-    .modal-footer strong {
-      color: #74757a;
-    }
-
-    /* =========================================
-       TOAST
-    ========================================= */
-
-    .toast-container {
-      position: fixed;
-
-      right: 18px;
-      bottom: 18px;
-
-      z-index: 1000;
-
-      display: flex;
-      flex-direction: column;
-
-      gap: 8px;
-    }
-
-    .toast {
-      max-width: 340px;
-
-      padding: 12px 14px;
-
-      border:
-        1px solid var(--line2);
-
-      border-radius: 12px;
-
-      color: #ddd;
-
-      background:
-        #101011;
-
-      box-shadow:
-        var(--shadow);
-
-      font-size: 9px;
-
-      animation:
-        toastIn .2s ease;
-
-      transition:
-        opacity .2s,
-        transform .2s;
-    }
-
-    @keyframes toastIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* =========================================
-       RESPONSIVE
-    ========================================= */
-
-    @media (max-width: 1000px) {
-
-      .hero-layout {
-        grid-template-columns: 1fr;
-
-        text-align: center;
-      }
-
-      .hero-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .hero-description {
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .hero-actions {
-        justify-content: center;
-      }
-
-      .hero-visual {
-        min-height: 330px;
-      }
-
-      .status-bar {
-        grid-template-columns:
-          repeat(2,1fr);
-      }
-
-      .status-item:nth-child(2) {
-        border-right: 0;
-      }
-
-      .status-item:nth-child(-n+2) {
-        border-bottom:
-          1px solid var(--line);
-      }
-
-      .products-grid {
-        grid-template-columns:
-          repeat(2,minmax(0,1fr));
-      }
-
-      .why-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .why-title {
-        text-align: center;
-      }
-
-      .why-title p {
-        margin-left: auto;
-        margin-right: auto;
-      }
-    }
-
-    @media (max-width: 700px) {
-
-      .container,
-      .header-inner,
-      .footer-inner {
-        width:
-          calc(100% - 22px);
-      }
-
-      .header-inner {
-        height: 64px;
-      }
-
-      .nav a:not(.nav-discord) {
-        display: none;
-      }
-
-      .hero {
-        padding:
-          70px 0 55px;
-      }
-
-      .hero h1 {
-        font-size:
-          clamp(42px,12vw,65px);
-      }
-
-      .hero-description {
-        font-size: 12px;
-      }
-
-      .hero-visual {
-        min-height: 290px;
-      }
-
-      .onyx-orb {
-        width: 210px;
-        height: 245px;
-      }
-
-      .visual-card.one {
-        right: 0;
-        top: 25px;
-      }
-
-      .visual-card.two {
-        left: 0;
-        bottom: 20px;
-      }
-
-      .status-bar {
-        grid-template-columns: 1fr;
-
-        margin-bottom: 65px;
-      }
-
-      .status-item {
-        border-right: 0 !important;
-
-        border-bottom:
-          1px solid var(--line);
-      }
-
-      .status-item:last-child {
-        border-bottom: 0;
-      }
-
-      .catalog-tools {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .filters {
-        display: grid;
-
-        grid-template-columns:
-          repeat(2,1fr);
-      }
-
-      .sort-box {
-        margin-left: 0;
-      }
-
-      .products-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .steps {
-        grid-template-columns: 1fr;
-      }
-
-      .why-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .how-section,
-      .why-section,
-      .faq-section {
-        padding: 75px 0;
-      }
-
-      .center-head h2 {
-        font-size: 30px;
-      }
-
-      .why-title h2 {
-        font-size: 35px;
-      }
-
-      .footer-inner {
-        flex-direction: column;
-
-        text-align: center;
-      }
-
-      .footer-links {
-        order: -1;
-      }
-    }
-
-    @media (max-width: 390px) {
-
-      .hero-actions {
-        width: 100%;
-
-        flex-direction: column;
-      }
-
-      .hero-actions > * {
-        width: 100%;
-      }
-
-      .filters {
-        grid-template-columns: 1fr;
-      }
-
-      .product-bottom {
-        flex-direction: column;
-
-        align-items: stretch;
-      }
-
-      .buy-btn {
-        width: 100%;
-      }
-
-      .checkout-steps {
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-
-      .modal-head,
-      .modal-body {
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ONYX STORE — Produtos Digitais</title>
+<meta name="description" content="ONYX STORE — produtos digitais com pagamento seguro e entrega automática.">
+
+<style>
+:root{
+  --bg:#030303;
+  --bg2:#070708;
+  --bg3:#0d0d0f;
+  --card:rgba(16,16,18,.82);
+  --card2:rgba(255,255,255,.035);
+  --line:rgba(255,255,255,.075);
+  --line2:rgba(255,255,255,.14);
+  --line3:rgba(255,255,255,.23);
+  --text:#f4f4f5;
+  --muted:#8a8b91;
+  --muted2:#65666c;
+  --muted3:#48494e;
+  --silver:#ededee;
+  --silver2:#b3b4b8;
+  --silver3:#707176;
+  --green:#4be58a;
+  --yellow:#e4c75f;
+  --red:#ff6565;
+  --max:1240px;
+  --radius:22px;
+  --shadow:0 30px 90px rgba(0,0,0,.55);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html{scroll-behavior:smooth}
+
+body{
+  min-height:100vh;
+  overflow-x:hidden;
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(ellipse at 50% -15%,rgba(255,255,255,.105),transparent 34%),
+    radial-gradient(ellipse at 100% 45%,rgba(255,255,255,.025),transparent 30%),
+    linear-gradient(180deg,#020202,#070708 48%,#020202);
+}
+
+body.modal-open{overflow:hidden}
+
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+::selection{background:rgba(255,255,255,.22);color:#fff}
+
+.ambient{
+  position:fixed;
+  inset:0;
+  z-index:-5;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.ambient:before{
+  content:"";
+  position:absolute;
+  width:850px;
+  height:850px;
+  left:50%;
+  top:-650px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.14),rgba(255,255,255,.025) 38%,transparent 70%);
+  filter:blur(30px);
+}
+
+.ambient:after{
+  content:"";
+  position:absolute;
+  width:700px;
+  height:700px;
+  right:-500px;
+  top:30%;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.045),transparent 70%);
+  filter:blur(45px);
+}
+
+.grid-bg{
+  position:absolute;
+  inset:0;
+  opacity:.024;
+  background-image:
+    linear-gradient(rgba(255,255,255,.7) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.7) 1px,transparent 1px);
+  background-size:58px 58px;
+  mask-image:linear-gradient(to bottom,#000,transparent 78%);
+}
+
+.grain{
+  position:fixed;
+  inset:0;
+  z-index:-4;
+  pointer-events:none;
+  opacity:.017;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+.container{
+  width:min(var(--max),calc(100% - 36px));
+  margin:auto;
+}
+
+/* HEADER */
+
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid rgba(255,255,255,.055);
+  background:rgba(3,3,3,.72);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+}
+
+.header-inner{
+  width:min(var(--max),calc(100% - 36px));
+  height:76px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  gap:30px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  flex-shrink:0;
+}
+
+.brand-mark{
+  position:relative;
+  width:41px;
+  height:41px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  color:#080808;
+  font-size:17px;
+  font-weight:1000;
+  background:linear-gradient(145deg,#fff,#a7a8ac 48%,#414247);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 10px 35px rgba(0,0,0,.5);
+}
+
+.brand-mark:after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:11px;
+  border:1px solid rgba(255,255,255,.28);
+}
+
+.brand-text{
+  font-size:15px;
+  font-weight:950;
+  letter-spacing:.22em;
+}
+
+.nav{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.nav a{
+  padding:10px 13px;
+  border-radius:10px;
+  color:#85868b;
+  font-size:11px;
+  font-weight:800;
+  transition:.2s;
+}
+
+.nav a:hover{
+  color:#fff;
+  background:rgba(255,255,255,.055);
+}
+
+.nav-discord{
+  color:#eee!important;
+  border:1px solid var(--line2);
+  background:rgba(255,255,255,.045);
+}
+
+.nav-discord:hover{
+  border-color:var(--line3);
+  background:rgba(255,255,255,.085)!important;
+}
+
+/* HERO */
+
+.hero{
+  position:relative;
+  padding:105px 0 75px;
+}
+
+.hero-layout{
+  display:grid;
+  grid-template-columns:1.08fr .92fr;
+  align-items:center;
+  gap:70px;
+}
+
+.hero-content{position:relative}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 12px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:999px;
+  color:#a9aaaf;
+  background:rgba(255,255,255,.035);
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.hero-badge i{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(75,229,138,.7);
+  animation:livePulse 2s infinite;
+}
+
+@keyframes livePulse{
+  50%{opacity:.4;transform:scale(.7)}
+}
+
+.hero h1{
+  max-width:800px;
+  margin-top:25px;
+  font-size:clamp(50px,6.7vw,86px);
+  line-height:.9;
+  letter-spacing:-.075em;
+  font-weight:1000;
+}
+
+.hero h1 .first{
+  display:block;
+  color:#f4f4f5;
+}
+
+.hero h1 .second{
+  display:block;
+  color:transparent;
+  background:linear-gradient(105deg,#fff,#bfc0c3 27%,#5b5c61 51%,#f4f4f5 73%,#77787d);
+  background-size:180% auto;
+  background-clip:text;
+  -webkit-background-clip:text;
+  animation:metalShine 7s linear infinite;
+}
+
+@keyframes metalShine{
+  0%{background-position:180% center}
+  100%{background-position:-20% center}
+}
+
+.hero-description{
+  max-width:600px;
+  margin-top:25px;
+  color:#808187;
+  font-size:14px;
+  line-height:1.8;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:30px;
+}
+
+.btn{
+  min-height:47px;
+  padding:0 20px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:11px;
+  font-size:10px;
+  font-weight:950;
+  transition:.22s;
+}
+
+.btn-primary{
+  color:#080808;
+  border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,#f5f5f6,#999a9e);
+  box-shadow:0 14px 35px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 20px 45px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+.btn-secondary{
+  color:#d0d0d3;
+  border:1px solid var(--line2);
+  background:rgba(255,255,255,.035);
+}
+
+.btn-secondary:hover{
+  color:#fff;
+  border-color:var(--line3);
+  background:rgba(255,255,255,.075);
+}
+
+/* HERO VISUAL */
+
+.hero-visual{
+  position:relative;
+  min-height:400px;
+  display:grid;
+  place-items:center;
+}
+
+.visual-glow{
+  position:absolute;
+  width:370px;
+  height:370px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.12),transparent 67%);
+  filter:blur(38px);
+}
+
+.onyx-orb{
+  position:relative;
+  width:275px;
+  height:315px;
+  transform:rotate(17deg) skewY(-4deg);
+  border-radius:38px 65px 42px 70px;
+  background:linear-gradient(135deg,#333438,#101114 24%,#020202 53%,#191a1d 75%,#050506);
+  box-shadow:-25px 35px 70px rgba(0,0,0,.8),inset 12px 12px 30px rgba(255,255,255,.055),inset -15px -15px 35px rgba(0,0,0,.9);
+  animation:orbFloat 6s ease-in-out infinite;
+}
+
+.onyx-orb:before{
+  content:"";
+  position:absolute;
+  inset:18px;
+  border-radius:inherit;
+  border:1px solid rgba(255,255,255,.09);
+  background:linear-gradient(135deg,transparent 35%,rgba(255,255,255,.05),transparent 62%);
+}
+
+.onyx-orb:after{
+  content:"O";
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  transform:rotate(-17deg);
+  color:rgba(255,255,255,.12);
+  font-size:90px;
+  font-weight:1000;
+  text-shadow:0 0 40px rgba(255,255,255,.07);
+}
+
+@keyframes orbFloat{
+  0%,100%{transform:translateY(0) rotate(17deg) skewY(-4deg)}
+  50%{transform:translateY(-12px) rotate(20deg) skewY(-4deg)}
+}
+
+.visual-card{
+  position:absolute;
+  min-width:155px;
+  padding:13px 15px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:13px;
+  background:rgba(10,10,11,.76);
+  backdrop-filter:blur(16px);
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+}
+
+.visual-card.one{top:55px;right:5px}
+.visual-card.two{bottom:50px;left:5px}
+
+.visual-card small{
+  display:block;
+  color:#5e5f65;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+
+.visual-card strong{
+  display:block;
+  margin-top:4px;
+  color:#e5e5e6;
+  font-size:12px;
+}
+
+.dot{
+  display:inline-block;
+  width:5px;
+  height:5px;
+  margin-right:5px;
+  border-radius:50%;
+  background:var(--green);
+}
+
+/* STATUS */
+
+.status-bar{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  margin-bottom:80px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.012));
+  box-shadow:0 20px 70px rgba(0,0,0,.25);
+}
+
+.status-item{
+  min-height:84px;
+  padding:18px 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-right:1px solid var(--line);
+}
+
+.status-item:last-child{border-right:0}
+
+.status-icon{
+  width:37px;
+  height:37px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line2);
+  border-radius:11px;
+  color:#ddd;
+  background:rgba(255,255,255,.045);
+  font-size:14px;
+}
+
+.status-copy strong{
+  display:block;
+  font-size:11px;
+  font-weight:900;
+}
+
+.status-copy span{
+  display:block;
+  margin-top:3px;
+  color:#65666c;
+  font-size:8px;
+}
+
+/* SECTIONS */
+
+.section-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:25px;
+  margin-bottom:25px;
+}
+
+.eyebrow{
+  margin-bottom:7px;
+  color:#77787d;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+
+.section-head h2{
+  font-size:34px;
+  line-height:1;
+  letter-spacing:-.05em;
+  font-weight:1000;
+}
+
+.section-head p{
+  margin-top:7px;
+  color:#68696f;
+  font-size:11px;
+}
+
+.catalog-count{
+  padding:8px 11px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  color:#8b8c91;
+  background:rgba(255,255,255,.025);
+  font-size:9px;
+  font-weight:900;
+}
+
+/* TOOLS */
+
+.catalog-tools{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:12px;
+}
+
+.search-box{
+  position:relative;
+  flex:1;
+}
+
+.search-box svg{
+  position:absolute;
+  left:14px;
+  top:50%;
+  width:15px;
+  height:15px;
+  transform:translateY(-50%);
+  color:#5d5e64;
+}
+
+.search-box input{
+  width:100%;
+  height:43px;
+  padding:0 15px 0 40px;
+  outline:none;
+  color:#fff;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:rgba(255,255,255,.03);
+  transition:.2s;
+}
+
+.search-box input::placeholder{color:#55565b}
+
+.search-box input:focus{
+  border-color:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.05);
+  box-shadow:0 0 0 3px rgba(255,255,255,.025);
+}
+
+.filters{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:28px;
+}
+
+.filter-btn,.sort-box{
+  height:36px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  color:#77787e;
+  background:rgba(255,255,255,.025);
+  font-size:9px;
+  font-weight:900;
+  transition:.2s;
+}
+
+.filter-btn:hover{
+  color:#eee;
+  border-color:var(--line2);
+}
+
+.filter-btn.active{
+  color:#fff;
+  border-color:rgba(255,255,255,.19);
+  background:rgba(255,255,255,.075);
+}
+
+.sort-box{
+  margin-left:auto;
+  outline:none;
+  background:#0d0d0e;
+}
+
+/* PRODUCTS */
+
+.products-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:15px;
+}
+
+.product-card{
+  position:relative;
+  min-width:0;
+  padding:21px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
+  box-shadow:0 15px 45px rgba(0,0,0,.22);
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+}
+
+.product-card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(255,255,255,.18);
+  box-shadow:0 28px 70px rgba(0,0,0,.42);
+}
+
+.product-card:before{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:180px;
+  right:-130px;
+  top:-120px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.11),transparent 70%);
+  filter:blur(22px);
+  pointer-events:none;
+}
+
+.product-card:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.045) 50%,transparent 80%);
+  transition:.3s;
+}
+
+.product-card:hover:after{opacity:1}
+
+.product-top{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.product-icon{
+  width:49px;
+  height:49px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line2);
+  border-radius:14px;
+  color:#e4e4e6;
+  background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,255,255,.025));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  font-size:17px;
+  font-weight:1000;
+}
+
+.stock-badge{
+  padding:6px 9px;
+  border:1px solid rgba(69,223,133,.12);
+  border-radius:999px;
+  color:#78e9a1;
+  background:rgba(69,223,133,.045);
+  font-size:7px;
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+
+.stock-badge.low{
+  color:var(--yellow);
+  border-color:rgba(228,199,95,.13);
+  background:rgba(228,199,95,.045);
+}
+
+.stock-badge.out{
+  color:#ff8585;
+  border-color:rgba(255,97,97,.13);
+  background:rgba(255,97,97,.045);
+}
+
+.product-category{
+  margin-top:18px;
+  color:#62636a;
+  font-size:7px;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.product-info h3{
+  margin-top:5px;
+  font-size:18px;
+  letter-spacing:-.035em;
+  font-weight:950;
+}
+
+.product-description{
+  min-height:40px;
+  margin-top:8px;
+  color:#6d6e74;
+  font-size:10px;
+  line-height:1.7;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.product-meta{
+  display:flex;
+  gap:7px;
+  margin-top:13px;
+}
+
+.meta-pill{
+  padding:5px 7px;
+  color:#6b6c71;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:rgba(255,255,255,.02);
+  font-size:7px;
+  font-weight:800;
+}
+
+.product-bottom{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:15px;
+  margin-top:19px;
+  padding-top:15px;
+  border-top:1px solid var(--line);
+}
+
+.price-label{
+  color:#5b5c62;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.price{
+  margin-top:2px;
+  color:#eee;
+  font-size:23px;
+  letter-spacing:-.055em;
+  font-weight:1000;
+}
+
+.buy-btn{
+  min-width:123px;
+  height:40px;
+  padding:0 14px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:10px;
+  color:#080808;
+  background:linear-gradient(135deg,#eeeeef,#96979b);
+  font-size:9px;
+  font-weight:950;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+  transition:.2s;
+}
+
+.buy-btn:hover:not(:disabled){
+  transform:translateY(-2px);
+  box-shadow:0 12px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+.buy-btn:disabled{
+  cursor:not-allowed;
+  color:#55565b;
+  border-color:rgba(255,255,255,.04);
+  background:#151516;
+  box-shadow:none;
+}
+
+/* HOW */
+
+.how-section{
+  padding:110px 0;
+  margin-top:100px;
+  border-top:1px solid var(--line);
+}
+
+.center-head{
+  max-width:600px;
+  margin:0 auto 42px;
+  text-align:center;
+}
+
+.center-head h2{
+  font-size:36px;
+  letter-spacing:-.055em;
+  font-weight:1000;
+}
+
+.center-head p{
+  margin-top:9px;
+  color:#696a70;
+  font-size:11px;
+  line-height:1.7;
+}
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.step{
+  position:relative;
+  min-height:205px;
+  padding:25px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:19px;
+  background:rgba(255,255,255,.018);
+  transition:.25s;
+}
+
+.step:hover{
+  transform:translateY(-4px);
+  border-color:var(--line2);
+  background:rgba(255,255,255,.028);
+}
+
+.step-number{
+  position:absolute;
+  right:20px;
+  top:10px;
+  color:rgba(255,255,255,.035);
+  font-size:70px;
+  line-height:1;
+  font-weight:1000;
+}
+
+.step-icon{
+  width:43px;
+  height:43px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line2);
+  border-radius:12px;
+  background:rgba(255,255,255,.045);
+  color:#ddd;
+  font-size:16px;
+}
+
+.step h3{
+  margin-top:20px;
+  font-size:15px;
+  font-weight:950;
+}
+
+.step p{
+  margin-top:7px;
+  color:#68696f;
+  font-size:10px;
+  line-height:1.75;
+}
+
+/* WHY */
+
+.why-section{
+  padding:95px 0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.006));
+}
+
+.why-layout{
+  display:grid;
+  grid-template-columns:.8fr 1.2fr;
+  gap:70px;
+  align-items:center;
+}
+
+.why-title h2{
+  font-size:42px;
+  line-height:.95;
+  letter-spacing:-.06em;
+  font-weight:1000;
+}
+
+.why-title p{
+  max-width:390px;
+  margin-top:17px;
+  color:#696a70;
+  font-size:11px;
+  line-height:1.8;
+}
+
+.why-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.why-card{
+  padding:21px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(0,0,0,.25);
+  transition:.2s;
+}
+
+.why-card:hover{
+  border-color:var(--line2);
+  background:rgba(255,255,255,.02);
+}
+
+.why-card strong{
+  display:block;
+  font-size:13px;
+}
+
+.why-card p{
+  margin-top:6px;
+  color:#65666c;
+  font-size:9px;
+  line-height:1.7;
+}
+
+/* FAQ */
+
+.faq-section{padding:100px 0}
+
+.faq{
+  max-width:800px;
+  margin:35px auto 0;
+}
+
+details{border-bottom:1px solid var(--line)}
+details:first-child{border-top:1px solid var(--line)}
+
+summary{
+  position:relative;
+  padding:20px 35px 20px 0;
+  list-style:none;
+  cursor:pointer;
+  color:#d7d7d9;
+  font-size:12px;
+  font-weight:850;
+}
+
+summary::-webkit-details-marker{display:none}
+
+summary:after{
+  content:"+";
+  position:absolute;
+  right:5px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#696a70;
+  font-size:18px;
+  transition:.2s;
+}
+
+details[open] summary:after{
+  transform:translateY(-50%) rotate(45deg);
+}
+
+details p{
+  max-width:700px;
+  padding:0 35px 20px 0;
+  color:#66676d;
+  font-size:10px;
+  line-height:1.8;
+}
+
+/* CTA */
+
+.final-cta{
+  padding:90px 20px;
+  text-align:center;
+  border-top:1px solid var(--line);
+  background:radial-gradient(ellipse at center,rgba(255,255,255,.055),transparent 65%);
+}
+
+.final-cta h2{
+  font-size:clamp(32px,5vw,52px);
+  letter-spacing:-.06em;
+  font-weight:1000;
+}
+
+.final-cta p{
+  max-width:540px;
+  margin:11px auto 23px;
+  color:#696a70;
+  font-size:11px;
+  line-height:1.7;
+}
+
+/* FOOTER */
+
+footer{
+  border-top:1px solid var(--line);
+  padding:35px 0;
+}
+
+.footer-inner{
+  width:min(var(--max),calc(100% - 36px));
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:25px;
+}
+
+.footer-brand strong{
+  color:#aaaab0;
+  font-size:11px;
+  letter-spacing:.15em;
+}
+
+.footer-brand span{
+  display:block;
+  margin-top:5px;
+  color:#4f5056;
+  font-size:9px;
+}
+
+.footer-links{
+  display:flex;
+  gap:18px;
+}
+
+.footer-links a{
+  color:#5e5f65;
+  font-size:9px;
+  font-weight:800;
+}
+
+.footer-links a:hover{color:#ddd}
+
+.footer-copy{
+  color:#44454a;
+  font-size:8px;
+}
+
+/* EMPTY */
+
+.skeleton{
+  height:325px;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(255,255,255,.018),rgba(255,255,255,.06),rgba(255,255,255,.018));
+  background-size:300% 100%;
+  animation:shimmer 1.5s infinite;
+}
+
+@keyframes shimmer{
+  0%{background-position:100% 0}
+  100%{background-position:-100% 0}
+}
+
+.empty{
+  grid-column:1/-1;
+  padding:80px 20px;
+  text-align:center;
+  border:1px dashed var(--line2);
+  border-radius:18px;
+  color:#5f6065;
+}
+
+.empty-icon{
+  margin-bottom:12px;
+  font-size:30px;
+  opacity:.55;
+}
+
+.empty h3{
+  color:#a4a5aa;
+  font-size:16px;
+}
+
+.empty p{
+  margin-top:5px;
+  font-size:10px;
+}
+
+/* MODAL */
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(0,0,0,.88);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+.modal-backdrop.open{display:flex}
+
+.modal{
+  position:relative;
+  width:min(540px,100%);
+  max-height:calc(100vh - 36px);
+  overflow-y:auto;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:25px;
+  background:
+    radial-gradient(circle at 50% -25%,rgba(255,255,255,.105),transparent 45%),
+    #09090a;
+  box-shadow:0 45px 130px rgba(0,0,0,.85);
+  animation:modalIn .23s ease;
+}
+
+@keyframes modalIn{
+  from{opacity:0;transform:translateY(15px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.modal-close{
+  position:absolute;
+  top:16px;
+  right:16px;
+  z-index:5;
+  width:35px;
+  height:35px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  color:#999a9f;
+  background:rgba(255,255,255,.04);
+  font-size:17px;
+  transition:.2s;
+}
+
+.modal-close:hover{
+  color:#fff;
+  border-color:var(--line2);
+  background:rgba(255,255,255,.09);
+}
+
+.modal-head{
+  padding:27px 27px 20px;
+  border-bottom:1px solid var(--line);
+}
+
+.modal-head h2{
+  padding-right:35px;
+  font-size:23px;
+  letter-spacing:-.04em;
+}
+
+.modal-head p{
+  margin-top:6px;
+  color:#68696f;
+  font-size:10px;
+}
+
+.checkout-steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  padding:17px 27px 0;
+}
+
+.checkout-step{
+  text-align:center;
+  color:#4e4f55;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.checkout-step:before{
+  content:"";
+  display:grid;
+  place-items:center;
+  width:25px;
+  height:25px;
+  margin:0 auto 6px;
+  border:1px solid var(--line2);
+  border-radius:50%;
+  background:#111113;
+}
+
+.checkout-step.active{color:#ddd}
+
+.checkout-step.active:before{
+  background:linear-gradient(145deg,#eee,#888);
+  border-color:rgba(255,255,255,.25);
+}
+
+.checkout-step.done{color:var(--green)}
+
+.checkout-step.done:before{
+  content:"✓";
+  color:#08100c;
+  background:var(--green);
+  border-color:var(--green);
+}
+
+.modal-body{padding:20px 27px 27px}
+
+.order-summary{
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.025);
+}
+
+.summary-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:7px 0;
+  color:#74757b;
+  font-size:10px;
+}
+
+.summary-row strong{
+  color:#ddd;
+  text-align:right;
+}
+
+.summary-row.total{
+  margin-top:7px;
+  padding-top:13px;
+  border-top:1px solid var(--line);
+}
+
+.summary-row.total strong{
+  color:#fff;
+  font-size:19px;
+}
+
+.payment-status{
+  margin-top:14px;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  border:1px solid var(--line2);
+  border-radius:13px;
+  background:rgba(255,255,255,.025);
+}
+
+.status-dot{
+  width:9px;
+  height:9px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#aaa;
+  box-shadow:0 0 12px rgba(255,255,255,.2);
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  50%{opacity:.4;transform:scale(.8)}
+}
+
+.payment-status.success{
+  border-color:rgba(69,223,133,.18);
+  background:rgba(69,223,133,.045);
+}
+
+.payment-status.success .status-dot{
+  background:var(--green);
+  box-shadow:0 0 13px rgba(69,223,133,.55);
+  animation:none;
+}
+
+.status-text strong{
+  display:block;
+  color:#ddd;
+  font-size:10px;
+}
+
+.status-text span{
+  display:block;
+  margin-top:3px;
+  color:#62636a;
+  font-size:8px;
+}
+
+.payment-btn{
+  width:100%;
+  height:49px;
+  margin-top:12px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:12px;
+  color:#080808;
+  background:linear-gradient(135deg,#ededee,#999a9e);
+  font-size:10px;
+  font-weight:950;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+  transition:.2s;
+}
+
+.payment-btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 14px 35px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+.payment-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.payment-note{
+  margin-top:9px;
+  text-align:center;
+  color:#505157;
+  font-size:8px;
+  line-height:1.6;
+}
+
+/* SUCCESS */
+
+.delivery{display:none}
+.delivery.show{display:block}
+
+.success-screen{
+  display:none;
+  padding:14px 0 3px;
+  text-align:center;
+  animation:successIn .4s ease;
+}
+
+.success-screen.show{display:block}
+
+@keyframes successIn{
+  from{opacity:0;transform:translateY(12px) scale(.99)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.success-icon{
+  position:relative;
+  width:82px;
+  height:82px;
+  margin:0 auto 19px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(69,223,133,.4);
+  border-radius:50%;
+  color:#06130b;
+  background:linear-gradient(145deg,#7af0a8,#32bd70);
+  font-size:32px;
+  font-weight:1000;
+  box-shadow:
+    0 0 0 10px rgba(69,223,133,.035),
+    0 0 0 20px rgba(69,223,133,.014),
+    0 0 55px rgba(69,223,133,.24);
+  animation:successPop .55s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes successPop{
+  0%{transform:scale(.65);opacity:0}
+  70%{transform:scale(1.08)}
+  100%{transform:scale(1);opacity:1}
+}
+
+.success-icon:after{
+  content:"";
+  position:absolute;
+  inset:-12px;
+  border:1px solid rgba(69,223,133,.09);
+  border-radius:50%;
+}
+
+.success-title{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 11px;
+  border:1px solid rgba(69,223,133,.18);
+  border-radius:999px;
+  color:#71eb9e;
+  background:rgba(69,223,133,.06);
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.17em;
+}
+
+.success-screen h3{
+  margin-top:11px;
+  color:#fafafa;
+  font-size:29px;
+  letter-spacing:-.055em;
+  font-weight:1000;
+}
+
+.success-screen > p{
+  max-width:400px;
+  margin:9px auto 20px;
+  color:#a1a2a7;
+  font-size:10px;
+  line-height:1.75;
+}
+
+.delivery-label{
+  margin-bottom:7px;
+  text-align:left;
+  color:#85868b;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.account-box{
+  position:relative;
+  padding:17px;
+  text-align:left;
+  border:1px solid rgba(69,223,133,.25);
+  border-radius:13px;
+  color:#f0f0f1;
+  background:
+    linear-gradient(135deg,rgba(69,223,133,.075),rgba(69,223,133,.025)),
+    rgba(0,0,0,.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 10px 30px rgba(0,0,0,.2);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10px;
+  line-height:1.7;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.copy-account{
+  width:100%;
+  height:44px;
+  margin-top:9px;
+  border:1px solid rgba(69,223,133,.28);
+  border-radius:10px;
+  color:#08120c;
+  background:linear-gradient(135deg,#7aefa8,#42d681);
+  font-size:9px;
+  font-weight:1000;
+  box-shadow:0 10px 25px rgba(69,223,133,.09);
+  transition:.2s;
+}
+
+.copy-account:hover{
+  transform:translateY(-2px);
+  box-shadow:0 15px 35px rgba(69,223,133,.15);
+}
+
+.feedback-box{
+  margin-top:19px;
+  padding:18px;
+  text-align:left;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:15px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.feedback-head{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.feedback-icon{
+  width:36px;
+  height:36px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:10px;
+  color:#111;
+  background:linear-gradient(145deg,#f0f0f1,#9c9da1);
+  font-size:14px;
+}
+
+.feedback-head strong{
+  display:block;
+  color:#f0f0f1;
+  font-size:12px;
+  font-weight:950;
+}
+
+.feedback-highlight{
+  display:block;
+  margin-top:2px;
+  color:#b9babf;
+  font-size:9px;
+}
+
+.feedback-box p{
+  margin-top:12px;
+  color:#9a9ba1;
+  font-size:9px;
+  line-height:1.75;
+}
+
+.discord-feedback{
+  width:100%;
+  height:45px;
+  margin-top:13px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;
+  color:#080808;
+  background:linear-gradient(135deg,#f1f1f2,#a2a3a7);
+  font-size:9px;
+  font-weight:1000;
+  transition:.2s;
+}
+
+.discord-feedback:hover{
+  transform:translateY(-2px);
+  box-shadow:0 13px 30px rgba(0,0,0,.4);
+}
+
+.feedback-small{
+  margin-top:11px;
+  text-align:center;
+  color:#65666c;
+  font-size:8px;
+}
+
+/* MODAL FOOTER */
+
+.modal-footer{
+  margin-top:17px;
+  padding-top:15px;
+  border-top:1px solid var(--line);
+  text-align:center;
+  color:#505157;
+  font-size:8px;
+  line-height:1.7;
+}
+
+.modal-footer strong{color:#85868b}
+
+/* TOAST */
+
+.toast-container{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:1000;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.toast{
+  max-width:340px;
+  padding:13px 15px;
+  border:1px solid var(--line2);
+  border-radius:12px;
+  color:#ddd;
+  background:#101011;
+  box-shadow:var(--shadow);
+  font-size:9px;
+  animation:toastIn .2s ease;
+  transition:opacity .2s,transform .2s;
+}
+
+@keyframes toastIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+  .hero-layout{grid-template-columns:1fr;text-align:center}
+  .hero-content{display:flex;flex-direction:column;align-items:center}
+  .hero-description{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  .hero-visual{min-height:330px}
+  .status-bar{grid-template-columns:repeat(2,1fr)}
+  .status-item:nth-child(2){border-right:0}
+  .status-item:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .why-layout{grid-template-columns:1fr}
+  .why-title{text-align:center}
+  .why-title p{margin-left:auto;margin-right:auto}
+}
+
+@media(max-width:700px){
+  .container,.header-inner,.footer-inner{width:calc(100% - 22px)}
+  .header-inner{height:64px}
+  .nav a:not(.nav-discord){display:none}
+  .hero{padding:70px 0 55px}
+  .hero h1{font-size:clamp(42px,12vw,65px)}
+  .hero-description{font-size:12px}
+  .hero-visual{min-height:290px}
+  .onyx-orb{width:210px;height:245px}
+  .visual-card.one{right:0;top:25px}
+  .visual-card.two{left:0;bottom:20px}
+  .status-bar{grid-template-columns:1fr;margin-bottom:65px}
+  .status-item{border-right:0!important;border-bottom:1px solid var(--line)}
+  .status-item:last-child{border-bottom:0}
+  .catalog-tools{flex-direction:column;align-items:stretch}
+  .filters{display:grid;grid-template-columns:repeat(2,1fr)}
+  .sort-box{margin-left:0}
+  .products-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .why-grid{grid-template-columns:1fr}
+  .how-section,.why-section,.faq-section{padding:75px 0}
+  .center-head h2{font-size:30px}
+  .why-title h2{font-size:35px}
+  .footer-inner{flex-direction:column;text-align:center}
+  .footer-links{order:-1}
+  .success-screen h3{font-size:26px}
+}
+
+@media(max-width:390px){
+  .hero-actions{width:100%;flex-direction:column}
+  .hero-actions>*{width:100%}
+  .filters{grid-template-columns:1fr}
+  .product-bottom{flex-direction:column;align-items:stretch}
+  .buy-btn{width:100%}
+  .checkout-steps{padding-left:18px;padding-right:18px}
+  .modal-head,.modal-body{padding-left:18px;padding-right:18px}
+}
+</style>
 </head>
 
 <body>
 
-  <div class="ambient">
-    <div class="grid-bg"></div>
+<div class="ambient"><div class="grid-bg"></div></div>
+<div class="grain"></div>
+
+<header>
+  <div class="header-inner">
+    <a href="#" class="brand">
+      <div class="brand-mark">O</div>
+      <div class="brand-text">ONYX</div>
+    </a>
+
+    <nav class="nav">
+      <a href="#products">Produtos</a>
+      <a href="#how">Como funciona</a>
+      <a href="#faq">FAQ</a>
+      <a class="nav-discord" href="https://discord.gg/p9ZmkncQ8q" target="_blank" rel="noopener noreferrer">Discord</a>
+    </nav>
   </div>
+</header>
 
-  <div class="grain"></div>
+<main>
 
+<section class="hero">
+  <div class="container hero-layout">
 
-  <!-- =========================================
-       HEADER
-  ========================================== -->
+    <div class="hero-content">
 
-  <header>
+      <div class="hero-badge">
+        <i></i>
+        ONYX STORE • ONLINE 24/7
+      </div>
 
-    <div class="header-inner">
+      <h1>
+        <span class="first">PRODUTOS DIGITAIS.</span>
+        <span class="second">SEM COMPLICAÇÃO.</span>
+      </h1>
 
-      <a href="#" class="brand">
+      <p class="hero-description">
+        Escolha seu produto, realize o pagamento com segurança
+        e receba automaticamente após a confirmação.
+        Simples, rápido e direto.
+      </p>
 
-        <div class="brand-mark">
-          O
-        </div>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+          Explorar produtos
+        </button>
 
-        <div class="brand-text">
-          ONYX
-        </div>
-
-      </a>
-
-
-      <nav class="nav">
-
-        <a href="#products">
-          Produtos
+        <a class="btn btn-secondary" href="https://discord.gg/p9ZmkncQ8q" target="_blank" rel="noopener noreferrer">
+          Comunidade Discord
         </a>
-
-        <a href="#how">
-          Como funciona
-        </a>
-
-        <a href="#faq">
-          FAQ
-        </a>
-
-        <a
-          class="nav-discord"
-          href="https://discord.gg/p9ZmkncQ8q"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Discord
-        </a>
-
-      </nav>
+      </div>
 
     </div>
 
-  </header>
+    <div class="hero-visual">
+      <div class="visual-glow"></div>
+      <div class="onyx-orb"></div>
 
+      <div class="visual-card one">
+        <small>STATUS</small>
+        <strong><span class="dot"></span>Sistema online</strong>
+      </div>
 
-  <!-- =========================================
-       MAIN
-  ========================================== -->
+      <div class="visual-card two">
+        <small>DELIVERY</small>
+        <strong>⚡ AUTOMÁTICO</strong>
+      </div>
+    </div>
 
-  <main>
+  </div>
+</section>
 
+<section class="container">
+  <div class="status-bar">
 
-    <!-- HERO -->
+    <div class="status-item">
+      <div class="status-icon">⚡</div>
+      <div class="status-copy">
+        <strong>Entrega automática</strong>
+        <span>Receba após a confirmação</span>
+      </div>
+    </div>
 
-    <section class="hero">
+    <div class="status-item">
+      <div class="status-icon">◈</div>
+      <div class="status-copy">
+        <strong>Pagamento seguro</strong>
+        <span>Processado pelo LivePix</span>
+      </div>
+    </div>
 
-      <div class="container hero-layout">
+    <div class="status-item">
+      <div class="status-icon">24</div>
+      <div class="status-copy">
+        <strong>Disponível 24/7</strong>
+        <span>Sistema funcionando sempre</span>
+      </div>
+    </div>
 
-        <div class="hero-content">
+    <div class="status-item">
+      <div class="status-icon">✓</div>
+      <div class="status-copy">
+        <strong>Processo simples</strong>
+        <span>Sem burocracia</span>
+      </div>
+    </div>
 
-          <div class="hero-badge">
-            <i></i>
-            ONYX STORE • ONLINE 24/7
+  </div>
+</section>
+
+<section class="container" id="products">
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">CATÁLOGO ONYX</div>
+      <h2>Produtos</h2>
+      <p>Escolha o que você procura.</p>
+    </div>
+
+    <div class="catalog-count" id="catalogCount">0 produtos</div>
+  </div>
+
+  <div class="catalog-tools">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </svg>
+      <input id="searchInput" type="search" placeholder="Buscar produto..." autocomplete="off">
+    </div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">Todos</button>
+    <button class="filter-btn" data-filter="available">Disponíveis</button>
+    <button class="filter-btn" data-filter="low">Últimas unidades</button>
+
+    <select class="sort-box" id="sortSelect">
+      <option value="default">Ordenar: padrão</option>
+      <option value="priceAsc">Menor preço</option>
+      <option value="priceDesc">Maior preço</option>
+      <option value="name">Nome A-Z</option>
+    </select>
+  </div>
+
+  <div class="products-grid" id="productsGrid">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </div>
+
+</section>
+
+<section class="how-section" id="how">
+  <div class="container">
+
+    <div class="center-head">
+      <div class="eyebrow">PROCESSO</div>
+      <h2>Como funciona?</h2>
+      <p>Comprar na ONYX foi pensado para ser rápido do começo ao fim.</p>
+    </div>
+
+    <div class="steps">
+
+      <article class="step">
+        <div class="step-number">01</div>
+        <div class="step-icon">◈</div>
+        <h3>Escolha seu produto</h3>
+        <p>Navegue pelo catálogo, confira o estoque e escolha o produto que deseja adquirir.</p>
+      </article>
+
+      <article class="step">
+        <div class="step-number">02</div>
+        <div class="step-icon">$</div>
+        <h3>Faça o pagamento</h3>
+        <p>Clique em comprar e finalize o pagamento através do checkout seguro do LivePix.</p>
+      </article>
+
+      <article class="step">
+        <div class="step-number">03</div>
+        <div class="step-icon">✓</div>
+        <h3>Receba automaticamente</h3>
+        <p>Após a confirmação, seu produto é liberado automaticamente dentro da própria compra.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section class="why-section">
+  <div class="container why-layout">
+
+    <div class="why-title">
+      <div class="eyebrow">POR QUE ONYX?</div>
+      <h2>FEITO PARA<br>SER SIMPLES.</h2>
+      <p>Uma experiência de compra limpa, rápida e sem etapas desnecessárias. Você escolhe, paga e recebe.</p>
+    </div>
+
+    <div class="why-grid">
+
+      <article class="why-card">
+        <strong>⚡ Velocidade</strong>
+        <p>Sistema automatizado para reduzir o tempo entre pagamento e entrega.</p>
+      </article>
+
+      <article class="why-card">
+        <strong>◈ Segurança</strong>
+        <p>Pagamentos processados através do LivePix durante o checkout.</p>
+      </article>
+
+      <article class="why-card">
+        <strong>✓ Automação</strong>
+        <p>O sistema identifica a confirmação e libera o produto automaticamente.</p>
+      </article>
+
+      <article class="why-card">
+        <strong>◆ Suporte</strong>
+        <p>Precisa de ajuda? Nossa comunidade está disponível através do Discord.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section class="faq-section" id="faq">
+  <div class="container">
+
+    <div class="center-head">
+      <div class="eyebrow">DÚVIDAS</div>
+      <h2>Perguntas frequentes</h2>
+      <p>Algumas respostas rápidas antes da sua compra.</p>
+    </div>
+
+    <div class="faq">
+
+      <details>
+        <summary>Como recebo meu produto?</summary>
+        <p>Após o pagamento ser confirmado, o sistema libera automaticamente o produto dentro da tela da compra.</p>
+      </details>
+
+      <details>
+        <summary>Qual forma de pagamento é utilizada?</summary>
+        <p>O pagamento é realizado através do checkout do LivePix.</p>
+      </details>
+
+      <details>
+        <summary>Quanto tempo demora para receber?</summary>
+        <p>A entrega é automática após a confirmação do pagamento pelo sistema.</p>
+      </details>
+
+      <details>
+        <summary>Preciso entrar no Discord para comprar?</summary>
+        <p>Não. A compra pode ser realizada diretamente pela loja. O Discord fica disponível para suporte e feedback.</p>
+      </details>
+
+      <details>
+        <summary>Onde peço ajuda caso tenha algum problema?</summary>
+        <p>Entre no Discord da ONYX e procure nossa equipe de suporte.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="eyebrow">COMUNIDADE ONYX</div>
+  <h2>PRECISOU DE AJUDA?</h2>
+  <p>Entre na nossa comunidade, acompanhe novidades e fale com o suporte da ONYX.</p>
+
+  <a class="btn btn-primary" href="https://discord.gg/p9ZmkncQ8q" target="_blank" rel="noopener noreferrer">
+    Entrar no Discord
+  </a>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+      <strong>ONYX STORE</strong>
+      <span>Produtos digitais • Entrega automática</span>
+    </div>
+
+    <div class="footer-links">
+      <a href="#products">Produtos</a>
+      <a href="#how">Como funciona</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://discord.gg/p9ZmkncQ8q" target="_blank" rel="noopener noreferrer">Discord</a>
+    </div>
+
+    <div class="footer-copy">© 2026 ONYX.</div>
+
+  </div>
+</footer>
+
+<!-- CHECKOUT -->
+
+<div class="modal-backdrop" id="checkoutModal">
+
+  <div class="modal">
+
+    <button class="modal-close" onclick="closeModal()" aria-label="Fechar">×</button>
+
+    <div class="modal-head">
+      <div class="eyebrow">FINALIZAR COMPRA</div>
+
+      <h2 id="orderProduct">Preparando pedido...</h2>
+
+      <p>
+        Complete o pagamento para receber seu produto automaticamente.
+      </p>
+    </div>
+
+    <div class="checkout-steps" id="checkoutSteps">
+      <div class="checkout-step active" id="stepOrder">Pedido</div>
+      <div class="checkout-step" id="stepPayment">Pagamento</div>
+      <div class="checkout-step" id="stepDelivery">Entrega</div>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="order-summary" id="orderSummary">
+
+        <div class="summary-row">
+          <span>Produto</span>
+          <strong id="summaryProduct">—</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Valor do produto</span>
+          <strong id="summaryBase">—</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Taxa de processamento</span>
+          <strong id="summaryFee">—</strong>
+        </div>
+
+        <div class="summary-row total">
+          <span>Total</span>
+          <strong id="orderPrice">—</strong>
+        </div>
+
+      </div>
+
+      <div class="payment-status" id="paymentStatus">
+        <div class="status-dot"></div>
+
+        <div class="status-text">
+          <strong id="statusTitle">Criando cobrança...</strong>
+          <span id="statusDescription">Aguarde enquanto preparamos seu pagamento.</span>
+        </div>
+      </div>
+
+      <button class="payment-btn" id="checkoutBtn" disabled>
+        Preparando pagamento...
+      </button>
+
+      <div class="payment-note">
+        O pagamento é processado pelo LivePix.
+        Não feche esta janela até a confirmação.
+      </div>
+
+      <div class="delivery" id="delivery">
+
+        <div class="success-screen" id="successScreen">
+
+          <div class="success-icon">✓</div>
+
+          <div class="success-title">
+            ✓ &nbsp; VENDA APROVADA
           </div>
 
+          <h3>Compra concluída!</h3>
 
-          <h1>
-
-            <span class="first">
-              PRODUTOS DIGITAIS.
-            </span>
-
-            <span class="second">
-              SEM COMPLICAÇÃO.
-            </span>
-
-          </h1>
-
-
-          <p class="hero-description">
-
-            Escolha seu produto, realize o pagamento
-            com segurança e receba automaticamente
-            após a confirmação. Simples, rápido e direto.
-
+          <p>
+            Pagamento confirmado com sucesso.<br>
+            Seu produto já foi liberado automaticamente e está disponível abaixo.
           </p>
 
+          <div class="delivery-label">Seu produto</div>
 
-          <div class="hero-actions">
+          <div class="account-box" id="account">
+            Seu produto aparecerá aqui.
+          </div>
 
-            <button
-              class="btn btn-primary"
-              onclick="
-                document
-                  .getElementById('products')
-                  .scrollIntoView({behavior:'smooth'})
-              "
-            >
-              Explorar produtos
-            </button>
+          <button class="copy-account" onclick="copyAccount()">
+            COPIAR PRODUTO
+          </button>
 
+          <div class="feedback-box">
+
+            <div class="feedback-head">
+
+              <div class="feedback-icon">★</div>
+
+              <div>
+                <strong>Sua compra foi concluída!</strong>
+                <span class="feedback-highlight">
+                  Quer contar pra gente o que achou?
+                </span>
+              </div>
+
+            </div>
+
+            <p>
+              Seu feedback ajuda a ONYX a melhorar cada vez mais
+              a loja e a experiência de compra. Se puder, deixe
+              uma avaliação no nosso Discord — leva poucos segundos.
+            </p>
 
             <a
-              class="btn btn-secondary"
+              class="discord-feedback"
               href="https://discord.gg/p9ZmkncQ8q"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Comunidade Discord
+              ★ &nbsp; DEIXAR MEU FEEDBACK NO DISCORD
             </a>
 
-          </div>
-
-        </div>
-
-
-        <div class="hero-visual">
-
-          <div class="visual-glow"></div>
-
-          <div class="onyx-orb"></div>
-
-
-          <div class="visual-card one">
-
-            <small>
-              STATUS
-            </small>
-
-            <strong>
-              <span class="dot"></span>
-              Sistema online
-            </strong>
-
-          </div>
-
-
-          <div class="visual-card two">
-
-            <small>
-              DELIVERY
-            </small>
-
-            <strong>
-              ⚡ AUTOMÁTICO
-            </strong>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- STORE STATUS -->
-
-    <section class="container">
-
-      <div class="status-bar">
-
-        <div class="status-item">
-
-          <div class="status-icon">
-            ⚡
-          </div>
-
-          <div class="status-copy">
-
-            <strong>
-              Entrega automática
-            </strong>
-
-            <span>
-              Receba após a confirmação
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="status-item">
-
-          <div class="status-icon">
-            ◈
-          </div>
-
-          <div class="status-copy">
-
-            <strong>
-              Pagamento seguro
-            </strong>
-
-            <span>
-              Processado pelo LivePix
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="status-item">
-
-          <div class="status-icon">
-            24
-          </div>
-
-          <div class="status-copy">
-
-            <strong>
-              Disponível 24/7
-            </strong>
-
-            <span>
-              Sistema funcionando sempre
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="status-item">
-
-          <div class="status-icon">
-            ✓
-          </div>
-
-          <div class="status-copy">
-
-            <strong>
-              Processo simples
-            </strong>
-
-            <span>
-              Sem burocracia
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================================
-         PRODUCTS
-    ========================================== -->
-
-    <section
-      class="container"
-      id="products"
-    >
-
-      <div class="section-head">
-
-        <div>
-
-          <div class="eyebrow">
-            CATÁLOGO ONYX
-          </div>
-
-          <h2>
-            Produtos
-          </h2>
-
-          <p>
-            Escolha o que você procura.
-          </p>
-
-        </div>
-
-
-        <div
-          class="catalog-count"
-          id="catalogCount"
-        >
-          0 produtos
-        </div>
-
-      </div>
-
-
-      <div class="catalog-tools">
-
-        <div class="search-box">
-
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle
-              cx="11"
-              cy="11"
-              r="7"
-            ></circle>
-
-            <path
-              d="m20 20-4-4"
-            ></path>
-          </svg>
-
-
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="Buscar produto..."
-            autocomplete="off"
-          >
-
-        </div>
-
-      </div>
-
-
-      <div class="filters">
-
-        <button
-          class="filter-btn active"
-          data-filter="all"
-        >
-          Todos
-        </button>
-
-
-        <button
-          class="filter-btn"
-          data-filter="available"
-        >
-          Disponíveis
-        </button>
-
-
-        <button
-          class="filter-btn"
-          data-filter="low"
-        >
-          Últimas unidades
-        </button>
-
-
-        <select
-          class="sort-box"
-          id="sortSelect"
-        >
-
-          <option value="default">
-            Ordenar: padrão
-          </option>
-
-          <option value="priceAsc">
-            Menor preço
-          </option>
-
-          <option value="priceDesc">
-            Maior preço
-          </option>
-
-          <option value="name">
-            Nome A-Z
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div
-        class="products-grid"
-        id="productsGrid"
-      >
-
-        <div class="skeleton"></div>
-        <div class="skeleton"></div>
-        <div class="skeleton"></div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================================
-         HOW IT WORKS
-    ========================================== -->
-
-    <section
-      class="how-section"
-      id="how"
-    >
-
-      <div class="container">
-
-        <div class="center-head">
-
-          <div class="eyebrow">
-            PROCESSO
-          </div>
-
-          <h2>
-            Como funciona?
-          </h2>
-
-          <p>
-            Comprar na ONYX foi pensado para ser
-            rápido do começo ao fim.
-          </p>
-
-        </div>
-
-
-        <div class="steps">
-
-
-          <article class="step">
-
-            <div class="step-number">
-              01
+            <div class="feedback-small">
+              Obrigado por comprar na ONYX STORE.
             </div>
 
-            <div class="step-icon">
-              ◈
-            </div>
-
-            <h3>
-              Escolha seu produto
-            </h3>
-
-            <p>
-              Navegue pelo catálogo, confira
-              o estoque e escolha o produto
-              que deseja adquirir.
-            </p>
-
-          </article>
-
-
-          <article class="step">
-
-            <div class="step-number">
-              02
-            </div>
-
-            <div class="step-icon">
-              $
-            </div>
-
-            <h3>
-              Faça o pagamento
-            </h3>
-
-            <p>
-              Clique em comprar e finalize
-              o pagamento através do checkout
-              seguro do LivePix.
-            </p>
-
-          </article>
-
-
-          <article class="step">
-
-            <div class="step-number">
-              03
-            </div>
-
-            <div class="step-icon">
-              ✓
-            </div>
-
-            <h3>
-              Receba automaticamente
-            </h3>
-
-            <p>
-              Após a confirmação, seu produto
-              é liberado automaticamente
-              dentro da própria compra.
-            </p>
-
-          </article>
-
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================================
-         WHY ONYX
-    ========================================== -->
-
-    <section class="why-section">
-
-      <div class="container why-layout">
-
-        <div class="why-title">
-
-          <div class="eyebrow">
-            POR QUE ONYX?
           </div>
 
-          <h2>
-            FEITO PARA<br>
-            SER SIMPLES.
-          </h2>
-
-          <p>
-            Uma experiência de compra limpa,
-            rápida e sem etapas desnecessárias.
-            Você escolhe, paga e recebe.
-          </p>
-
-        </div>
-
-
-        <div class="why-grid">
-
-
-          <article class="why-card">
-
-            <strong>
-              ⚡ Velocidade
-            </strong>
-
-            <p>
-              Sistema automatizado para
-              reduzir o tempo entre pagamento
-              e entrega.
-            </p>
-
-          </article>
-
-
-          <article class="why-card">
-
-            <strong>
-              ◈ Segurança
-            </strong>
-
-            <p>
-              Pagamentos processados através
-              do LivePix durante o checkout.
-            </p>
-
-          </article>
-
-
-          <article class="why-card">
-
-            <strong>
-              ✓ Automação
-            </strong>
-
-            <p>
-              O sistema identifica a confirmação
-              e libera o produto automaticamente.
-            </p>
-
-          </article>
-
-
-          <article class="why-card">
-
-            <strong>
-              ◆ Suporte
-            </strong>
-
-            <p>
-              Precisa de ajuda? Nossa comunidade
-              está disponível através do Discord.
-            </p>
-
-          </article>
-
-
         </div>
 
       </div>
 
-    </section>
-
-
-    <!-- =========================================
-         FAQ
-    ========================================== -->
-
-    <section
-      class="faq-section"
-      id="faq"
-    >
-
-      <div class="container">
-
-        <div class="center-head">
-
-          <div class="eyebrow">
-            DÚVIDAS
-          </div>
-
-          <h2>
-            Perguntas frequentes
-          </h2>
-
-          <p>
-            Algumas respostas rápidas antes da sua compra.
-          </p>
-
-        </div>
-
-
-        <div class="faq">
-
-          <details>
-
-            <summary>
-              Como recebo meu produto?
-            </summary>
-
-            <p>
-              Após o pagamento ser confirmado,
-              o sistema libera automaticamente
-              o produto dentro da tela da compra.
-            </p>
-
-          </details>
-
-
-          <details>
-
-            <summary>
-              Qual forma de pagamento é utilizada?
-            </summary>
-
-            <p>
-              O pagamento é realizado através
-              do checkout do LivePix.
-            </p>
-
-          </details>
-
-
-          <details>
-
-            <summary>
-              Quanto tempo demora para receber?
-            </summary>
-
-            <p>
-              A entrega é automática após a
-              confirmação do pagamento pelo sistema.
-            </p>
-
-          </details>
-
-
-          <details>
-
-            <summary>
-              Preciso entrar no Discord para comprar?
-            </summary>
-
-            <p>
-              Não. A compra pode ser realizada
-              diretamente pela loja. O Discord fica
-              disponível para suporte e feedback.
-            </p>
-
-          </details>
-
-
-          <details>
-
-            <summary>
-              Onde peço ajuda caso tenha algum problema?
-            </summary>
-
-            <p>
-              Entre no Discord da ONYX e procure
-              nossa equipe de suporte.
-            </p>
-
-          </details>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================================
-         FINAL CTA
-    ========================================== -->
-
-    <section class="final-cta">
-
-      <div class="eyebrow">
-        COMUNIDADE ONYX
-      </div>
-
-      <h2>
-        PRECISOU DE AJUDA?
-      </h2>
-
-      <p>
-        Entre na nossa comunidade, acompanhe novidades
-        e fale com o suporte da ONYX.
-      </p>
-
-
-      <a
-        class="btn btn-primary"
-        href="https://discord.gg/p9ZmkncQ8q"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Entrar no Discord
-      </a>
-
-    </section>
-
-  </main>
-
-
-  <!-- =========================================
-       FOOTER
-  ========================================== -->
-
-  <footer>
-
-    <div class="footer-inner">
-
-      <div class="footer-brand">
-
-        <strong>
-          ONYX STORE
-        </strong>
-
-        <span>
-          Produtos digitais • Entrega automática
-        </span>
-
-      </div>
-
-
-      <div class="footer-links">
-
-        <a href="#products">
-          Produtos
-        </a>
-
-        <a href="#how">
-          Como funciona
-        </a>
-
-        <a href="#faq">
-          FAQ
-        </a>
-
-        <a
-          href="https://discord.gg/p9ZmkncQ8q"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Discord
-        </a>
-
-      </div>
-
-
-      <div class="footer-copy">
-        © 2026 ONYX.
+      <div class="modal-footer">
+        Pedido:
+        <strong id="orderId">—</strong>
+        <br>
+        A entrega acontece automaticamente após a confirmação do pagamento.
       </div>
 
     </div>
-
-  </footer>
-
-
-  <!-- =========================================
-       CHECKOUT MODAL
-  ========================================== -->
-
-  <div
-    class="modal-backdrop"
-    id="checkoutModal"
-  >
-
-    <div class="modal">
-
-
-      <button
-        class="modal-close"
-        onclick="closeModal()"
-        aria-label="Fechar"
-      >
-        ×
-      </button>
-
-
-      <div class="modal-head">
-
-        <div class="eyebrow">
-          FINALIZAR COMPRA
-        </div>
-
-        <h2 id="orderProduct">
-          Preparando pedido...
-        </h2>
-
-        <p>
-          Complete o pagamento para receber
-          seu produto automaticamente.
-        </p>
-
-      </div>
-
-
-      <!-- CHECKOUT STEPS -->
-
-      <div
-        class="checkout-steps"
-        id="checkoutSteps"
-      >
-
-        <div
-          class="checkout-step active"
-          id="stepOrder"
-        >
-          Pedido
-        </div>
-
-        <div
-          class="checkout-step"
-          id="stepPayment"
-        >
-          Pagamento
-        </div>
-
-        <div
-          class="checkout-step"
-          id="stepDelivery"
-        >
-          Entrega
-        </div>
-
-      </div>
-
-
-      <div class="modal-body">
-
-
-        <!-- ORDER SUMMARY -->
-
-        <div
-          class="order-summary"
-          id="orderSummary"
-        >
-
-          <div class="summary-row">
-
-            <span>
-              Produto
-            </span>
-
-            <strong id="summaryProduct">
-              —
-            </strong>
-
-          </div>
-
-
-          <div class="summary-row">
-
-            <span>
-              Valor do produto
-            </span>
-
-            <strong id="summaryBase">
-              —
-            </strong>
-
-          </div>
-
-
-          <div class="summary-row">
-
-            <span>
-              Taxa de processamento
-            </span>
-
-            <strong id="summaryFee">
-              —
-            </strong>
-
-          </div>
-
-
-          <div class="summary-row total">
-
-            <span>
-              Total
-            </span>
-
-            <strong id="orderPrice">
-              —
-            </strong>
-
-          </div>
-
-        </div>
-
-
-        <!-- PAYMENT -->
-
-        <div
-          class="payment-status"
-          id="paymentStatus"
-        >
-
-          <div class="status-dot"></div>
-
-          <div class="status-text">
-
-            <strong id="statusTitle">
-              Criando cobrança...
-            </strong>
-
-            <span id="statusDescription">
-              Aguarde enquanto preparamos seu pagamento.
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <button
-          class="payment-btn"
-          id="checkoutBtn"
-          disabled
-        >
-          Preparando pagamento...
-        </button>
-
-
-        <div class="payment-note">
-          O pagamento é processado pelo LivePix.
-          Não feche esta janela até a confirmação.
-        </div>
-
-
-        <!-- DELIVERY -->
-
-        <div
-          class="delivery"
-          id="delivery"
-        >
-
-          <div class="success-screen" id="successScreen">
-
-            <div class="success-icon">
-              ✓
-            </div>
-
-            <div class="success-title">
-              VENDA APROVADA
-            </div>
-
-            <h3>
-              Compra concluída!
-            </h3>
-
-            <p>
-              Seu pagamento foi confirmado e seu
-              pedido foi entregue com sucesso.
-            </p>
-
-
-            <div
-              class="account-box"
-              id="account"
-            >
-              Seu produto aparecerá aqui.
-            </div>
-
-
-            <button
-              class="copy-account"
-              onclick="copyAccount()"
-            >
-              Copiar produto
-            </button>
-
-
-            <div class="feedback-box">
-
-              <strong>
-                Curtiu sua compra?
-              </strong>
-
-              <p>
-                Manda um feedback pra gente no Discord.
-                Seu comentário ajuda muito a ONYX.
-              </p>
-
-
-              <a
-                class="discord-feedback"
-                href="https://discord.gg/p9ZmkncQ8q"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Entrar no Discord e deixar feedback
-              </a>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="modal-footer">
-
-          Pedido:
-          <strong id="orderId">
-            —
-          </strong>
-
-          <br>
-
-          A entrega acontece automaticamente
-          após a confirmação do pagamento.
-
-        </div>
-
-      </div>
-
-    </div>
-
   </div>
+</div>
 
+<div class="toast-container" id="toastContainer"></div>
 
-  <!-- TOAST -->
+<script>
+const DISCORD_URL="https://discord.gg/p9ZmkncQ8q";
 
-  <div
-    class="toast-container"
-    id="toastContainer"
-  ></div>
+let allProducts=[];
+let currentProducts=[];
+let currentFilter="all";
+let currentOrderId=null;
+let currentCheckoutUrl=null;
+let pollTimer=null;
+let currentAccount="";
 
+const $=selector=>document.querySelector(selector);
 
-  <script>
+function escapeHtml(value){
+  return String(value??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
 
-    const DISCORD_URL =
-      "https://discord.gg/p9ZmkncQ8q";
+function money(cents){
+  const value=Number(cents||0)/100;
+  return value.toLocaleString("pt-BR",{
+    style:"currency",
+    currency:"BRL"
+  });
+}
 
+function getPriceCents(product){
+  if(product.priceCents!=null)return Number(product.priceCents);
 
-    let allProducts = [];
-    let currentProducts = [];
+  if(product.price!=null){
+    const value=Number(product.price);
 
-    let currentFilter = "all";
-
-    let currentOrderId = null;
-    let currentCheckoutUrl = null;
-
-    let pollTimer = null;
-
-    let currentAccount = "";
-
-
-    const $ =
-      selector =>
-        document.querySelector(selector);
-
-
-    /* =========================================
-       UTILS
-    ========================================== */
-
-    function escapeHtml(value) {
-
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
+    if(!Number.isNaN(value)){
+      return value<100
+        ? Math.round(value*100)
+        : Math.round(value);
     }
-
-
-    function money(cents) {
-
-      const value =
-        Number(cents || 0) / 100;
-
-      return value.toLocaleString(
-        "pt-BR",
-        {
-          style: "currency",
-          currency: "BRL"
-        }
-      );
-
-    }
-
-
-    function getPriceCents(product) {
-
-      if (
-        product.priceCents != null
-      ) {
-        return Number(
-          product.priceCents
-        );
-      }
-
-
-      if (
-        product.price != null
-      ) {
-
-        const value =
-          Number(product.price);
-
-        if (!Number.isNaN(value)) {
-
-          return value < 100
-            ? Math.round(value * 100)
-            : Math.round(value);
-
-        }
-
-      }
-
-
-      if (
-        product.price_cents != null
-      ) {
-
-        return Number(
-          product.price_cents
-        );
-
-      }
-
-
-      return 0;
-
-    }
-
-
-    function getStock(product) {
-
-      return Number(
-        product.stock ??
-        product.stockCount ??
-        product.available ??
-        product.quantity ??
-        0
-      );
-
-    }
-
-
-    function getProductId(product) {
-
-      return (
-        product.id ??
-        product.productId ??
-        product._id
-      );
-
-    }
-
-
-    function getProductName(product) {
-
-      return (
-        product.name ??
-        product.title ??
-        "Produto"
-      );
-
-    }
-
-
-    function getProductDescription(product) {
-
-      return (
-        product.description ??
-        product.desc ??
-        "Produto digital disponível na ONYX STORE."
-      );
-
-    }
-
-
-    function toast(message) {
-
-      const container =
-        $("#toastContainer");
-
-      const item =
-        document.createElement("div");
-
-      item.className = "toast";
-
-      item.textContent = message;
-
-      container.appendChild(item);
-
-
-      setTimeout(() => {
-
-        item.style.opacity = "0";
-
-        item.style.transform =
-          "translateY(8px)";
-
-        setTimeout(
-          () => item.remove(),
-          200
-        );
-
-      }, 2800);
-
-    }
-
-
-    /* =========================================
-       STATS
-    ========================================= */
-
-    function updateStats() {
-
-      const total =
-        allProducts.length;
-
-
-      $("#catalogCount")
-        .textContent =
-        `${total} produto${total === 1 ? "" : "s"}`;
-
-    }
-
-
-    /* =========================================
-       PRODUCTS
-    ========================================= */
-
-    function renderProducts() {
-
-      const grid =
-        $("#productsGrid");
-
-
-      let products =
-        [...allProducts];
-
-
-      const search =
-        $("#searchInput")
-          .value
-          .trim()
-          .toLowerCase();
-
-
-      if (search) {
-
-        products =
-          products.filter(product => {
-
-            const text = [
-
-              getProductName(product),
-
-              getProductDescription(product)
-
-            ]
-              .join(" ")
-              .toLowerCase();
-
-
-            return text.includes(search);
-
-          });
-
-      }
-
-
-      if (
-        currentFilter ===
-        "available"
-      ) {
-
-        products =
-          products.filter(
-            product =>
-              getStock(product) > 0
-          );
-
-      }
-
-
-      if (
-        currentFilter ===
-        "low"
-      ) {
-
-        products =
-          products.filter(product => {
-
-            const stock =
-              getStock(product);
-
-            return (
-              stock > 0 &&
-              stock <= 5
-            );
-
-          });
-
-      }
-
-
-      const sort =
-        $("#sortSelect").value;
-
-
-      if (sort === "priceAsc") {
-
-        products.sort(
-          (a,b) =>
-            getPriceCents(a) -
-            getPriceCents(b)
-        );
-
-      }
-
-
-      if (sort === "priceDesc") {
-
-        products.sort(
-          (a,b) =>
-            getPriceCents(b) -
-            getPriceCents(a)
-        );
-
-      }
-
-
-      if (sort === "name") {
-
-        products.sort(
-          (a,b) =>
-            getProductName(a)
-              .localeCompare(
-                getProductName(b),
-                "pt-BR"
-              )
-        );
-
-      }
-
-
-      currentProducts =
-        products;
-
-
-      if (!products.length) {
-
-        grid.innerHTML = `
-
-          <div class="empty">
-
-            <div class="empty-icon">
-              ◇
-            </div>
-
-            <h3>
-              Nenhum produto encontrado
-            </h3>
-
-            <p>
-              Tente alterar sua pesquisa
-              ou os filtros.
-            </p>
-
-          </div>
-
-        `;
-
-        return;
-
-      }
-
-
-      grid.innerHTML =
-        products.map(product => {
-
-          const id =
-            getProductId(product);
-
-          const name =
-            getProductName(product);
-
-          const description =
-            getProductDescription(product);
-
-          const price =
-            getPriceCents(product);
-
-          const stock =
-            getStock(product);
-
-
-          const available =
-            stock > 0;
-
-
-          let stockText =
-            "Disponível";
-
-          let stockClass =
-            "";
-
-
-          if (!available) {
-
-            stockText =
-              "Esgotado";
-
-            stockClass =
-              "out";
-
-          }
-
-          else if (stock <= 5) {
-
-            stockText =
-              `${stock} restante${stock === 1 ? "" : "s"}`;
-
-            stockClass =
-              "low";
-
-          }
-
-          else {
-
-            stockText =
-              `${stock} disponíveis`;
-
-          }
-
-
-          const safeId =
-            String(id)
-              .replace(/\\/g, "\\\\")
-              .replace(/'/g, "\\'");
-
-
-          return `
-
-            <article
-              class="product-card"
-            >
-
-              <div class="product-top">
-
-                <div class="product-icon">
-                  ◈
-                </div>
-
-
-                <div
-                  class="stock-badge ${stockClass}"
-                >
-                  ${escapeHtml(stockText)}
-                </div>
-
-              </div>
-
-
-              <div class="product-info">
-
-                <div class="product-category">
-                  ONYX DIGITAL
-                </div>
-
-                <h3>
-                  ${escapeHtml(name)}
-                </h3>
-
-
-                <p
-                  class="product-description"
-                >
-                  ${escapeHtml(description)}
-                </p>
-
-
-                <div class="product-meta">
-
-                  <span class="meta-pill">
-                    ⚡ Automático
-                  </span>
-
-                  <span class="meta-pill">
-                    ◈ Seguro
-                  </span>
-
-                </div>
-
-              </div>
-
-
-              <div class="product-bottom">
-
-                <div>
-
-                  <div class="price-label">
-                    Preço
-                  </div>
-
-                  <div class="price">
-                    ${money(price)}
-                  </div>
-
-                </div>
-
-
-                <button
-                  class="buy-btn"
-                  ${available ? "" : "disabled"}
-                  onclick="buyProduct('${safeId}')"
-                >
-
-                  ${
-                    available
-                      ? "Comprar agora"
-                      : "Esgotado"
-                  }
-
-                </button>
-
-              </div>
-
-            </article>
-
-          `;
-
-        }).join("");
-
-    }
-
-
-    /* =========================================
-       LOAD PRODUCTS
-    ========================================= */
-
-    async function loadProducts() {
-
-      const grid =
-        $("#productsGrid");
-
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/products",
-            {
-              cache: "no-store"
-            }
-          );
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            "Falha ao carregar produtos."
-          );
-
-        }
-
-
-        const data =
-          await response.json();
-
-
-        allProducts =
-          Array.isArray(data)
-            ? data
-            : Array.isArray(data.products)
-              ? data.products
-              : [];
-
-
-        updateStats();
-
-        renderProducts();
-
-
-      } catch (error) {
-
-        console.error(error);
-
-
-        grid.innerHTML = `
-
-          <div class="empty">
-
-            <div class="empty-icon">
-              !
-            </div>
-
-            <h3>
-              Não foi possível carregar a loja
-            </h3>
-
-            <p>
-              Atualize a página e tente novamente.
-            </p>
-
-          </div>
-
-        `;
-
-
-        toast(
-          "Não foi possível carregar os produtos."
-        );
-
-      }
-
-    }
-
-
-    /* =========================================
-       BUY
-    ========================================= */
-
-    async function buyProduct(productId) {
-
-      const product =
-        allProducts.find(
-          item =>
-            String(
-              getProductId(item)
-            ) ===
-            String(productId)
-        );
-
-
-      if (!product) {
-
-        toast(
-          "Produto não encontrado."
-        );
-
-        return;
-
-      }
-
-
-      if (
-        getStock(product) <= 0
-      ) {
-
-        toast(
-          "Esse produto está esgotado."
-        );
-
-        return;
-
-      }
-
-
-      openModal();
-
-
-      $("#orderProduct")
-        .textContent =
-        getProductName(product);
-
-
-      $("#summaryProduct")
-        .textContent =
-        getProductName(product);
-
-
-      const baseAmount =
-        getPriceCents(product);
-
-
-      $("#summaryBase")
-        .textContent =
-        money(baseAmount);
-
-
-      $("#summaryFee")
-        .textContent =
-        "Calculando...";
-
-
-      $("#orderPrice")
-        .textContent =
-        "Calculando...";
-
-
-      $("#orderId")
-        .textContent =
-        "—";
-
-
-      $("#statusTitle")
-        .textContent =
-        "Criando cobrança...";
-
-
-      $("#statusDescription")
-        .textContent =
-        "Aguarde enquanto preparamos seu pagamento.";
-
-
-      $("#paymentStatus")
-        .classList.remove(
-          "success"
-        );
-
-
-      $("#checkoutBtn")
-        .disabled = true;
-
-
-      $("#checkoutBtn")
-        .style.display = "";
-
-
-      $("#checkoutBtn")
-        .textContent =
-        "Preparando pagamento...";
-
-
-      $("#delivery")
-        .classList.remove(
-          "show"
-        );
-
-
-      $("#successScreen")
-        .classList.remove(
-          "show"
-        );
-
-
-      $("#orderSummary")
-        .style.display = "";
-
-
-      $("#checkoutSteps")
-        .style.display = "";
-
-
-      setCheckoutStep("order");
-
-
-      currentAccount = "";
-
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/checkout",
-            {
-              method: "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:
-                JSON.stringify({
-                  productId:
-                    getProductId(product)
-                })
-
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            data.error ||
-            data.message ||
-            "Não foi possível criar o pedido."
-          );
-
-        }
-
-
-        currentOrderId =
-          data.orderId;
-
-
-        currentCheckoutUrl =
-          data.checkout ||
-          data.redirectUrl ||
-          data.paymentUrl ||
-          null;
-
-
-        const amountCents =
-          Number(
-            data.amountCents ??
-            data.totalAmountCents ??
-            baseAmount
-          );
-
-
-        const baseCents =
-          Number(
-            data.baseAmountCents ??
-            baseAmount
-          );
-
-
-        const feeCents =
-          Math.max(
-            0,
-            amountCents -
-            baseCents
-          );
-
-
-        $("#orderId")
-          .textContent =
-          currentOrderId ||
-          "—";
-
-
-        $("#summaryBase")
-          .textContent =
-          money(baseCents);
-
-
-        $("#summaryFee")
-          .textContent =
-          feeCents > 0
-            ? money(feeCents)
-            : "Incluída";
-
-
-        $("#orderPrice")
-          .textContent =
-          money(amountCents);
-
-
-        $("#statusTitle")
-          .textContent =
-          "Pagamento pronto";
-
-
-        $("#statusDescription")
-          .textContent =
-          "Abra o checkout para realizar o pagamento.";
-
-
-        setCheckoutStep("payment");
-
-
-        if (
-          currentCheckoutUrl
-        ) {
-
-          $("#checkoutBtn")
-            .disabled = false;
-
-
-          $("#checkoutBtn")
-            .textContent =
-            "Abrir pagamento";
-
-
-          $("#checkoutBtn")
-            .onclick = () => {
-
-              window.open(
-                currentCheckoutUrl,
-                "_blank",
-                "noopener,noreferrer"
-              );
-
-
-              $("#statusTitle")
-                .textContent =
-                "Aguardando pagamento";
-
-
-              $("#statusDescription")
-                .textContent =
-                "Estamos aguardando a confirmação do pagamento.";
-
-            };
-
-
-        } else {
-
-          $("#checkoutBtn")
-            .disabled = true;
-
-
-          $("#checkoutBtn")
-            .textContent =
-            "Pagamento indisponível";
-
-
-          toast(
-            "A cobrança foi criada, mas o link não foi retornado."
-          );
-
-        }
-
-
-        startPolling();
-
-
-      } catch (error) {
-
-        console.error(error);
-
-
-        $("#statusTitle")
-          .textContent =
-          "Erro ao criar cobrança";
-
-
-        $("#statusDescription")
-          .textContent =
-          error.message ||
-          "Tente novamente.";
-
-
-        $("#checkoutBtn")
-          .disabled = true;
-
-
-        $("#checkoutBtn")
-          .textContent =
-          "Pagamento indisponível";
-
-
-        toast(
-          error.message ||
-          "Erro ao criar pedido."
-        );
-
-      }
-
-    }
-
-
-    /* =========================================
-       CHECKOUT STEPS
-    ========================================= */
-
-    function setCheckoutStep(step) {
-
-      const order =
-        $("#stepOrder");
-
-      const payment =
-        $("#stepPayment");
-
-      const delivery =
-        $("#stepDelivery");
-
-
-      [
-        order,
-        payment,
-        delivery
-      ].forEach(item => {
-
-        item.classList.remove(
-          "active",
-          "done"
-        );
-
-      });
-
-
-      if (step === "order") {
-
-        order.classList.add(
-          "active"
-        );
-
-      }
-
-
-      if (step === "payment") {
-
-        order.classList.add(
-          "done"
-        );
-
-        payment.classList.add(
-          "active"
-        );
-
-      }
-
-
-      if (step === "delivery") {
-
-        order.classList.add(
-          "done"
-        );
-
-        payment.classList.add(
-          "done"
-        );
-
-        delivery.classList.add(
-          "done"
-        );
-
-      }
-
-    }
-
-
-    /* =========================================
-       POLLING
-    ========================================= */
-
-    function startPolling() {
-
-      stopPolling();
-
-
-      if (!currentOrderId) {
-        return;
-      }
-
-
-      checkOrder();
-
-
-      pollTimer =
-        setInterval(
-          checkOrder,
-          3000
-        );
-
-    }
-
-
-    function stopPolling() {
-
-      if (pollTimer) {
-
-        clearInterval(
-          pollTimer
-        );
-
-        pollTimer = null;
-
-      }
-
-    }
-
-
-    async function checkOrder() {
-
-      if (!currentOrderId) {
-        return;
-      }
-
-
-      try {
-
-        const response =
-          await fetch(
-            `/api/order/${encodeURIComponent(currentOrderId)}`,
-            {
-              cache: "no-store"
-            }
-          );
-
-
-        if (!response.ok) {
-          return;
-        }
-
-
-        const data =
-          await response.json();
-
-
-        if (
-          data.status === "paid" &&
-          (
-            data.delivered === true ||
-            data.account ||
-            data.product
-          )
-        ) {
-
-          currentAccount =
-            data.account ??
-            data.product ??
-            data.delivery ??
-            "";
-
-
-          stopPolling();
-
-
-          setCheckoutStep("delivery");
-
-
-          $("#paymentStatus")
-            .classList.add(
-              "success"
-            );
-
-
-          $("#statusTitle")
-            .textContent =
-            "Pagamento confirmado!";
-
-
-          $("#statusDescription")
-            .textContent =
-            "Seu produto foi liberado automaticamente.";
-
-
-          $("#checkoutBtn")
-            .style.display =
-            "none";
-
-
-          $("#orderSummary")
-            .style.display =
-            "none";
-
-
-          $("#checkoutSteps")
-            .style.display =
-            "";
-
-
-          $("#account")
-            .textContent =
-            currentAccount ||
-            "Produto entregue.";
-
-
-          $("#delivery")
-            .classList.add(
-              "show"
-            );
-
-
-          $("#successScreen")
-            .classList.add(
-              "show"
-            );
-
-
-          toast(
-            "✓ Venda aprovada! Produto liberado."
-          );
-
-        }
-
-      } catch (error) {
-
-        console.error(
-          "Erro ao consultar pedido:",
-          error
-        );
-
-      }
-
-    }
-
-
-    /* =========================================
-       MODAL
-    ========================================= */
-
-    function openModal() {
-
-      $("#checkoutModal")
-        .classList.add(
-          "open"
-        );
-
-
-      document.body
-        .classList.add(
-          "modal-open"
-        );
-
-    }
-
-
-    function closeModal() {
-
-      stopPolling();
-
-
-      $("#checkoutModal")
-        .classList.remove(
-          "open"
-        );
-
-
-      document.body
-        .classList.remove(
-          "modal-open"
-        );
-
-    }
-
-
-    /* =========================================
-       COPY
-    ========================================= */
-
-    async function copyAccount() {
-
-      if (!currentAccount) {
-        return;
-      }
-
-
-      try {
-
-        await navigator.clipboard
-          .writeText(
-            currentAccount
-          );
-
-
-        toast(
-          "Produto copiado para a área de transferência."
-        );
-
-
-      } catch {
-
-        toast(
-          "Não foi possível copiar automaticamente."
-        );
-
-      }
-
-    }
-
-
-    /* =========================================
-       FILTERS
-    ========================================= */
-
-    document
-      .querySelectorAll(
-        ".filter-btn"
+  }
+
+  if(product.price_cents!=null)
+    return Number(product.price_cents);
+
+  return 0;
+}
+
+function getStock(product){
+  return Number(
+    product.stock ??
+    product.stockCount ??
+    product.available ??
+    product.quantity ??
+    0
+  );
+}
+
+function getProductId(product){
+  return product.id ?? product.productId ?? product._id;
+}
+
+function getProductName(product){
+  return product.name ?? product.title ?? "Produto";
+}
+
+function getProductDescription(product){
+  return product.description ??
+    product.desc ??
+    "Produto digital disponível na ONYX STORE.";
+}
+
+function toast(message){
+  const container=$("#toastContainer");
+  const item=document.createElement("div");
+
+  item.className="toast";
+  item.textContent=message;
+
+  container.appendChild(item);
+
+  setTimeout(()=>{
+    item.style.opacity="0";
+    item.style.transform="translateY(8px)";
+
+    setTimeout(()=>item.remove(),200);
+  },2800);
+}
+
+function updateStats(){
+  const total=allProducts.length;
+
+  $("#catalogCount").textContent=
+    `${total} produto${total===1?"":"s"}`;
+}
+
+function renderProducts(){
+
+  const grid=$("#productsGrid");
+
+  let products=[...allProducts];
+
+  const search=$("#searchInput")
+    .value
+    .trim()
+    .toLowerCase();
+
+  if(search){
+    products=products.filter(product=>{
+      const text=[
+        getProductName(product),
+        getProductDescription(product)
+      ].join(" ").toLowerCase();
+
+      return text.includes(search);
+    });
+  }
+
+  if(currentFilter==="available"){
+    products=products.filter(product=>getStock(product)>0);
+  }
+
+  if(currentFilter==="low"){
+    products=products.filter(product=>{
+      const stock=getStock(product);
+      return stock>0 && stock<=5;
+    });
+  }
+
+  const sort=$("#sortSelect").value;
+
+  if(sort==="priceAsc"){
+    products.sort((a,b)=>
+      getPriceCents(a)-getPriceCents(b)
+    );
+  }
+
+  if(sort==="priceDesc"){
+    products.sort((a,b)=>
+      getPriceCents(b)-getPriceCents(a)
+    );
+  }
+
+  if(sort==="name"){
+    products.sort((a,b)=>
+      getProductName(a).localeCompare(
+        getProductName(b),
+        "pt-BR"
       )
-      .forEach(button => {
+    );
+  }
 
-        button.addEventListener(
-          "click",
-          () => {
+  currentProducts=products;
 
-            document
-              .querySelectorAll(
-                ".filter-btn"
-              )
-              .forEach(item =>
-                item.classList
-                  .remove("active")
-              );
+  if(!products.length){
 
+    grid.innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">◇</div>
+        <h3>Nenhum produto encontrado</h3>
+        <p>Tente alterar sua pesquisa ou os filtros.</p>
+      </div>
+    `;
 
-            button.classList
-              .add("active");
+    return;
+  }
 
+  grid.innerHTML=products.map(product=>{
 
-            currentFilter =
-              button.dataset.filter;
+    const id=getProductId(product);
+    const name=getProductName(product);
+    const description=getProductDescription(product);
+    const price=getPriceCents(product);
+    const stock=getStock(product);
+    const available=stock>0;
 
+    let stockText="Disponível";
+    let stockClass="";
 
-            renderProducts();
+    if(!available){
+      stockText="Esgotado";
+      stockClass="out";
+    }else if(stock<=5){
+      stockText=
+        `${stock} restante${stock===1?"":"s"}`;
+      stockClass="low";
+    }else{
+      stockText=`${stock} disponíveis`;
+    }
 
-          }
-        );
+    const safeId=String(id)
+      .replace(/\\/g,"\\\\")
+      .replace(/'/g,"\\'");
 
-      });
+    return`
+      <article class="product-card">
 
+        <div class="product-top">
 
-    $("#searchInput")
-      .addEventListener(
-        "input",
-        renderProducts
-      );
+          <div class="product-icon">◈</div>
 
+          <div class="stock-badge ${stockClass}">
+            ${escapeHtml(stockText)}
+          </div>
 
-    $("#sortSelect")
-      .addEventListener(
-        "change",
-        renderProducts
-      );
+        </div>
 
+        <div class="product-info">
 
-    /* =========================================
-       MODAL EVENTS
-    ========================================= */
+          <div class="product-category">
+            ONYX DIGITAL
+          </div>
 
-    $("#checkoutModal")
-      .addEventListener(
-        "click",
-        event => {
+          <h3>
+            ${escapeHtml(name)}
+          </h3>
 
-          if (
-            event.target ===
-            $("#checkoutModal")
-          ) {
+          <p class="product-description">
+            ${escapeHtml(description)}
+          </p>
 
-            closeModal();
+          <div class="product-meta">
+            <span class="meta-pill">⚡ Automático</span>
+            <span class="meta-pill">◈ Seguro</span>
+          </div>
 
-          }
+        </div>
 
-        }
-      );
+        <div class="product-bottom">
 
+          <div>
+            <div class="price-label">Preço</div>
+            <div class="price">${money(price)}</div>
+          </div>
 
-    document.addEventListener(
-      "keydown",
-      event => {
+          <button
+            class="buy-btn"
+            ${available?"":"disabled"}
+            onclick="buyProduct('${safeId}')"
+          >
+            ${available?"Comprar agora":"Esgotado"}
+          </button>
 
-        if (
-          event.key === "Escape" &&
-          $("#checkoutModal")
-            .classList
-            .contains("open")
-        ) {
+        </div>
 
-          closeModal();
+      </article>
+    `;
 
-        }
+  }).join("");
+}
 
+async function loadProducts(){
+
+  const grid=$("#productsGrid");
+
+  try{
+
+    const response=await fetch(
+      "/api/products",
+      {cache:"no-store"}
+    );
+
+    if(!response.ok)
+      throw new Error("Falha ao carregar produtos.");
+
+    const data=await response.json();
+
+    allProducts=
+      Array.isArray(data)
+        ? data
+        : Array.isArray(data.products)
+          ? data.products
+          : [];
+
+    updateStats();
+    renderProducts();
+
+  }catch(error){
+
+    console.error(error);
+
+    grid.innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">!</div>
+        <h3>Não foi possível carregar a loja</h3>
+        <p>Atualize a página e tente novamente.</p>
+      </div>
+    `;
+
+    toast("Não foi possível carregar os produtos.");
+  }
+}
+
+async function buyProduct(productId){
+
+  const product=allProducts.find(
+    item=>String(getProductId(item))===String(productId)
+  );
+
+  if(!product){
+    toast("Produto não encontrado.");
+    return;
+  }
+
+  if(getStock(product)<=0){
+    toast("Esse produto está esgotado.");
+    return;
+  }
+
+  openModal();
+
+  $("#orderProduct").textContent=getProductName(product);
+  $("#summaryProduct").textContent=getProductName(product);
+
+  const baseAmount=getPriceCents(product);
+
+  $("#summaryBase").textContent=money(baseAmount);
+  $("#summaryFee").textContent="Calculando...";
+  $("#orderPrice").textContent="Calculando...";
+  $("#orderId").textContent="—";
+
+  $("#statusTitle").textContent="Criando cobrança...";
+  $("#statusDescription").textContent=
+    "Aguarde enquanto preparamos seu pagamento.";
+
+  $("#paymentStatus").classList.remove("success");
+
+  $("#checkoutBtn").disabled=true;
+  $("#checkoutBtn").style.display="";
+  $("#checkoutBtn").textContent="Preparando pagamento...";
+
+  $("#delivery").classList.remove("show");
+  $("#successScreen").classList.remove("show");
+  $("#orderSummary").style.display="";
+  $("#checkoutSteps").style.display="";
+
+  setCheckoutStep("order");
+
+  currentAccount="";
+
+  try{
+
+    const response=await fetch(
+      "/api/checkout",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          productId:getProductId(product)
+        })
       }
     );
 
+    const data=await response.json();
 
-    /* =========================================
-       INIT
-    ========================================= */
+    if(!response.ok){
+      throw new Error(
+        data.error ||
+        data.message ||
+        "Não foi possível criar o pedido."
+      );
+    }
 
-    loadProducts();
+    currentOrderId=data.orderId;
 
-  </script>
+    currentCheckoutUrl=
+      data.checkout ||
+      data.redirectUrl ||
+      data.paymentUrl ||
+      null;
+
+    const amountCents=Number(
+      data.amountCents ??
+      data.totalAmountCents ??
+      baseAmount
+    );
+
+    const baseCents=Number(
+      data.baseAmountCents ??
+      baseAmount
+    );
+
+    const feeCents=Math.max(
+      0,
+      amountCents-baseCents
+    );
+
+    $("#orderId").textContent=
+      currentOrderId||"—";
+
+    $("#summaryBase").textContent=
+      money(baseCents);
+
+    $("#summaryFee").textContent=
+      feeCents>0
+        ? money(feeCents)
+        : "Incluída";
+
+    $("#orderPrice").textContent=
+      money(amountCents);
+
+    $("#statusTitle").textContent=
+      "Pagamento pronto";
+
+    $("#statusDescription").textContent=
+      "Abra o checkout para realizar o pagamento.";
+
+    setCheckoutStep("payment");
+
+    if(currentCheckoutUrl){
+
+      $("#checkoutBtn").disabled=false;
+      $("#checkoutBtn").textContent="Abrir pagamento";
+
+      $("#checkoutBtn").onclick=()=>{
+
+        window.open(
+          currentCheckoutUrl,
+          "_blank",
+          "noopener,noreferrer"
+        );
+
+        $("#statusTitle").textContent=
+          "Aguardando pagamento";
+
+        $("#statusDescription").textContent=
+          "Estamos aguardando a confirmação do pagamento.";
+      };
+
+    }else{
+
+      $("#checkoutBtn").disabled=true;
+      $("#checkoutBtn").textContent=
+        "Pagamento indisponível";
+
+      toast(
+        "A cobrança foi criada, mas o link não foi retornado."
+      );
+    }
+
+    startPolling();
+
+  }catch(error){
+
+    console.error(error);
+
+    $("#statusTitle").textContent=
+      "Erro ao criar cobrança";
+
+    $("#statusDescription").textContent=
+      error.message||"Tente novamente.";
+
+    $("#checkoutBtn").disabled=true;
+    $("#checkoutBtn").textContent=
+      "Pagamento indisponível";
+
+    toast(
+      error.message||
+      "Erro ao criar pedido."
+    );
+  }
+}
+
+function setCheckoutStep(step){
+
+  const order=$("#stepOrder");
+  const payment=$("#stepPayment");
+  const delivery=$("#stepDelivery");
+
+  [order,payment,delivery].forEach(item=>{
+    item.classList.remove("active","done");
+  });
+
+  if(step==="order"){
+    order.classList.add("active");
+  }
+
+  if(step==="payment"){
+    order.classList.add("done");
+    payment.classList.add("active");
+  }
+
+  if(step==="delivery"){
+    order.classList.add("done");
+    payment.classList.add("done");
+    delivery.classList.add("done");
+  }
+}
+
+function startPolling(){
+
+  stopPolling();
+
+  if(!currentOrderId)return;
+
+  checkOrder();
+
+  pollTimer=setInterval(
+    checkOrder,
+    3000
+  );
+}
+
+function stopPolling(){
+
+  if(pollTimer){
+    clearInterval(pollTimer);
+    pollTimer=null;
+  }
+}
+
+async function checkOrder(){
+
+  if(!currentOrderId)return;
+
+  try{
+
+    const response=await fetch(
+      `/api/order/${encodeURIComponent(currentOrderId)}`,
+      {cache:"no-store"}
+    );
+
+    if(!response.ok)return;
+
+    const data=await response.json();
+
+    if(
+      data.status==="paid" &&
+      (
+        data.delivered===true ||
+        data.account ||
+        data.product
+      )
+    ){
+
+      currentAccount=
+        data.account ??
+        data.product ??
+        data.delivery ??
+        "";
+
+      stopPolling();
+
+      setCheckoutStep("delivery");
+
+      $("#paymentStatus").classList.add("success");
+
+      $("#statusTitle").textContent=
+        "Pagamento confirmado!";
+
+      $("#statusDescription").textContent=
+        "Seu produto foi liberado automaticamente.";
+
+      $("#checkoutBtn").style.display="none";
+      $("#orderSummary").style.display="none";
+      $("#checkoutSteps").style.display="";
+
+      $("#account").textContent=
+        currentAccount||
+        "Produto entregue.";
+
+      $("#delivery").classList.add("show");
+      $("#successScreen").classList.add("show");
+
+      toast("✓ Venda aprovada! Produto liberado.");
+    }
+
+  }catch(error){
+
+    console.error(
+      "Erro ao consultar pedido:",
+      error
+    );
+  }
+}
+
+function openModal(){
+
+  $("#checkoutModal").classList.add("open");
+
+  document.body.classList.add("modal-open");
+}
+
+function closeModal(){
+
+  stopPolling();
+
+  $("#checkoutModal").classList.remove("open");
+
+  document.body.classList.remove("modal-open");
+}
+
+async function copyAccount(){
+
+  if(!currentAccount)return;
+
+  try{
+
+    await navigator.clipboard.writeText(
+      currentAccount
+    );
+
+    const button=$(".copy-account");
+
+    const original=button.textContent;
+
+    button.textContent="✓ PRODUTO COPIADO";
+
+    toast(
+      "Produto copiado para a área de transferência."
+    );
+
+    setTimeout(()=>{
+      button.textContent=original;
+    },1800);
+
+  }catch{
+
+    toast(
+      "Não foi possível copiar automaticamente."
+    );
+  }
+}
+
+/* FILTERS */
+
+document
+  .querySelectorAll(".filter-btn")
+  .forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+      document
+        .querySelectorAll(".filter-btn")
+        .forEach(item=>
+          item.classList.remove("active")
+        );
+
+      button.classList.add("active");
+
+      currentFilter=button.dataset.filter;
+
+      renderProducts();
+    });
+  });
+
+$("#searchInput").addEventListener(
+  "input",
+  renderProducts
+);
+
+$("#sortSelect").addEventListener(
+  "change",
+  renderProducts
+);
+
+/* MODAL */
+
+$("#checkoutModal").addEventListener(
+  "click",
+  event=>{
+    if(event.target===$("#checkoutModal")){
+      closeModal();
+    }
+  }
+);
+
+document.addEventListener(
+  "keydown",
+  event=>{
+    if(
+      event.key==="Escape" &&
+      $("#checkoutModal")
+        .classList
+        .contains("open")
+    ){
+      closeModal();
+    }
+  }
+);
+
+/* INIT */
+
+loadProducts();
+</script>
 
 </body>
 </html>
