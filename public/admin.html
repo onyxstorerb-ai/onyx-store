@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
@@ -213,7 +214,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 760px;
+      min-width: 650px;
     }
 
     th {
@@ -228,7 +229,6 @@
       padding: 13px 10px;
       border-bottom: 1px solid #252932;
       text-align: left;
-      vertical-align: middle;
     }
 
     tr:last-child td {
@@ -259,21 +259,6 @@
       color: #ff7777;
     }
 
-    .available {
-      background: #12321f;
-      color: #65e69a;
-    }
-
-    .reserved {
-      background: #342b12;
-      color: #f2c75c;
-    }
-
-    .sold {
-      background: #292c33;
-      color: #aeb4bf;
-    }
-
     .empty {
       padding: 25px 10px;
       text-align: center;
@@ -282,159 +267,6 @@
 
     .hidden {
       display: none !important;
-    }
-
-    /* AÇÕES DOS PRODUTOS */
-
-    .product-actions {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-    }
-
-    .edit-btn,
-    .stock-btn,
-    .delete-btn,
-    .small-btn {
-      padding: 8px 11px;
-      font-size: 12px;
-      border-radius: 8px;
-    }
-
-    .edit-btn,
-    .stock-btn {
-      background: #1b1e25;
-      border: 1px solid #30343d;
-    }
-
-    .delete-btn {
-      background: #321616;
-      border: 1px solid #5a2525;
-      color: #ff8a8a;
-    }
-
-    .small-btn {
-      padding: 7px 10px;
-    }
-
-    /* MODAL */
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .72);
-      backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 9999;
-    }
-
-    .modal {
-      width: min(560px, 100%);
-      max-height: 90vh;
-      overflow-y: auto;
-      background: #111318;
-      border: 1px solid #2b3039;
-      border-radius: 18px;
-      padding: 23px;
-      box-shadow: 0 25px 80px rgba(0,0,0,.55);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 5px;
-    }
-
-    .modal-header h2 {
-      margin: 0;
-    }
-
-    .close-btn {
-      width: 35px;
-      height: 35px;
-      padding: 0;
-      border-radius: 9px;
-      background: #1b1e25;
-      border: 1px solid #30343d;
-      font-size: 18px;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .save-btn {
-      background: linear-gradient(135deg, #ff7600, #ff5100);
-    }
-
-    .cancel-btn {
-      background: #1b1e25;
-      border: 1px solid #30343d;
-    }
-
-    /* ESTOQUE */
-
-    .stock-list {
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      margin-top: 18px;
-    }
-
-    .stock-item {
-      background: #090a0d;
-      border: 1px solid #292e38;
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .stock-info {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .stock-id {
-      color: #707681;
-      font-size: 11px;
-      margin-bottom: 5px;
-      word-break: break-all;
-    }
-
-    .stock-account {
-      font-family: monospace;
-      font-size: 13px;
-      color: #d9dde4;
-      word-break: break-all;
-    }
-
-    .stock-actions {
-      display: flex;
-      gap: 7px;
-      flex-shrink: 0;
-    }
-
-    .stock-count {
-      color: #8f949d;
-      font-size: 13px;
-      margin-top: 5px;
-    }
-
-    .stock-edit-area {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #292e38;
     }
 
     @media (max-width: 700px) {
@@ -455,25 +287,9 @@
       .box {
         padding: 17px;
       }
-
-      .modal {
-        padding: 18px;
-      }
-
-      .stock-item {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .stock-actions {
-        width: 100%;
-      }
-
-      .stock-actions button {
-        flex: 1;
-      }
     }
   </style>
+
 </head>
 
 <body>
@@ -484,693 +300,312 @@
 
   <div id="login">
     <div class="box login-box">
-
       <div class="brand" style="margin-bottom:25px">
         <div class="logo">O</div>
-
         <div>
           <h1>ONYX ADMIN</h1>
           <p class="muted">Painel administrativo</p>
         </div>
       </div>
 
-      <label for="pass">
-        Senha do administrador
-      </label>
+```
+  <label for="pass">Senha do administrador</label>
+  <input
+    id="pass"
+    type="password"
+    placeholder="Digite sua senha"
+    autocomplete="current-password"
+  >
 
-      <input
-        id="pass"
-        type="password"
-        placeholder="Digite sua senha"
-        autocomplete="current-password"
-      >
+  <div style="height:10px"></div>
 
-      <div style="height:10px"></div>
+  <button id="loginBtn" onclick="login()" style="width:100%">
+    Entrar no painel
+  </button>
 
-      <button
-        id="loginBtn"
-        onclick="login()"
-        style="width:100%"
-      >
-        Entrar no painel
-      </button>
+  <div id="loginStatus" class="status"></div>
+</div>
+```
 
-      <div id="loginStatus" class="status"></div>
-
-    </div>
   </div>
-
 
   <!-- PAINEL -->
 
   <div id="panel" class="hidden">
 
-    <div class="top">
-
-      <div class="brand">
-
-        <div class="logo">O</div>
-
-        <div>
-          <h1>ONYX ADMIN</h1>
-          <p class="muted">Gerencie sua loja</p>
-        </div>
-
-      </div>
-
-      <div class="actions">
-
-        <button
-          class="secondary"
-          onclick="refresh()"
-        >
-          Atualizar
-        </button>
-
-        <button
-          class="danger"
-          onclick="logout()"
-        >
-          Sair
-        </button>
-
-      </div>
-
+```
+<div class="top">
+  <div class="brand">
+    <div class="logo">O</div>
+    <div>
+      <h1>ONYX ADMIN</h1>
+      <p class="muted">Gerencie sua loja</p>
     </div>
+  </div>
+
+  <div class="actions">
+    <button class="secondary" onclick="refresh()">
+      Atualizar
+    </button>
+
+    <button class="danger" onclick="logout()">
+      Sair
+    </button>
+  </div>
+</div>
 
 
-    <div id="status" class="status"></div>
+<div id="status" class="status"></div>
 
 
-    <!-- ESTATÍSTICAS -->
+<!-- ESTATÍSTICAS -->
+<div class="stats">
 
-    <div class="stats">
+  <div class="stat">
+    <div class="stat-title">Produtos</div>
+    <div id="statProducts" class="stat-value">0</div>
+  </div>
 
-      <div class="stat">
-        <div class="stat-title">
-          Produtos
-        </div>
+  <div class="stat">
+    <div class="stat-title">Estoque disponível</div>
+    <div id="statStock" class="stat-value">0</div>
+  </div>
 
-        <div
-          id="statProducts"
-          class="stat-value"
-        >
-          0
-        </div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-title">
-          Estoque disponível
-        </div>
-
-        <div
-          id="statStock"
-          class="stat-value"
-        >
-          0
-        </div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-title">
-          Vendas
-        </div>
-
-        <div
-          id="statSold"
-          class="stat-value"
-        >
-          0
-        </div>
-      </div>
-
-    </div>
-
-
-    <!-- NOVO PRODUTO -->
-
-    <div class="box">
-
-      <h2>➕ Novo produto</h2>
-
-      <div class="row">
-
-        <div>
-
-          <label for="name">
-            Nome do produto
-          </label>
-
-          <input
-            id="name"
-            type="text"
-            placeholder="Ex.: Conta Premium"
-          >
-
-        </div>
-
-        <div>
-
-          <label for="price">
-            Preço
-          </label>
-
-          <input
-            id="price"
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="Ex.: 9.90"
-          >
-
-        </div>
-
-      </div>
-
-      <label for="desc">
-        Descrição
-      </label>
-
-      <textarea
-        id="desc"
-        placeholder="Digite uma descrição para o produto..."
-      ></textarea>
-
-      <button onclick="addProduct()">
-        Criar produto
-      </button>
-
-    </div>
-
-
-    <!-- ESTOQUE -->
-
-    <div class="box">
-
-      <h2>📦 Adicionar ao estoque</h2>
-
-      <label for="product">
-        Produto
-      </label>
-
-      <select id="product">
-        <option value="">
-          Carregando produtos...
-        </option>
-      </select>
-
-      <label for="account">
-        Conta / item
-      </label>
-
-      <textarea
-        id="account"
-        placeholder="Ex.: email:senha"
-      ></textarea>
-
-      <button onclick="addStock()">
-        Adicionar ao estoque
-      </button>
-
-    </div>
-
-
-    <!-- PRODUTOS -->
-
-    <div class="box">
-
-      <h2>🛍️ Produtos e estoque</h2>
-
-      <div id="products">
-        <div class="empty">
-          Carregando...
-        </div>
-      </div>
-
-    </div>
-
-
-    <!-- PEDIDOS -->
-
-    <div class="box">
-
-      <h2>🧾 Últimos pedidos</h2>
-
-      <div id="orders">
-        <div class="empty">
-          Carregando...
-        </div>
-      </div>
-
-    </div>
-
+  <div class="stat">
+    <div class="stat-title">Vendas</div>
+    <div id="statSold" class="stat-value">0</div>
   </div>
 
 </div>
 
 
-<!-- MODAL EDITAR PRODUTO -->
+<!-- NOVO PRODUTO -->
+<div class="box">
 
-<div
-  id="editModal"
-  class="modal-overlay hidden"
->
+  <h2>➕ Novo produto</h2>
 
-  <div class="modal">
+  <div class="row">
 
-    <div class="modal-header">
-
-      <h2>✏️ Editar produto</h2>
-
-      <button
-        class="close-btn"
-        onclick="closeEditModal()"
+    <div>
+      <label for="name">Nome do produto</label>
+      <input
+        id="name"
+        type="text"
+        placeholder="Ex.: Conta Premium"
       >
-        ×
-      </button>
-
     </div>
 
-    <p class="muted">
-      Altere as informações do produto.
-    </p>
-
-    <input
-      id="editId"
-      type="hidden"
-    >
-
-    <label for="editName">
-      Nome do produto
-    </label>
-
-    <input
-      id="editName"
-      type="text"
-      placeholder="Nome do produto"
-    >
-
-    <label for="editPrice">
-      Preço
-    </label>
-
-    <input
-      id="editPrice"
-      type="number"
-      step="0.01"
-      min="0"
-      placeholder="0.00"
-    >
-
-    <label for="editDescription">
-      Descrição
-    </label>
-
-    <textarea
-      id="editDescription"
-      placeholder="Descrição do produto..."
-    ></textarea>
-
-    <div class="modal-actions">
-
-      <button
-        class="cancel-btn"
-        onclick="closeEditModal()"
+    <div>
+      <label for="price">Preço</label>
+      <input
+        id="price"
+        type="number"
+        step="0.01"
+        min="0"
+        placeholder="Ex.: 9.90"
       >
-        Cancelar
-      </button>
-
-      <button
-        id="saveEditBtn"
-        class="save-btn"
-        onclick="saveEditProduct()"
-      >
-        Salvar alterações
-      </button>
-
     </div>
 
+  </div>
+
+  <label for="desc">Descrição</label>
+
+  <textarea
+    id="desc"
+    placeholder="Digite uma descrição para o produto..."
+  ></textarea>
+
+  <button onclick="addProduct()">
+    Criar produto
+  </button>
+
+</div>
+
+
+<!-- ESTOQUE -->
+<div class="box">
+
+  <h2>📦 Adicionar ao estoque</h2>
+
+  <label for="product">Produto</label>
+
+  <select id="product">
+    <option value="">Carregando produtos...</option>
+  </select>
+
+  <label for="account">Conta / item</label>
+
+  <textarea
+    id="account"
+    placeholder="Ex.: email: senha:"
+  ></textarea>
+
+  <button onclick="addStock()">
+    Adicionar ao estoque
+  </button>
+
+</div>
+
+
+<!-- PRODUTOS -->
+<div class="box">
+
+  <h2>🛍️ Produtos e estoque</h2>
+
+  <div id="products">
+    <div class="empty">Carregando...</div>
   </div>
 
 </div>
 
 
-<!-- MODAL ESTOQUE -->
+<!-- PEDIDOS -->
+<div class="box">
 
-<div
-  id="stockModal"
-  class="modal-overlay hidden"
->
+  <h2>🧾 Últimos pedidos</h2>
 
-  <div class="modal">
+  <div id="orders">
+    <div class="empty">Carregando...</div>
+  </div>
 
-    <div class="modal-header">
-
-      <div>
-        <h2>📦 Gerenciar estoque</h2>
-        <p
-          id="stockProductName"
-          class="muted"
-        >
-          Produto
-        </p>
-      </div>
-
-      <button
-        class="close-btn"
-        onclick="closeStockModal()"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <div
-      id="stockCount"
-      class="stock-count"
-    >
-      Carregando estoque...
-    </div>
-
-    <div
-      id="stockList"
-      class="stock-list"
-    >
-      <div class="empty">
-        Carregando...
-      </div>
-    </div>
+</div>
+```
 
   </div>
 
 </div>
-
-
-<!-- MODAL EDITAR ESTOQUE -->
-
-<div
-  id="editStockModal"
-  class="modal-overlay hidden"
->
-
-  <div class="modal">
-
-    <div class="modal-header">
-
-      <h2>✏️ Editar item</h2>
-
-      <button
-        class="close-btn"
-        onclick="closeEditStockModal()"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <p class="muted">
-      Altere a conta/item deste estoque.
-    </p>
-
-    <input
-      id="editStockId"
-      type="hidden"
-    >
-
-    <label for="editStockAccount">
-      Conta / item
-    </label>
-
-    <textarea
-      id="editStockAccount"
-      placeholder="email:senha"
-    ></textarea>
-
-    <div class="modal-actions">
-
-      <button
-        class="cancel-btn"
-        onclick="closeEditStockModal()"
-      >
-        Cancelar
-      </button>
-
-      <button
-        id="saveStockBtn"
-        class="save-btn"
-        onclick="saveEditStock()"
-      >
-        Salvar alterações
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
 
 <script>
-
   let pwd = '';
 
-  let productsCache = [];
-
-  let currentStockProductId = '';
-
-  let currentStockItems = [];
-
-
-  const $ = id =>
-    document.getElementById(id);
-
+  const $ = id => document.getElementById(id);
 
   function headers() {
-
     return {
       'x-admin-password': pwd,
       'content-type': 'application/json'
     };
-
   }
 
-
-  function showStatus(
-    message,
-    type = 'normal'
-  ) {
-
+  function showStatus(message, type = 'normal') {
     const el = $('status');
 
     el.textContent = message;
-
-    el.className =
-      'status show';
+    el.className = 'status show';
 
     if (type === 'error') {
-
-      el.style.borderColor =
-        '#542222';
-
-      el.style.color =
-        '#ff8585';
-
+      el.style.borderColor = '#542222';
+      el.style.color = '#ff8585';
     } else if (type === 'success') {
-
-      el.style.borderColor =
-        '#244d35';
-
-      el.style.color =
-        '#6be49a';
-
+      el.style.borderColor = '#244d35';
+      el.style.color = '#6be49a';
     } else {
-
-      el.style.borderColor =
-        '#292e38';
-
-      el.style.color =
-        '#bfc4cc';
-
+      el.style.borderColor = '#292e38';
+      el.style.color = '#bfc4cc';
     }
 
     setTimeout(() => {
-
       el.classList.remove('show');
-
     }, 3500);
-
   }
 
 
   function showLoginStatus(message) {
+    const el = $('loginStatus');
 
-    const el =
-      $('loginStatus');
+    el.textContent = message;
+    el.className = 'status show';
 
-    el.textContent =
-      message;
-
-    el.className =
-      'status show';
-
-    el.style.borderColor =
-      '#542222';
-
-    el.style.color =
-      '#ff8585';
-
+    el.style.borderColor = '#542222';
+    el.style.color = '#ff8585';
   }
 
 
   async function login() {
 
-    const password =
-      $('pass').value.trim();
+    const password = $('pass').value.trim();
 
     if (!password) {
-
-      showLoginStatus(
-        'Digite a senha do administrador.'
-      );
-
+      showLoginStatus('Digite a senha do administrador.');
       return;
     }
 
-    const btn =
-      $('loginBtn');
+    const btn = $('loginBtn');
 
     btn.disabled = true;
-
-    btn.textContent =
-      'Entrando...';
+    btn.textContent = 'Entrando...';
 
     pwd = password;
 
     try {
 
-      const response =
-        await fetch(
-          '/api/admin/products',
-          {
-            headers: headers()
-          }
-        );
+      const response = await fetch('/api/admin/products', {
+        headers: headers()
+      });
 
       if (!response.ok) {
-
         pwd = '';
-
-        showLoginStatus(
-          'Senha incorreta.'
-        );
-
+        showLoginStatus('Senha incorreta.');
         return;
       }
 
-      $('login')
-        .classList
-        .add('hidden');
-
-      $('panel')
-        .classList
-        .remove('hidden');
+      $('login').classList.add('hidden');
+      $('panel').classList.remove('hidden');
 
       await refresh();
 
     } catch (error) {
 
       pwd = '';
-
-      showLoginStatus(
-        'Não foi possível conectar ao servidor.'
-      );
+      showLoginStatus('Não foi possível conectar ao servidor.');
 
     } finally {
 
       btn.disabled = false;
-
-      btn.textContent =
-        'Entrar no painel';
+      btn.textContent = 'Entrar no painel';
 
     }
-
   }
 
 
   async function addProduct() {
 
-    const name =
-      $('name').value.trim();
-
-    const price =
-      $('price').value.trim();
-
-    const description =
-      $('desc').value.trim();
+    const name = $('name').value.trim();
+    const price = $('price').value.trim();
+    const description = $('desc').value.trim();
 
     if (!name) {
-
-      showStatus(
-        'Digite o nome do produto.',
-        'error'
-      );
-
+      showStatus('Digite o nome do produto.', 'error');
       return;
     }
 
-    if (
-      !price ||
-      Number(price) <= 0
-    ) {
-
-      showStatus(
-        'Digite um preço válido.',
-        'error'
-      );
-
+    if (!price || Number(price) <= 0) {
+      showStatus('Digite um preço válido.', 'error');
       return;
     }
 
     try {
 
-      const response =
-        await fetch(
-          '/api/admin/products',
-          {
-            method: 'POST',
-            headers: headers(),
-
-            body: JSON.stringify({
-              name,
-              price,
-              description
-            })
-          }
-        );
+      const response = await fetch('/api/admin/products', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({
+          name,
+          price,
+          description
+        })
+      });
 
       if (!response.ok) {
 
-        let message =
-          'Não foi possível criar o produto.';
+        let message = 'Não foi possível criar o produto.';
 
         try {
-
-          const data =
-            await response.json();
-
-          if (data.error) {
-            message =
-              data.error;
-          }
-
+          const data = await response.json();
+          if (data.error) message = data.error;
         } catch {}
 
-        showStatus(
-          message,
-          'error'
-        );
-
+        showStatus(message, 'error');
         return;
       }
 
@@ -1178,192 +613,84 @@
       $('price').value = '';
       $('desc').value = '';
 
-      showStatus(
-        'Produto criado com sucesso!',
-        'success'
-      );
+      showStatus('Produto criado com sucesso!', 'success');
 
       await refresh();
 
     } catch (error) {
 
-      showStatus(
-        'Erro de conexão.',
-        'error'
-      );
+      showStatus('Erro de conexão.', 'error');
 
     }
-
   }
 
 
   async function addStock() {
 
-    const productId =
-      $('product').value;
-
-    const account =
-      $('account').value.trim();
+    const productId = $('product').value;
+    const account = $('account').value.trim();
 
     if (!productId) {
-
-      showStatus(
-        'Crie um produto primeiro.',
-        'error'
-      );
-
+      showStatus('Crie um produto primeiro.', 'error');
       return;
     }
 
     if (!account) {
-
-      showStatus(
-        'Digite a conta ou item do estoque.',
-        'error'
-      );
-
+      showStatus('Digite a conta ou item do estoque.', 'error');
       return;
     }
 
     try {
 
-      const response =
-        await fetch(
-          '/api/admin/stock',
-          {
-            method: 'POST',
-            headers: headers(),
-
-            body: JSON.stringify({
-              productId,
-              account
-            })
-          }
-        );
+      const response = await fetch('/api/admin/stock', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({
+          productId,
+          account
+        })
+      });
 
       if (!response.ok) {
 
-        let message =
-          'Não foi possível adicionar ao estoque.';
+        let message = 'Não foi possível adicionar ao estoque.';
 
         try {
-
-          const data =
-            await response.json();
-
-          if (data.error) {
-            message =
-              data.error;
-          }
-
+          const data = await response.json();
+          if (data.error) message = data.error;
         } catch {}
 
-        showStatus(
-          message,
-          'error'
-        );
-
+        showStatus(message, 'error');
         return;
       }
 
       $('account').value = '';
 
-      showStatus(
-        'Item adicionado ao estoque!',
-        'success'
-      );
+      showStatus('Item adicionado ao estoque!', 'success');
 
       await refresh();
 
     } catch (error) {
 
-      showStatus(
-        'Erro de conexão.',
-        'error'
-      );
+      showStatus('Erro de conexão.', 'error');
 
     }
-
   }
 
 
   function statusBadge(status) {
 
-    const value =
-      String(status || '')
-        .toLowerCase();
+    const value = String(status || '').toLowerCase();
 
     if (value === 'paid') {
-
-      return `
-        <span class="badge paid">
-          Pago
-        </span>
-      `;
-
+      return '<span class="badge paid">Pago</span>';
     }
 
     if (value === 'cancelled') {
-
-      return `
-        <span class="badge cancelled">
-          Cancelado
-        </span>
-      `;
-
+      return '<span class="badge cancelled">Cancelado</span>';
     }
 
-    return `
-      <span class="badge pending">
-        Pendente
-      </span>
-    `;
-
-  }
-
-
-  function stockStatusBadge(status) {
-
-    const value =
-      String(status || '')
-        .toLowerCase();
-
-    if (value === 'available') {
-
-      return `
-        <span class="badge available">
-          Disponível
-        </span>
-      `;
-
-    }
-
-    if (value === 'reserved') {
-
-      return `
-        <span class="badge reserved">
-          Reservado
-        </span>
-      `;
-
-    }
-
-    if (value === 'sold') {
-
-      return `
-        <span class="badge sold">
-          Vendido
-        </span>
-      `;
-
-    }
-
-    return `
-      <span class="badge sold">
-        ${escapeHtml(status || 'Desconhecido')}
-      </span>
-    `;
-
+    return '<span class="badge pending">Pendente</span>';
   }
 
 
@@ -1371,45 +698,26 @@
 
     try {
 
-      const productResponse =
-        await fetch(
-          '/api/admin/products',
-          {
-            headers: headers()
-          }
-        );
+      const productResponse = await fetch(
+        '/api/admin/products',
+        { headers: headers() }
+      );
 
       if (!productResponse.ok) {
-
-        showStatus(
-          'Sessão expirada ou senha inválida.',
-          'error'
-        );
-
+        showStatus('Sessão expirada ou senha inválida.', 'error');
         logout();
-
         return;
       }
 
-      const productData =
-        await productResponse.json();
+      const productData = await productResponse.json();
 
-      const productList =
-        Array.isArray(productData)
-          ? productData
-          : [];
-
-      productsCache =
-        productList;
-
-
-      /* SELECT DE ESTOQUE */
+      const productList = Array.isArray(productData)
+        ? productData
+        : [];
 
       $('product').innerHTML = '';
 
-      if (
-        productList.length === 0
-      ) {
+      if (productList.length === 0) {
 
         $('product').innerHTML =
           '<option value="">Nenhum produto criado</option>';
@@ -1418,59 +726,36 @@
 
         productList.forEach(item => {
 
-          const option =
-            document.createElement(
-              'option'
-            );
+          const option = document.createElement('option');
 
-          option.value =
-            item.id;
-
+          option.value = item.id;
           option.textContent =
             `${item.name} — ${item.stock || 0} disponível`;
 
-          $('product')
-            .appendChild(option);
+          $('product').appendChild(option);
 
         });
 
       }
 
 
-      /* ESTATÍSTICAS */
-
       let totalStock = 0;
       let totalSold = 0;
 
       productList.forEach(item => {
 
-        totalStock +=
-          Number(item.stock || 0);
-
-        totalSold +=
-          Number(item.sold || 0);
+        totalStock += Number(item.stock || 0);
+        totalSold += Number(item.sold || 0);
 
       });
 
 
-      $('statProducts')
-        .textContent =
-        productList.length;
-
-      $('statStock')
-        .textContent =
-        totalStock;
-
-      $('statSold')
-        .textContent =
-        totalSold;
+      $('statProducts').textContent = productList.length;
+      $('statStock').textContent = totalStock;
+      $('statSold').textContent = totalSold;
 
 
-      /* TABELA DE PRODUTOS */
-
-      if (
-        productList.length === 0
-      ) {
+      if (productList.length === 0) {
 
         $('products').innerHTML =
           '<div class="empty">Nenhum produto cadastrado.</div>';
@@ -1478,37 +763,15 @@
       } else {
 
         $('products').innerHTML = `
-
           <div class="table-wrap">
-
             <table>
-
               <thead>
-
                 <tr>
-
-                  <th>
-                    Produto
-                  </th>
-
-                  <th>
-                    Disponível
-                  </th>
-
-                  <th>
-                    Vendidas
-                  </th>
-
-                  <th>
-                    Preço
-                  </th>
-
-                  <th>
-                    Ações
-                  </th>
-
+                  <th>Produto</th>
+                  <th>Disponível</th>
+                  <th>Vendidas</th>
+                  <th>Preço</th>
                 </tr>
-
               </thead>
 
               <tbody>
@@ -1518,9 +781,7 @@
                   <tr>
 
                     <td>
-                      <strong>
-                        ${escapeHtml(item.name)}
-                      </strong>
+                      <strong>${escapeHtml(item.name)}</strong>
                     </td>
 
                     <td>
@@ -1535,80 +796,37 @@
                       R$ ${formatPrice(item.price_cents)}
                     </td>
 
-                    <td>
-
-                      <div class="product-actions">
-
-                        <button
-                          class="stock-btn"
-                          onclick="manageStock('${escapeJs(item.id)}')"
-                        >
-                          📦 Estoque
-                        </button>
-
-                        <button
-                          class="edit-btn"
-                          onclick="editProduct('${escapeJs(item.id)}')"
-                        >
-                          ✏️ Editar
-                        </button>
-
-                        <button
-                          class="delete-btn"
-                          onclick="deleteProduct('${escapeJs(item.id)}')"
-                        >
-                          🗑️ Excluir
-                        </button>
-
-                      </div>
-
-                    </td>
-
                   </tr>
 
                 `).join('')}
 
               </tbody>
-
             </table>
-
           </div>
-
         `;
 
       }
 
 
-      /* PEDIDOS */
-
-      const orderResponse =
-        await fetch(
-          '/api/admin/orders',
-          {
-            headers: headers()
-          }
-        );
+      const orderResponse = await fetch(
+        '/api/admin/orders',
+        { headers: headers() }
+      );
 
       if (!orderResponse.ok) {
-
         $('orders').innerHTML =
           '<div class="empty">Não foi possível carregar os pedidos.</div>';
-
         return;
       }
 
-      const orderData =
-        await orderResponse.json();
+      const orderData = await orderResponse.json();
 
-      const orderList =
-        Array.isArray(orderData)
-          ? orderData
-          : [];
+      const orderList = Array.isArray(orderData)
+        ? orderData
+        : [];
 
 
-      if (
-        orderList.length === 0
-      ) {
+      if (orderList.length === 0) {
 
         $('orders').innerHTML =
           '<div class="empty">Nenhum pedido registrado ainda.</div>';
@@ -1616,33 +834,16 @@
       } else {
 
         $('orders').innerHTML = `
-
           <div class="table-wrap">
-
             <table>
 
               <thead>
-
                 <tr>
-
-                  <th>
-                    Produto
-                  </th>
-
-                  <th>
-                    Status
-                  </th>
-
-                  <th>
-                    Valor
-                  </th>
-
-                  <th>
-                    Data
-                  </th>
-
+                  <th>Produto</th>
+                  <th>Status</th>
+                  <th>Valor</th>
+                  <th>Data</th>
                 </tr>
-
               </thead>
 
               <tbody>
@@ -1674,881 +875,42 @@
               </tbody>
 
             </table>
-
           </div>
-
         `;
 
       }
 
     } catch (error) {
 
-      console.error(error);
-
-      showStatus(
-        'Erro ao atualizar o painel.',
-        'error'
-      );
+      showStatus('Erro ao atualizar o painel.', 'error');
 
     }
-
   }
 
-
-  /* =======================================================
-     EDITAR PRODUTO
-  ======================================================= */
-
-  function editProduct(productId) {
-
-    const product =
-      productsCache.find(
-        item =>
-          String(item.id) ===
-          String(productId)
-      );
-
-    if (!product) {
-
-      showStatus(
-        'Produto não encontrado.',
-        'error'
-      );
-
-      return;
-    }
-
-
-    $('editId').value =
-      product.id;
-
-    $('editName').value =
-      product.name || '';
-
-    $('editDescription').value =
-      product.description || '';
-
-    $('editPrice').value =
-      (
-        Number(product.price_cents || 0) /
-        100
-      ).toFixed(2);
-
-
-    $('editModal')
-      .classList
-      .remove('hidden');
-
-  }
-
-
-  function closeEditModal() {
-
-    $('editModal')
-      .classList
-      .add('hidden');
-
-  }
-
-
-  async function saveEditProduct() {
-
-    const id =
-      $('editId').value;
-
-    const name =
-      $('editName').value.trim();
-
-    const description =
-      $('editDescription').value.trim();
-
-    const price =
-      $('editPrice').value.trim();
-
-
-    if (!id) {
-
-      showStatus(
-        'Produto inválido.',
-        'error'
-      );
-
-      return;
-    }
-
-    if (!name) {
-
-      showStatus(
-        'Digite o nome do produto.',
-        'error'
-      );
-
-      return;
-    }
-
-    if (
-      !price ||
-      Number(price) <= 0
-    ) {
-
-      showStatus(
-        'Digite um preço válido.',
-        'error'
-      );
-
-      return;
-    }
-
-
-    const btn =
-      $('saveEditBtn');
-
-    btn.disabled = true;
-
-    btn.textContent =
-      'Salvando...';
-
-
-    try {
-
-      const response =
-        await fetch(
-          `/api/admin/products/${encodeURIComponent(id)}`,
-          {
-            method: 'PUT',
-            headers: headers(),
-
-            body: JSON.stringify({
-              name,
-              price,
-              description
-            })
-          }
-        );
-
-
-      if (!response.ok) {
-
-        let message =
-          'Não foi possível editar o produto.';
-
-        try {
-
-          const data =
-            await response.json();
-
-          if (data.error) {
-            message =
-              data.error;
-          }
-
-        } catch {}
-
-
-        showStatus(
-          message,
-          'error'
-        );
-
-        return;
-      }
-
-
-      closeEditModal();
-
-      showStatus(
-        'Produto atualizado com sucesso!',
-        'success'
-      );
-
-      await refresh();
-
-    } catch (error) {
-
-      showStatus(
-        'Erro de conexão.',
-        'error'
-      );
-
-    } finally {
-
-      btn.disabled = false;
-
-      btn.textContent =
-        'Salvar alterações';
-
-    }
-
-  }
-
-
-  /* =======================================================
-     EXCLUIR PRODUTO
-  ======================================================= */
-
-  async function deleteProduct(productId) {
-
-    const product =
-      productsCache.find(
-        item =>
-          String(item.id) ===
-          String(productId)
-      );
-
-    if (!product) {
-
-      showStatus(
-        'Produto não encontrado.',
-        'error'
-      );
-
-      return;
-    }
-
-
-    const confirmed =
-      confirm(
-        `Tem certeza que deseja excluir o produto "${product.name}"?\n\nO produto será removido da loja e o estoque disponível será apagado.`
-      );
-
-    if (!confirmed) {
-      return;
-    }
-
-
-    try {
-
-      const response =
-        await fetch(
-          `/api/admin/products/${encodeURIComponent(productId)}`,
-          {
-            method: 'DELETE',
-            headers: headers()
-          }
-        );
-
-
-      if (!response.ok) {
-
-        let message =
-          'Não foi possível excluir o produto.';
-
-        try {
-
-          const data =
-            await response.json();
-
-          if (data.error) {
-            message =
-              data.error;
-          }
-
-        } catch {}
-
-
-        showStatus(
-          message,
-          'error'
-        );
-
-        return;
-      }
-
-
-      showStatus(
-        'Produto excluído com sucesso!',
-        'success'
-      );
-
-      await refresh();
-
-    } catch (error) {
-
-      showStatus(
-        'Erro de conexão.',
-        'error'
-      );
-
-    }
-
-  }
-
-
-  /* =======================================================
-     GERENCIAR ESTOQUE
-  ======================================================= */
-
-  async function manageStock(productId) {
-
-    const product =
-      productsCache.find(
-        item =>
-          String(item.id) ===
-          String(productId)
-      );
-
-    if (!product) {
-
-      showStatus(
-        'Produto não encontrado.',
-        'error'
-      );
-
-      return;
-    }
-
-    currentStockProductId =
-      productId;
-
-    $('stockProductName')
-      .textContent =
-      product.name || 'Produto';
-
-    $('stockCount')
-      .textContent =
-      'Carregando estoque...';
-
-    $('stockList').innerHTML =
-      '<div class="empty">Carregando...</div>';
-
-    $('stockModal')
-      .classList
-      .remove('hidden');
-
-    await loadStock(productId);
-
-  }
-
-
-  async function loadStock(productId) {
-
-    try {
-
-      const response =
-        await fetch(
-          `/api/admin/stock/${encodeURIComponent(productId)}`,
-          {
-            headers: headers()
-          }
-        );
-
-      if (!response.ok) {
-
-        let message =
-          'Não foi possível carregar o estoque.';
-
-        try {
-
-          const data =
-            await response.json();
-
-          if (data.error) {
-            message =
-              data.error;
-          }
-
-        } catch {}
-
-        $('stockList').innerHTML =
-          `<div class="empty">${escapeHtml(message)}</div>`;
-
-        return;
-      }
-
-      const data =
-        await response.json();
-
-      currentStockItems =
-        Array.isArray(data)
-          ? data
-          : [];
-
-      renderStock();
-
-    } catch (error) {
-
-      console.error(error);
-
-      $('stockList').innerHTML =
-        '<div class="empty">Erro ao carregar estoque.</div>';
-
-    }
-
-  }
-
-
-  function renderStock() {
-
-    const items =
-      currentStockItems;
-
-    const available =
-      items.filter(
-        item =>
-          String(item.status).toLowerCase() ===
-          'available'
-      ).length;
-
-    $('stockCount')
-      .textContent =
-      `${items.length} item(ns) • ${available} disponível(is)`;
-
-
-    if (!items.length) {
-
-      $('stockList').innerHTML =
-        '<div class="empty">Nenhum item neste estoque.</div>';
-
-      return;
-
-    }
-
-
-    /*
-     * O endpoint de listagem retorna apenas os IDs/status.
-     * Para não expor contas armazenadas no banco,
-     * mostramos o ID e o estado.
-     */
-    $('stockList').innerHTML =
-      items.map(item => {
-
-        const status =
-          String(item.status || '')
-            .toLowerCase();
-
-        const canEdit =
-          status === 'available';
-
-        const canDelete =
-          status === 'available';
-
-        return `
-
-          <div class="stock-item">
-
-            <div class="stock-info">
-
-              <div class="stock-id">
-                ID: ${escapeHtml(item.id)}
-              </div>
-
-              <div class="stock-account">
-                ${status === 'sold'
-                  ? '🔒 Item vendido'
-                  : status === 'reserved'
-                    ? '🔒 Item reservado'
-                    : '🔐 Item disponível'}
-              </div>
-
-              <div style="margin-top:7px">
-                ${stockStatusBadge(item.status)}
-              </div>
-
-            </div>
-
-            <div class="stock-actions">
-
-              ${
-                canEdit
-                  ? `
-                    <button
-                      class="small-btn edit-btn"
-                      onclick="editStock('${escapeJs(item.id)}')"
-                    >
-                      ✏️ Editar
-                    </button>
-                  `
-                  : ''
-              }
-
-              ${
-                canDelete
-                  ? `
-                    <button
-                      class="small-btn delete-btn"
-                      onclick="deleteStock('${escapeJs(item.id)}')"
-                    >
-                      🗑️ Excluir
-                    </button>
-                  `
-                  : ''
-              }
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join('');
-
-  }
-
-
-  function closeStockModal() {
-
-    $('stockModal')
-      .classList
-      .add('hidden');
-
-    currentStockProductId =
-      '';
-
-    currentStockItems =
-      [];
-
-  }
-
-
-  /* =======================================================
-     EDITAR ITEM DO ESTOQUE
-  ======================================================= */
-
-  async function editStock(inventoryId) {
-
-    const item =
-      currentStockItems.find(
-        stock =>
-          String(stock.id) ===
-          String(inventoryId)
-      );
-
-    if (!item) {
-
-      showStatus(
-        'Item de estoque não encontrado.',
-        'error'
-      );
-
-      return;
-    }
-
-    if (
-      String(item.status).toLowerCase() !==
-      'available'
-    ) {
-
-      showStatus(
-        'Somente estoque disponível pode ser editado.',
-        'error'
-      );
-
-      return;
-    }
-
-    /*
-     * O endpoint GET de estoque não devolve
-     * a conta descriptografada.
-     *
-     * O administrador digita o novo valor.
-     */
-    $('editStockId').value =
-      inventoryId;
-
-    $('editStockAccount').value =
-      '';
-
-    $('editStockAccount').placeholder =
-      'Digite a conta/item atualizado...';
-
-    $('editStockModal')
-      .classList
-      .remove('hidden');
-
-  }
-
-
-  function closeEditStockModal() {
-
-    $('editStockModal')
-      .classList
-      .add('hidden');
-
-    $('editStockId').value =
-      '';
-
-    $('editStockAccount').value =
-      '';
-
-  }
-
-
-  async function saveEditStock() {
-
-    const inventoryId =
-      $('editStockId').value;
-
-    const account =
-      $('editStockAccount').value.trim();
-
-
-    if (!inventoryId) {
-
-      showStatus(
-        'Item de estoque inválido.',
-        'error'
-      );
-
-      return;
-    }
-
-    if (!account) {
-
-      showStatus(
-        'Digite a conta ou item.',
-        'error'
-      );
-
-      return;
-    }
-
-
-    const btn =
-      $('saveStockBtn');
-
-    btn.disabled = true;
-
-    btn.textContent =
-      'Salvando...';
-
-
-    try {
-
-      const response =
-        await fetch(
-          `/api/admin/stock/${encodeURIComponent(inventoryId)}`,
-          {
-            method: 'PUT',
-            headers: headers(),
-
-            body: JSON.stringify({
-              account
-            })
-          }
-        );
-
-
-      if (!response.ok) {
-
-        let message =
-          'Não foi possível editar o estoque.';
-
-        try {
-
-          const data =
-            await response.json();
-
-          if (data.error) {
-            message =
-              data.error;
-          }
-
-        } catch {}
-
-
-        showStatus(
-          message,
-          'error'
-        );
-
-        return;
-      }
-
-
-      closeEditStockModal();
-
-      showStatus(
-        'Estoque atualizado com sucesso!',
-        'success'
-      );
-
-      if (currentStockProductId) {
-
-        await loadStock(
-          currentStockProductId
-        );
-
-      }
-
-      await refresh();
-
-    } catch (error) {
-
-      showStatus(
-        'Erro de conexão.',
-        'error'
-      );
-
-    } finally {
-
-      btn.disabled = false;
-
-      btn.textContent =
-        'Salvar alterações';
-
-    }
-
-  }
-
-
-  /* =======================================================
-     EXCLUIR ITEM DO ESTOQUE
-  ======================================================= */
-
-  async function deleteStock(inventoryId) {
-
-    const item =
-      currentStockItems.find(
-        stock =>
-          String(stock.id) ===
-          String(inventoryId)
-      );
-
-    if (!item) {
-
-      showStatus(
-        'Item de estoque não encontrado.',
-        'error'
-      );
-
-      return;
-    }
-
-
-    if (
-      String(item.status).toLowerCase() !==
-      'available'
-    ) {
-
-      showStatus(
-        'Esse item está reservado ou vendido e não pode ser excluído.',
-        'error'
-      );
-
-      return;
-    }
-
-
-    const confirmed =
-      confirm(
-        `Excluir este item do estoque?\n\nID: ${inventoryId}\n\nEssa ação não pode ser desfeita.`
-      );
-
-    if (!confirmed) {
-      return;
-    }
-
-
-    try {
-
-      const response =
-        await fetch(
-          `/api/admin/stock/${encodeURIComponent(inventoryId)}`,
-          {
-            method: 'DELETE',
-            headers: headers()
-          }
-        );
-
-
-      if (!response.ok) {
-
-        let message =
-          'Não foi possível excluir o estoque.';
-
-        try {
-
-          const data =
-            await response.json();
-
-          if (data.error) {
-            message =
-              data.error;
-          }
-
-        } catch {}
-
-
-        showStatus(
-          message,
-          'error'
-        );
-
-        return;
-      }
-
-
-      showStatus(
-        'Item removido do estoque!',
-        'success'
-      );
-
-
-      if (currentStockProductId) {
-
-        await loadStock(
-          currentStockProductId
-        );
-
-      }
-
-      await refresh();
-
-    } catch (error) {
-
-      showStatus(
-        'Erro de conexão.',
-        'error'
-      );
-
-    }
-
-  }
-
-
-  /* =======================================================
-     FORMATAÇÃO
-  ======================================================= */
 
   function formatPrice(cents) {
 
-    const value =
-      Number(cents || 0) /
-      100;
+    const value = Number(cents || 0) / 100;
 
-    return value.toLocaleString(
-      'pt-BR',
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }
-    );
+    return value.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
 
   }
 
 
   function formatDate(value) {
 
-    if (!value) {
-      return '—';
-    }
+    if (!value) return '—';
 
-    const date =
-      new Date(value);
+    const date = new Date(value);
 
-    if (
-      Number.isNaN(
-        date.getTime()
-      )
-    ) {
-
+    if (Number.isNaN(date.getTime())) {
       return value;
-
     }
 
-    return date.toLocaleString(
-      'pt-BR'
-    );
+    return date.toLocaleString('pt-BR');
 
   }
 
@@ -2556,163 +918,36 @@
   function escapeHtml(value) {
 
     return String(value ?? '')
-      .replace(
-        /&/g,
-        '&amp;'
-      )
-      .replace(
-        /</g,
-        '&lt;'
-      )
-      .replace(
-        />/g,
-        '&gt;'
-      )
-      .replace(
-        /"/g,
-        '&quot;'
-      )
-      .replace(
-        /'/g,
-        '&#039;'
-      );
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
 
   }
 
-
-  function escapeJs(value) {
-
-    return String(value ?? '')
-      .replace(
-        /\\/g,
-        '\\\\'
-      )
-      .replace(
-        /'/g,
-        "\\'"
-      )
-      .replace(
-        /\n/g,
-        '\\n'
-      )
-      .replace(
-        /\r/g,
-        '\\r'
-      );
-
-  }
-
-
-  /* =======================================================
-     LOGOUT
-  ======================================================= */
 
   function logout() {
 
     pwd = '';
 
-    productsCache = [];
-
-    currentStockItems = [];
-
-    currentStockProductId = '';
-
     $('pass').value = '';
 
-    $('panel')
-      .classList
-      .add('hidden');
+    $('panel').classList.add('hidden');
+    $('login').classList.remove('hidden');
 
-    $('login')
-      .classList
-      .remove('hidden');
-
-    $('loginStatus')
-      .classList
-      .remove('show');
-
-    closeEditModal();
-
-    closeStockModal();
-
-    closeEditStockModal();
+    $('loginStatus').classList.remove('show');
 
   }
 
 
-  /* =======================================================
-     ENTER NO LOGIN
-  ======================================================= */
+  $('pass').addEventListener('keydown', function(event) {
 
-  $('pass').addEventListener(
-    'keydown',
-    function(event) {
-
-      if (
-        event.key === 'Enter'
-      ) {
-
-        login();
-
-      }
-
+    if (event.key === 'Enter') {
+      login();
     }
-  );
 
-
-  /* =======================================================
-     FECHAR MODAIS CLICANDO FORA
-  ======================================================= */
-
-  $('editModal').addEventListener(
-    'click',
-    function(event) {
-
-      if (
-        event.target ===
-        $('editModal')
-      ) {
-
-        closeEditModal();
-
-      }
-
-    }
-  );
-
-
-  $('stockModal').addEventListener(
-    'click',
-    function(event) {
-
-      if (
-        event.target ===
-        $('stockModal')
-      ) {
-
-        closeStockModal();
-
-      }
-
-    }
-  );
-
-
-  $('editStockModal').addEventListener(
-    'click',
-    function(event) {
-
-      if (
-        event.target ===
-        $('editStockModal')
-      ) {
-
-        closeEditStockModal();
-
-      }
-
-    }
-  );
+  });
 
 </script>
 
