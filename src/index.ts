@@ -3,10 +3,23 @@ export interface Env {
   ASSETS: Fetcher;
   ADMIN_PASSWORD: string;
   ENCRYPTION_KEY: string;
+  // Mantido para não quebrar o ambiente atual. A integração nova usa OAuth2.
   LIVEPIX_API_TOKEN: string;
+  ID_DO_CLIENTE_LIVEPIX: string;
+  LIVEPIX_CLIENT_SECRET: string;
   DISCORD_URL?: string;
   SITE_URL?: string;
 }
+
+const LIVEPIX_OAUTH_URL = "https://oauth.livepix.gg/oauth2/token";
+const LIVEPIX_API_URL = "https://api.livepix.gg/v2";
+
+// A LivePix informa atualmente taxa de 5% para recebimentos via Pix.
+// O valor cobrado do cliente é calculado por gross-up para que, após a taxa,
+// o valor-base do produto seja preservado.
+const LIVEPIX_FEE_PERCENT = 5;
+
+let oauthCache: { accessToken: string; expiresAt: number } | null = null;
 
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -51,46 +64,122 @@ async function decrypt(value: string, secret: string) {
   return new TextDecoder().decode(decrypted);
 }
 
-async function livepixCreateDonation(
+function amountWithFee(amountCents: number) {
+  const fee = LIVEPIX_FEE_PERCENT / 100;
+  if (fee <= 0 || fee >= 1) throw new Error("Taxa LivePix inválida.");
+  return Math.ceil(amountCents / (1 - fee));
+}
+
+async function getLivepixAccessToken(env: Env) {
+  if (!env.ID_DO_CLIENTE_LIVEPIX || !env.LIVEPIX_CLIENT_SECRET) {
+    throw new Error("Credenciais OAuth2 do LivePix não configuradas.");
+  }
+
+  const now = Date.now();
+  if (oauthCache && oauthCache.expiresAt > now + 60_000) {
+    return oauthCache.accessToken;
+  }
+
+  const body = new URLSearchParams({
+    grant_type: "client_credentials",
+    client_id: env.ID_DO_CLIENTE_LIVEPIX,
+    client_secret: env.LIVEPIX_CLIENT_SECRET,
+    scope: "payments:write payments:read"
+  });
+
+  const response = await fetch(LIVEPIX_OAUTH_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body
+  });
+
+  const data = await response.json<any>();
+  if (!response.ok || !data?.access_token) {
+    throw new Error(data?.error_description || data?.message || "Falha ao autenticar no LivePix.");
+  }
+
+  oauthCache = {
+    accessToken: data.access_token,
+    expiresAt: now + Number(data.expires_in || 3600) * 1000
+  };
+
+  return data.access_token as string;
+}
+
+async function livepixRequest(env: Env, path: string, init: RequestInit = {}) {
+  const accessToken = await getLivepixAccessToken(env);
+  const headers = new Headers(init.headers);
+  headers.set("Authorization", `Bearer ${accessToken}`);
+  headers.set("Accept", "application/json");
+
+  if (init.body && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  let response = await fetch(`${LIVEPIX_API_URL}${path}`, { ...init, headers });
+
+  // Se o token expirar durante a execução, força uma nova emissão e tenta uma vez.
+  if (response.status === 401) {
+    oauthCache = null;
+    const retryToken = await getLivepixAccessToken(env);
+    headers.set("Authorization", `Bearer ${retryToken}`);
+    response = await fetch(`${LIVEPIX_API_URL}${path}`, { ...init, headers });
+  }
+
+  return response;
+}
+
+async function livepixCreatePayment(
   env: Env,
   amountCents: number,
   description: string,
   orderId: string,
   origin: string
 ) {
-  const amount = amountCents / 100;
-  const webhook = `${origin}/api/livepix/webhook`;
-  const returnUrl = `${origin}/?paid=${encodeURIComponent(orderId)}`;
+  const chargedAmountCents = amountWithFee(amountCents);
+  const redirectUrl = `${origin}/?paid=${encodeURIComponent(orderId)}`;
 
-  const response = await fetch("https://livepix.cc/api/donations", {
+  const response = await livepixRequest(env, "/payments", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.LIVEPIX_API_TOKEN}`,
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify({
-      description,
-      amount,
-      webhook,
-      return_url: returnUrl,
-      metadata: { order_id: orderId }
+      amount: chargedAmountCents,
+      currency: "BRL",
+      redirectUrl
     })
   });
 
   const body = await response.json<any>();
   if (!response.ok) {
-    throw new Error(body?.message || body?.error || "Falha ao criar cobrança LivePix");
+    throw new Error(body?.message || body?.error_description || body?.error || "Falha ao criar pagamento LivePix.");
   }
-  return body.data;
+
+  const payment = body?.data;
+  if (!payment?.reference || !payment?.redirectUrl) {
+    throw new Error("Resposta inválida do LivePix ao criar o pagamento.");
+  }
+
+  return {
+    ...payment,
+    description,
+    chargedAmountCents,
+    orderId
+  };
 }
 
-async function verifyLivepixDonation(env: Env, donationId: string) {
-  const response = await fetch(`https://livepix.cc/api/donations/${encodeURIComponent(donationId)}`, {
-    headers: { Authorization: `Bearer ${env.LIVEPIX_API_TOKEN}` }
-  });
+async function verifyLivepixPayment(env: Env, paymentId: string) {
+  const response = await livepixRequest(env, `/payments/${encodeURIComponent(paymentId)}`);
   if (!response.ok) return null;
   const body = await response.json<any>();
-  return body.data ?? null;
+  return body?.data ?? null;
+}
+
+async function findLivepixPaymentByReference(env: Env, reference: string) {
+  const query = new URLSearchParams({ reference, limit: "10" });
+  const response = await livepixRequest(env, `/payments?${query.toString()}`);
+  if (!response.ok) return null;
+  const body = await response.json<any>();
+  const payments = Array.isArray(body?.data) ? body.data : [];
+  return payments.find((payment: any) => payment?.reference === reference) ?? payments[0] ?? null;
 }
 
 async function reserveInventory(env: Env, orderId: string, productId: string) {
@@ -119,20 +208,28 @@ async function reserveInventory(env: Env, orderId: string, productId: string) {
   return row.id as string;
 }
 
-async function markPaidAndDeliver(env: Env, donation: any) {
-  const orderId = donation?.metadata?.order_id;
-  if (!orderId) return { ok: false, reason: "missing_order_id" };
+async function markPaidAndDeliver(env: Env, payment: any) {
+  const reference = String(payment?.reference || "");
+  if (!reference) return { ok: false, reason: "missing_reference" };
 
   const order = await env.DB.prepare(
-    `SELECT * FROM orders WHERE id=? LIMIT 1`
-  ).bind(orderId).first<any>();
+    `SELECT * FROM orders WHERE livepix_reference=? LIMIT 1`
+  ).bind(reference).first<any>();
 
   if (!order) return { ok: false, reason: "order_not_found" };
   if (order.status === "paid") return { ok: true, alreadyPaid: true };
 
-  // Verificação dupla: consulta a cobrança diretamente na API.
-  const verified = await verifyLivepixDonation(env, donation.id);
+  const verified = payment?.id
+    ? await verifyLivepixPayment(env, String(payment.id))
+    : await findLivepixPaymentByReference(env, reference);
+
   if (!verified?.proof) return { ok: false, reason: "payment_not_verified" };
+  if (verified.currency !== "BRL") return { ok: false, reason: "invalid_currency" };
+
+  // O pedido guarda o valor efetivamente cobrado, já com a taxa embutida.
+  if (Number(verified.amount) !== Number(order.amount_cents)) {
+    return { ok: false, reason: "amount_mismatch" };
+  }
 
   const inventory = await env.DB.prepare(
     `SELECT * FROM inventory WHERE id=? AND order_id=? LIMIT 1`
@@ -145,13 +242,52 @@ async function markPaidAndDeliver(env: Env, donation: any) {
   await env.DB.batch([
     env.DB.prepare(
       `UPDATE orders SET status='paid', livepix_id=?, livepix_reference=?, paid_at=CURRENT_TIMESTAMP WHERE id=? AND status!='paid'`
-    ).bind(donation.id, donation.reference ?? null, order.id),
+    ).bind(String(verified.id ?? payment.id ?? ""), reference, order.id),
     env.DB.prepare(
       `UPDATE inventory SET status='sold', sold_at=CURRENT_TIMESTAMP WHERE id=? AND status='reserved'`
     ).bind(inventory.id)
   ]);
 
   return { ok: true, account, orderId: order.id };
+}
+
+async function handleLivepixWebhook(request: Request, env: Env) {
+  const payload = await request.json<any>();
+
+  // Webhook da API v2: event "new" para pagamento recebido.
+  if (payload?.clientId && payload.clientId !== env.ID_DO_CLIENTE_LIVEPIX) {
+    return json({ error: "Cliente LivePix inválido." }, 401);
+  }
+
+  if (payload?.event !== "new") {
+    // Eventos não relacionados a pagamento recebido não precisam de processamento.
+    return json({ status: "ok" });
+  }
+
+  const resource = payload?.resource;
+  const paymentId = String(resource?.id || "");
+  const reference = String(resource?.reference || "");
+
+  if (!paymentId && !reference) {
+    return json({ error: "Pagamento sem identificador." }, 400);
+  }
+
+  const payment = paymentId
+    ? await verifyLivepixPayment(env, paymentId)
+    : await findLivepixPaymentByReference(env, reference);
+
+  if (!payment) {
+    return json({ error: "Pagamento não encontrado." }, 404);
+  }
+
+  const result = await markPaidAndDeliver(env, payment);
+  if (!result.ok && result.reason === "order_not_found") {
+    // Não confirmar um webhook desconhecido: isso permite reprocessamento.
+    return json(result, 404);
+  }
+  if (!result.ok) return json(result, 400);
+
+  return json({ status: "ok" });
 }
 
 async function api(request: Request, env: Env, url: URL) {
@@ -183,14 +319,16 @@ async function api(request: Request, env: Env, url: URL) {
       return json({ error: "Produto sem estoque." }, 409);
     }
 
+    const chargedAmountCents = amountWithFee(Number(product.price_cents));
+
     await env.DB.prepare(
       `INSERT INTO orders(id,product_id,inventory_id,amount_cents,status) VALUES(?,?,?,?, 'pending')`
-    ).bind(orderId, product.id, inventoryId, product.price_cents).run();
+    ).bind(orderId, product.id, inventoryId, chargedAmountCents).run();
 
     try {
-      const donation = await livepixCreateDonation(
+      const payment = await livepixCreatePayment(
         env,
-        product.price_cents,
+        Number(product.price_cents),
         `ONYX - ${product.name}`,
         orderId,
         url.origin
@@ -198,14 +336,17 @@ async function api(request: Request, env: Env, url: URL) {
 
       await env.DB.prepare(
         `UPDATE orders SET livepix_id=?, livepix_reference=? WHERE id=?`
-      ).bind(donation.id, donation.reference ?? null, orderId).run();
+      ).bind(payment.id ?? null, payment.reference, orderId).run();
 
       return json({
         orderId,
-        checkout: donation.checkout,
-        pixCode: donation.pix_code ?? null,
-        pixQrCode: donation.pix_qr_code ?? null,
-        expiresAt: donation.pix_code_expires_at ?? null
+        checkout: payment.redirectUrl,
+        pixCode: null,
+        pixQrCode: null,
+        expiresAt: null,
+        amountCents: chargedAmountCents,
+        baseAmountCents: Number(product.price_cents),
+        feePercent: LIVEPIX_FEE_PERCENT
       }, 201);
     } catch (error) {
       await env.DB.batch([
@@ -228,7 +369,8 @@ async function api(request: Request, env: Env, url: URL) {
     if (order.status !== "paid") return json({
       id: order.id,
       status: order.status,
-      product: order.name
+      product: order.name,
+      amountCents: order.amount_cents
     });
 
     const inventory = await env.DB.prepare(
@@ -244,20 +386,13 @@ async function api(request: Request, env: Env, url: URL) {
       status: "paid",
       delivered: true,
       product: order.name,
+      amountCents: order.amount_cents,
       account
     });
   }
 
   if (request.method === "POST" && path === "/api/livepix/webhook") {
-    const payload = await request.json<any>();
-
-    if (payload?.event === "donation.created") return json({ status: "ok" });
-    if (payload?.event !== "donation.paid") return json({ error: "Evento desconhecido" }, 400);
-
-    const result = await markPaidAndDeliver(env, payload.data);
-    if (!result.ok) return json(result, 400);
-
-    return json({ status: "ok" });
+    return handleLivepixWebhook(request, env);
   }
 
   if (path.startsWith("/api/admin/")) {
