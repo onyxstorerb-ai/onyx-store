@@ -228,6 +228,7 @@
       padding: 13px 10px;
       border-bottom: 1px solid #252932;
       text-align: left;
+      vertical-align: middle;
     }
 
     tr:last-child td {
@@ -258,6 +259,21 @@
       color: #ff7777;
     }
 
+    .available {
+      background: #12321f;
+      color: #65e69a;
+    }
+
+    .reserved {
+      background: #342b12;
+      color: #f2c75c;
+    }
+
+    .sold {
+      background: #292c33;
+      color: #aeb4bf;
+    }
+
     .empty {
       padding: 25px 10px;
       text-align: center;
@@ -277,13 +293,16 @@
     }
 
     .edit-btn,
-    .delete-btn {
+    .stock-btn,
+    .delete-btn,
+    .small-btn {
       padding: 8px 11px;
       font-size: 12px;
       border-radius: 8px;
     }
 
-    .edit-btn {
+    .edit-btn,
+    .stock-btn {
       background: #1b1e25;
       border: 1px solid #30343d;
     }
@@ -292,6 +311,10 @@
       background: #321616;
       border: 1px solid #5a2525;
       color: #ff8a8a;
+    }
+
+    .small-btn {
+      padding: 7px 10px;
     }
 
     /* MODAL */
@@ -309,7 +332,9 @@
     }
 
     .modal {
-      width: min(520px, 100%);
+      width: min(560px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
       background: #111318;
       border: 1px solid #2b3039;
       border-radius: 18px;
@@ -355,6 +380,63 @@
       border: 1px solid #30343d;
     }
 
+    /* ESTOQUE */
+
+    .stock-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .stock-item {
+      background: #090a0d;
+      border: 1px solid #292e38;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .stock-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .stock-id {
+      color: #707681;
+      font-size: 11px;
+      margin-bottom: 5px;
+      word-break: break-all;
+    }
+
+    .stock-account {
+      font-family: monospace;
+      font-size: 13px;
+      color: #d9dde4;
+      word-break: break-all;
+    }
+
+    .stock-actions {
+      display: flex;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .stock-count {
+      color: #8f949d;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .stock-edit-area {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #292e38;
+    }
+
     @media (max-width: 700px) {
       .wrap {
         width: min(100% - 20px, 1100px);
@@ -376,6 +458,19 @@
 
       .modal {
         padding: 18px;
+      }
+
+      .stock-item {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stock-actions {
+        width: 100%;
+      }
+
+      .stock-actions button {
+        flex: 1;
       }
     }
   </style>
@@ -721,10 +816,131 @@
 </div>
 
 
+<!-- MODAL ESTOQUE -->
+
+<div
+  id="stockModal"
+  class="modal-overlay hidden"
+>
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div>
+        <h2>📦 Gerenciar estoque</h2>
+        <p
+          id="stockProductName"
+          class="muted"
+        >
+          Produto
+        </p>
+      </div>
+
+      <button
+        class="close-btn"
+        onclick="closeStockModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div
+      id="stockCount"
+      class="stock-count"
+    >
+      Carregando estoque...
+    </div>
+
+    <div
+      id="stockList"
+      class="stock-list"
+    >
+      <div class="empty">
+        Carregando...
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL EDITAR ESTOQUE -->
+
+<div
+  id="editStockModal"
+  class="modal-overlay hidden"
+>
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <h2>✏️ Editar item</h2>
+
+      <button
+        class="close-btn"
+        onclick="closeEditStockModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <p class="muted">
+      Altere a conta/item deste estoque.
+    </p>
+
+    <input
+      id="editStockId"
+      type="hidden"
+    >
+
+    <label for="editStockAccount">
+      Conta / item
+    </label>
+
+    <textarea
+      id="editStockAccount"
+      placeholder="email:senha"
+    ></textarea>
+
+    <div class="modal-actions">
+
+      <button
+        class="cancel-btn"
+        onclick="closeEditStockModal()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        id="saveStockBtn"
+        class="save-btn"
+        onclick="saveEditStock()"
+      >
+        Salvar alterações
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
 <script>
 
   let pwd = '';
+
   let productsCache = [];
+
+  let currentStockProductId = '';
+
+  let currentStockItems = [];
+
 
   const $ = id =>
     document.getElementById(id);
@@ -1106,6 +1322,51 @@
   }
 
 
+  function stockStatusBadge(status) {
+
+    const value =
+      String(status || '')
+        .toLowerCase();
+
+    if (value === 'available') {
+
+      return `
+        <span class="badge available">
+          Disponível
+        </span>
+      `;
+
+    }
+
+    if (value === 'reserved') {
+
+      return `
+        <span class="badge reserved">
+          Reservado
+        </span>
+      `;
+
+    }
+
+    if (value === 'sold') {
+
+      return `
+        <span class="badge sold">
+          Vendido
+        </span>
+      `;
+
+    }
+
+    return `
+      <span class="badge sold">
+        ${escapeHtml(status || 'Desconhecido')}
+      </span>
+    `;
+
+  }
+
+
   async function refresh() {
 
     try {
@@ -1279,6 +1540,13 @@
                       <div class="product-actions">
 
                         <button
+                          class="stock-btn"
+                          onclick="manageStock('${escapeJs(item.id)}')"
+                        >
+                          📦 Estoque
+                        </button>
+
+                        <button
                           class="edit-btn"
                           onclick="editProduct('${escapeJs(item.id)}')"
                         >
@@ -1415,6 +1683,8 @@
 
     } catch (error) {
 
+      console.error(error);
+
       showStatus(
         'Erro ao atualizar o painel.',
         'error'
@@ -1425,9 +1695,9 @@
   }
 
 
-  /* =========================
+  /* =======================================================
      EDITAR PRODUTO
-  ========================= */
+  ======================================================= */
 
   function editProduct(productId) {
 
@@ -1612,9 +1882,9 @@
   }
 
 
-  /* =========================
+  /* =======================================================
      EXCLUIR PRODUTO
-  ========================= */
+  ======================================================= */
 
   async function deleteProduct(productId) {
 
@@ -1638,7 +1908,7 @@
 
     const confirmed =
       confirm(
-        `Tem certeza que deseja excluir o produto "${product.name}"?\n\nEssa ação não pode ser desfeita.`
+        `Tem certeza que deseja excluir o produto "${product.name}"?\n\nO produto será removido da loja e o estoque disponível será apagado.`
       );
 
     if (!confirmed) {
@@ -1703,6 +1973,542 @@
 
   }
 
+
+  /* =======================================================
+     GERENCIAR ESTOQUE
+  ======================================================= */
+
+  async function manageStock(productId) {
+
+    const product =
+      productsCache.find(
+        item =>
+          String(item.id) ===
+          String(productId)
+      );
+
+    if (!product) {
+
+      showStatus(
+        'Produto não encontrado.',
+        'error'
+      );
+
+      return;
+    }
+
+    currentStockProductId =
+      productId;
+
+    $('stockProductName')
+      .textContent =
+      product.name || 'Produto';
+
+    $('stockCount')
+      .textContent =
+      'Carregando estoque...';
+
+    $('stockList').innerHTML =
+      '<div class="empty">Carregando...</div>';
+
+    $('stockModal')
+      .classList
+      .remove('hidden');
+
+    await loadStock(productId);
+
+  }
+
+
+  async function loadStock(productId) {
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/admin/stock/${encodeURIComponent(productId)}`,
+          {
+            headers: headers()
+          }
+        );
+
+      if (!response.ok) {
+
+        let message =
+          'Não foi possível carregar o estoque.';
+
+        try {
+
+          const data =
+            await response.json();
+
+          if (data.error) {
+            message =
+              data.error;
+          }
+
+        } catch {}
+
+        $('stockList').innerHTML =
+          `<div class="empty">${escapeHtml(message)}</div>`;
+
+        return;
+      }
+
+      const data =
+        await response.json();
+
+      currentStockItems =
+        Array.isArray(data)
+          ? data
+          : [];
+
+      renderStock();
+
+    } catch (error) {
+
+      console.error(error);
+
+      $('stockList').innerHTML =
+        '<div class="empty">Erro ao carregar estoque.</div>';
+
+    }
+
+  }
+
+
+  function renderStock() {
+
+    const items =
+      currentStockItems;
+
+    const available =
+      items.filter(
+        item =>
+          String(item.status).toLowerCase() ===
+          'available'
+      ).length;
+
+    $('stockCount')
+      .textContent =
+      `${items.length} item(ns) • ${available} disponível(is)`;
+
+
+    if (!items.length) {
+
+      $('stockList').innerHTML =
+        '<div class="empty">Nenhum item neste estoque.</div>';
+
+      return;
+
+    }
+
+
+    /*
+     * O endpoint de listagem retorna apenas os IDs/status.
+     * Para não expor contas armazenadas no banco,
+     * mostramos o ID e o estado.
+     */
+    $('stockList').innerHTML =
+      items.map(item => {
+
+        const status =
+          String(item.status || '')
+            .toLowerCase();
+
+        const canEdit =
+          status === 'available';
+
+        const canDelete =
+          status === 'available';
+
+        return `
+
+          <div class="stock-item">
+
+            <div class="stock-info">
+
+              <div class="stock-id">
+                ID: ${escapeHtml(item.id)}
+              </div>
+
+              <div class="stock-account">
+                ${status === 'sold'
+                  ? '🔒 Item vendido'
+                  : status === 'reserved'
+                    ? '🔒 Item reservado'
+                    : '🔐 Item disponível'}
+              </div>
+
+              <div style="margin-top:7px">
+                ${stockStatusBadge(item.status)}
+              </div>
+
+            </div>
+
+            <div class="stock-actions">
+
+              ${
+                canEdit
+                  ? `
+                    <button
+                      class="small-btn edit-btn"
+                      onclick="editStock('${escapeJs(item.id)}')"
+                    >
+                      ✏️ Editar
+                    </button>
+                  `
+                  : ''
+              }
+
+              ${
+                canDelete
+                  ? `
+                    <button
+                      class="small-btn delete-btn"
+                      onclick="deleteStock('${escapeJs(item.id)}')"
+                    >
+                      🗑️ Excluir
+                    </button>
+                  `
+                  : ''
+              }
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join('');
+
+  }
+
+
+  function closeStockModal() {
+
+    $('stockModal')
+      .classList
+      .add('hidden');
+
+    currentStockProductId =
+      '';
+
+    currentStockItems =
+      [];
+
+  }
+
+
+  /* =======================================================
+     EDITAR ITEM DO ESTOQUE
+  ======================================================= */
+
+  async function editStock(inventoryId) {
+
+    const item =
+      currentStockItems.find(
+        stock =>
+          String(stock.id) ===
+          String(inventoryId)
+      );
+
+    if (!item) {
+
+      showStatus(
+        'Item de estoque não encontrado.',
+        'error'
+      );
+
+      return;
+    }
+
+    if (
+      String(item.status).toLowerCase() !==
+      'available'
+    ) {
+
+      showStatus(
+        'Somente estoque disponível pode ser editado.',
+        'error'
+      );
+
+      return;
+    }
+
+    /*
+     * O endpoint GET de estoque não devolve
+     * a conta descriptografada.
+     *
+     * O administrador digita o novo valor.
+     */
+    $('editStockId').value =
+      inventoryId;
+
+    $('editStockAccount').value =
+      '';
+
+    $('editStockAccount').placeholder =
+      'Digite a conta/item atualizado...';
+
+    $('editStockModal')
+      .classList
+      .remove('hidden');
+
+  }
+
+
+  function closeEditStockModal() {
+
+    $('editStockModal')
+      .classList
+      .add('hidden');
+
+    $('editStockId').value =
+      '';
+
+    $('editStockAccount').value =
+      '';
+
+  }
+
+
+  async function saveEditStock() {
+
+    const inventoryId =
+      $('editStockId').value;
+
+    const account =
+      $('editStockAccount').value.trim();
+
+
+    if (!inventoryId) {
+
+      showStatus(
+        'Item de estoque inválido.',
+        'error'
+      );
+
+      return;
+    }
+
+    if (!account) {
+
+      showStatus(
+        'Digite a conta ou item.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    const btn =
+      $('saveStockBtn');
+
+    btn.disabled = true;
+
+    btn.textContent =
+      'Salvando...';
+
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/admin/stock/${encodeURIComponent(inventoryId)}`,
+          {
+            method: 'PUT',
+            headers: headers(),
+
+            body: JSON.stringify({
+              account
+            })
+          }
+        );
+
+
+      if (!response.ok) {
+
+        let message =
+          'Não foi possível editar o estoque.';
+
+        try {
+
+          const data =
+            await response.json();
+
+          if (data.error) {
+            message =
+              data.error;
+          }
+
+        } catch {}
+
+
+        showStatus(
+          message,
+          'error'
+        );
+
+        return;
+      }
+
+
+      closeEditStockModal();
+
+      showStatus(
+        'Estoque atualizado com sucesso!',
+        'success'
+      );
+
+      if (currentStockProductId) {
+
+        await loadStock(
+          currentStockProductId
+        );
+
+      }
+
+      await refresh();
+
+    } catch (error) {
+
+      showStatus(
+        'Erro de conexão.',
+        'error'
+      );
+
+    } finally {
+
+      btn.disabled = false;
+
+      btn.textContent =
+        'Salvar alterações';
+
+    }
+
+  }
+
+
+  /* =======================================================
+     EXCLUIR ITEM DO ESTOQUE
+  ======================================================= */
+
+  async function deleteStock(inventoryId) {
+
+    const item =
+      currentStockItems.find(
+        stock =>
+          String(stock.id) ===
+          String(inventoryId)
+      );
+
+    if (!item) {
+
+      showStatus(
+        'Item de estoque não encontrado.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    if (
+      String(item.status).toLowerCase() !==
+      'available'
+    ) {
+
+      showStatus(
+        'Esse item está reservado ou vendido e não pode ser excluído.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    const confirmed =
+      confirm(
+        `Excluir este item do estoque?\n\nID: ${inventoryId}\n\nEssa ação não pode ser desfeita.`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/admin/stock/${encodeURIComponent(inventoryId)}`,
+          {
+            method: 'DELETE',
+            headers: headers()
+          }
+        );
+
+
+      if (!response.ok) {
+
+        let message =
+          'Não foi possível excluir o estoque.';
+
+        try {
+
+          const data =
+            await response.json();
+
+          if (data.error) {
+            message =
+              data.error;
+          }
+
+        } catch {}
+
+
+        showStatus(
+          message,
+          'error'
+        );
+
+        return;
+      }
+
+
+      showStatus(
+        'Item removido do estoque!',
+        'success'
+      );
+
+
+      if (currentStockProductId) {
+
+        await loadStock(
+          currentStockProductId
+        );
+
+      }
+
+      await refresh();
+
+    } catch (error) {
+
+      showStatus(
+        'Erro de conexão.',
+        'error'
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     FORMATAÇÃO
+  ======================================================= */
 
   function formatPrice(cents) {
 
@@ -1797,11 +2603,19 @@
   }
 
 
+  /* =======================================================
+     LOGOUT
+  ======================================================= */
+
   function logout() {
 
     pwd = '';
 
     productsCache = [];
+
+    currentStockItems = [];
+
+    currentStockProductId = '';
 
     $('pass').value = '';
 
@@ -1819,10 +2633,16 @@
 
     closeEditModal();
 
+    closeStockModal();
+
+    closeEditStockModal();
+
   }
 
 
-  /* ENTER NO LOGIN */
+  /* =======================================================
+     ENTER NO LOGIN
+  ======================================================= */
 
   $('pass').addEventListener(
     'keydown',
@@ -1840,7 +2660,9 @@
   );
 
 
-  /* FECHAR MODAL CLICANDO FORA */
+  /* =======================================================
+     FECHAR MODAIS CLICANDO FORA
+  ======================================================= */
 
   $('editModal').addEventListener(
     'click',
@@ -1852,6 +2674,40 @@
       ) {
 
         closeEditModal();
+
+      }
+
+    }
+  );
+
+
+  $('stockModal').addEventListener(
+    'click',
+    function(event) {
+
+      if (
+        event.target ===
+        $('stockModal')
+      ) {
+
+        closeStockModal();
+
+      }
+
+    }
+  );
+
+
+  $('editStockModal').addEventListener(
+    'click',
+    function(event) {
+
+      if (
+        event.target ===
+        $('editStockModal')
+      ) {
+
+        closeEditStockModal();
 
       }
 
