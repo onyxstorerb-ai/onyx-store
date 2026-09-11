@@ -27,6 +27,38 @@ const LIVEPIX_FEE_PERCENT = 5;
 const DEFAULT_DISCORD_URL =
   "https://discord.gg/p9ZmkncQ8q";
 
+const CATEGORY_DEFAULTS: Record<
+  string,
+  {
+    name: string;
+    image: string;
+  }
+> = {
+  roblox: {
+    name: "Roblox",
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/512px-Roblox_%282025%29_%28App_Icon%29.svg.png"
+  },
+
+  fortnite: {
+    name: "Fortnite",
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png"
+  },
+
+  vbucks: {
+    name: "V-Bucks",
+    image:
+      "https://static.wikia.nocookie.net/fortnite_ptbr_gamepedia_ptbr/images/5/5a/Icon_VBucks.png"
+  },
+
+  nitradas: {
+    name: "Nitradas",
+    image:
+      "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
+  }
+};
+
 let oauthCache: {
   accessToken: string;
   expiresAt: number;
@@ -52,7 +84,11 @@ const json = (
   );
 
 function id(prefix: string) {
-  return `${prefix}_${crypto.randomUUID().replaceAll("-", "")}`;
+  return (
+    prefix +
+    "_" +
+    crypto.randomUUID().replaceAll("-", "")
+  );
 }
 
 function adminAuthorized(
@@ -60,16 +96,19 @@ function adminAuthorized(
   env: Env
 ) {
   return (
-    request.headers.get("x-admin-password") ===
-    env.ADMIN_PASSWORD
+    request.headers.get(
+      "x-admin-password"
+    ) === env.ADMIN_PASSWORD
   );
 }
 
 /* =========================================================
-   BANCO / MIGRAÇÃO AUTOMÁTICA
+   BANCO / MIGRAÇÃO
 ========================================================= */
 
-async function ensureSchema(env: Env) {
+async function ensureSchema(
+  env: Env
+) {
   if (schemaReady) {
     return schemaReady;
   }
@@ -85,7 +124,7 @@ async function ensureSchema(env: Env) {
 
     const columns =
       await env.DB.prepare(
-        `PRAGMA table_info(products)`
+        "PRAGMA table_info(products)"
       ).all();
 
     const names =
@@ -112,31 +151,33 @@ async function ensureSchema(env: Env) {
     const defaults = [
       [
         "roblox",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/512px-Roblox_%282025%29_%28App_Icon%29.svg.png"
+        CATEGORY_DEFAULTS.roblox.image
       ],
       [
         "fortnite",
-        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png"
+        CATEGORY_DEFAULTS.fortnite.image
       ],
       [
         "vbucks",
-        "https://static.wikia.nocookie.net/fortnite_ptbr_gamepedia_ptbr/images/5/5a/Icon_VBucks.png"
+        CATEGORY_DEFAULTS.vbucks.image
       ],
       [
         "nitradas",
-        "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
+        CATEGORY_DEFAULTS.nitradas.image
       ]
     ];
 
-    for (const [category, image] of defaults) {
+    for (const item of defaults) {
       await env.DB.prepare(`
         INSERT OR IGNORE INTO category_settings
         (category, image_url)
         VALUES (?, ?)
-      `).bind(
-        category,
-        image
-      ).run();
+      `)
+        .bind(
+          item[0],
+          item[1]
+        )
+        .run();
     }
   })();
 
@@ -146,6 +187,30 @@ async function ensureSchema(env: Env) {
     schemaReady = null;
     throw error;
   }
+}
+
+/* =========================================================
+   CATEGORIA
+========================================================= */
+
+function normalizeCategory(
+  value: unknown
+) {
+  const category =
+    String(value || "")
+      .trim()
+      .toLowerCase();
+
+  if (
+    Object.prototype.hasOwnProperty.call(
+      CATEGORY_DEFAULTS,
+      category
+    )
+  ) {
+    return category;
+  }
+
+  return "roblox";
 }
 
 /* =========================================================
@@ -167,7 +232,9 @@ async function keyFromSecret(
   return crypto.subtle.importKey(
     "raw",
     hash,
-    { name: "AES-GCM" },
+    {
+      name: "AES-GCM"
+    },
     false,
     [
       "encrypt",
@@ -223,7 +290,9 @@ async function decrypt(
   const raw =
     Uint8Array.from(
       atob(value),
-      c => c.charCodeAt(0)
+      function (c) {
+        return c.charCodeAt(0);
+      }
     );
 
   const iv =
@@ -296,22 +365,33 @@ async function getLivepixAccessToken(
   if (
     oauthCache &&
     oauthCache.expiresAt >
-      now + 60_000
+      now + 60000
   ) {
     return oauthCache.accessToken;
   }
 
   const body =
-    new URLSearchParams({
-      grant_type:
-        "client_credentials",
-      client_id:
-        env.LIVEPIX_CLIENT_ID,
-      client_secret:
-        env.LIVEPIX_CLIENT_SECRET,
-      scope:
-        "payments:read payments:write"
-    });
+    new URLSearchParams();
+
+  body.set(
+    "grant_type",
+    "client_credentials"
+  );
+
+  body.set(
+    "client_id",
+    env.LIVEPIX_CLIENT_ID
+  );
+
+  body.set(
+    "client_secret",
+    env.LIVEPIX_CLIENT_SECRET
+  );
+
+  body.set(
+    "scope",
+    "payments:read payments:write"
+  );
 
   const response =
     await fetch(
@@ -332,7 +412,8 @@ async function getLivepixAccessToken(
   let data: any = {};
 
   try {
-    data = JSON.parse(raw);
+    data =
+      JSON.parse(raw);
   } catch {
     data = {};
   }
@@ -344,18 +425,22 @@ async function getLivepixAccessToken(
     throw new Error(
       data?.error_description ||
       data?.message ||
-      `Falha OAuth2 LivePix (${response.status}).`
+      "Falha OAuth2 LivePix (" +
+        response.status +
+        ")."
     );
   }
 
   oauthCache = {
     accessToken:
       data.access_token,
+
     expiresAt:
       now +
       Number(
         data.expires_in || 3600
-      ) * 1000
+      ) *
+        1000
   };
 
   return data.access_token;
@@ -378,7 +463,7 @@ async function livepixRequest(
 
   headers.set(
     "Authorization",
-    `Bearer ${accessToken}`
+    "Bearer " + accessToken
   );
 
   headers.set(
@@ -398,14 +483,16 @@ async function livepixRequest(
 
   let response =
     await fetch(
-      `${LIVEPIX_API_URL}${path}`,
+      LIVEPIX_API_URL + path,
       {
         ...init,
         headers
       }
     );
 
-  if (response.status === 401) {
+  if (
+    response.status === 401
+  ) {
     oauthCache = null;
 
     const retryToken =
@@ -413,12 +500,12 @@ async function livepixRequest(
 
     headers.set(
       "Authorization",
-      `Bearer ${retryToken}`
+      "Bearer " + retryToken
     );
 
     response =
       await fetch(
-        `${LIVEPIX_API_URL}${path}`,
+        LIVEPIX_API_URL + path,
         {
           ...init,
           headers
@@ -444,7 +531,9 @@ async function livepixCreatePayment(
     amountWithFee(amountCents);
 
   const redirectUrl =
-    `${origin}/?paid=${encodeURIComponent(orderId)}`;
+    origin +
+    "/?paid=" +
+    encodeURIComponent(orderId);
 
   const response =
     await livepixRequest(
@@ -452,13 +541,17 @@ async function livepixCreatePayment(
       "/payments",
       {
         method: "POST",
-        body: JSON.stringify({
-          amount:
-            chargedAmountCents,
-          currency:
-            "BRL",
-          redirectUrl
-        })
+
+        body:
+          JSON.stringify({
+            amount:
+              chargedAmountCents,
+
+            currency:
+              "BRL",
+
+            redirectUrl
+          })
       }
     );
 
@@ -468,7 +561,8 @@ async function livepixCreatePayment(
   let body: any = {};
 
   try {
-    body = JSON.parse(raw);
+    body =
+      JSON.parse(raw);
   } catch {
     body = {};
   }
@@ -478,7 +572,9 @@ async function livepixCreatePayment(
       body?.message ||
       body?.error_description ||
       body?.error ||
-      `Falha ao criar pagamento LivePix (${response.status}).`
+      "Falha ao criar pagamento LivePix (" +
+        response.status +
+        ")."
     );
   }
 
@@ -510,15 +606,20 @@ async function verifyLivepixPayment(
   env: Env,
   paymentId: string
 ) {
-  if (!paymentId) return null;
+  if (!paymentId) {
+    return null;
+  }
 
   const response =
     await livepixRequest(
       env,
-      `/payments/${encodeURIComponent(paymentId)}`
+      "/payments/" +
+        encodeURIComponent(paymentId)
     );
 
-  if (!response.ok) return null;
+  if (!response.ok) {
+    return null;
+  }
 
   const body =
     await response.json<any>();
@@ -530,20 +631,28 @@ async function findLivepixPaymentByReference(
   env: Env,
   reference: string
 ) {
-  if (!reference) return null;
+  if (!reference) {
+    return null;
+  }
 
   const query =
-    new URLSearchParams({
-      reference
-    });
+    new URLSearchParams();
+
+  query.set(
+    "reference",
+    reference
+  );
 
   const response =
     await livepixRequest(
       env,
-      `/payments?${query.toString()}`
+      "/payments?" +
+        query.toString()
     );
 
-  if (!response.ok) return null;
+  if (!response.ok) {
+    return null;
+  }
 
   const body =
     await response.json<any>();
@@ -556,8 +665,9 @@ async function findLivepixPaymentByReference(
   return (
     payments.find(
       (payment: any) =>
-        String(payment?.reference || "") ===
-        reference
+        String(
+          payment?.reference || ""
+        ) === reference
     ) ??
     payments[0] ??
     null
@@ -707,12 +817,19 @@ async function markPaidAndDeliver(
   payment: any
 ) {
   const paymentId =
-    String(payment?.id || "");
+    String(
+      payment?.id || ""
+    );
 
   const reference =
-    String(payment?.reference || "");
+    String(
+      payment?.reference || ""
+    );
 
-  if (!paymentId && !reference) {
+  if (
+    !paymentId &&
+    !reference
+  ) {
     return {
       ok: false,
       reason:
@@ -732,7 +849,10 @@ async function markPaidAndDeliver(
           .first<any>()
       : null;
 
-  if (!order && paymentId) {
+  if (
+    !order &&
+    paymentId
+  ) {
     order =
       await env.DB.prepare(
         `SELECT *
@@ -752,7 +872,9 @@ async function markPaidAndDeliver(
     };
   }
 
-  if (order.status === "paid") {
+  if (
+    order.status === "paid"
+  ) {
     return {
       ok: true,
       alreadyPaid: true,
@@ -770,7 +892,10 @@ async function markPaidAndDeliver(
       );
   }
 
-  if (!verified && reference) {
+  if (
+    !verified &&
+    reference
+  ) {
     verified =
       await findLivepixPaymentByReference(
         env,
@@ -807,14 +932,21 @@ async function markPaidAndDeliver(
   }
 
   const livepixAmount =
-    Number(verified.amount);
+    Number(
+      verified.amount
+    );
 
   const orderAmount =
-    Number(order.amount_cents);
+    Number(
+      order.amount_cents
+    );
 
   if (
-    !Number.isFinite(livepixAmount) ||
-    livepixAmount !== orderAmount
+    !Number.isFinite(
+      livepixAmount
+    ) ||
+    livepixAmount !==
+      orderAmount
   ) {
     return {
       ok: false,
@@ -850,7 +982,9 @@ async function markPaidAndDeliver(
     return claimed;
   }
 
-  if (claimed.alreadyPaid) {
+  if (
+    claimed.alreadyPaid
+  ) {
     return {
       ok: true,
       alreadyPaid: true,
@@ -898,8 +1032,12 @@ async function handleLivepixWebhook(
 
   if (
     payload?.clientId &&
-    String(payload.clientId) !==
-      String(env.LIVEPIX_CLIENT_ID)
+    String(
+      payload.clientId
+    ) !==
+      String(
+        env.LIVEPIX_CLIENT_ID
+      )
   ) {
     return json(
       {
@@ -926,12 +1064,19 @@ async function handleLivepixWebhook(
     payload;
 
   const paymentId =
-    String(resource?.id || "");
+    String(
+      resource?.id || ""
+    );
 
   const reference =
-    String(resource?.reference || "");
+    String(
+      resource?.reference || ""
+    );
 
-  if (!paymentId && !reference) {
+  if (
+    !paymentId &&
+    !reference
+  ) {
     return json(
       {
         error:
@@ -951,7 +1096,10 @@ async function handleLivepixWebhook(
       );
   }
 
-  if (!payment && reference) {
+  if (
+    !payment &&
+    reference
+  ) {
     payment =
       await findLivepixPaymentByReference(
         env,
@@ -977,9 +1125,11 @@ async function handleLivepixWebhook(
       status:
         "ok",
       orderId:
-        result.orderId ?? null,
+        result.orderId ??
+        null,
       alreadyPaid:
-        result.alreadyPaid ?? false
+        result.alreadyPaid ??
+        false
     });
   }
 
@@ -987,7 +1137,10 @@ async function handleLivepixWebhook(
     result.reason ===
     "order_not_found"
   ) {
-    return json(result, 404);
+    return json(
+      result,
+      404
+    );
   }
 
   if (
@@ -1009,60 +1162,10 @@ async function handleLivepixWebhook(
     );
   }
 
-  return json(result, 400);
-}
-
-/* =========================================================
-   CATEGORIAS
-========================================================= */
-
-const CATEGORY_DEFAULTS: Record<
-  string,
-  {
-    name: string;
-    image: string;
-  }
-> = {
-  roblox: {
-    name: "Roblox",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/512px-Roblox_%282025%29_%28App_Icon%29.svg.png"
-  },
-  fortnite: {
-    name: "Fortnite",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png"
-  },
-  vbucks: {
-    name: "V-Bucks",
-    image:
-      "https://static.wikia.nocookie.net/fortnite_ptbr_gamepedia_ptbr/images/5/5a/Icon_VBucks.png"
-  },
-  nitradas: {
-    name: "Nitradas",
-    image:
-      "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
-  }
-};
-
-function normalizeCategory(
-  value: unknown
-) {
-  const category =
-    String(value || "")
-      .trim()
-      .toLowerCase();
-
-  if (
-    Object.prototype.hasOwnProperty.call(
-      CATEGORY_DEFAULTS,
-      category
-    )
-  ) {
-    return category;
-  }
-
-  return "roblox";
+  return json(
+    result,
+    400
+  );
 }
 
 /* =========================================================
@@ -1089,7 +1192,9 @@ async function api(
   ) {
     const rows =
       await env.DB.prepare(
-        `SELECT category, image_url
+        `SELECT
+           category,
+           image_url
          FROM category_settings`
       ).all();
 
@@ -1097,11 +1202,25 @@ async function api(
       Object.entries(
         CATEGORY_DEFAULTS
       ).map(
-        ([key, value]) => {
+        function (
+          entry
+        ) {
+          const key =
+            entry[0];
+
+          const value =
+            entry[1];
+
           const row =
             (rows.results || []).find(
-              (item: any) =>
-                item.category === key
+              function (
+                item: any
+              ) {
+                return (
+                  item.category ===
+                  key
+                );
+              }
             ) as any;
 
           return {
@@ -1146,10 +1265,13 @@ async function api(
 
          WHERE p.active=1
 
-         ORDER BY p.created_at DESC`
+         ORDER BY
+           p.created_at DESC`
       ).all();
 
-    return json(products.results);
+    return json(
+      products.results
+    );
   }
 
   /* =======================================================
@@ -1176,7 +1298,9 @@ async function api(
     }
 
     const productId =
-      String(body?.productId || "");
+      String(
+        body?.productId || ""
+      );
 
     if (!productId) {
       return json(
@@ -1210,10 +1334,14 @@ async function api(
     }
 
     const baseAmountCents =
-      Number(product.price_cents);
+      Number(
+        product.price_cents
+      );
 
     if (
-      !Number.isFinite(baseAmountCents) ||
+      !Number.isFinite(
+        baseAmountCents
+      ) ||
       baseAmountCents <= 0
     ) {
       return json(
@@ -1236,9 +1364,13 @@ async function api(
         .first<any>();
 
     const availableStock =
-      Number(stock?.total || 0);
+      Number(
+        stock?.total || 0
+      );
 
-    if (availableStock <= 0) {
+    if (
+      availableStock <= 0
+    ) {
       return json(
         {
           error:
@@ -1295,7 +1427,8 @@ async function api(
         await livepixCreatePayment(
           env,
           baseAmountCents,
-          `ONYX - ${product.name}`,
+          "ONYX - " +
+            product.name,
           orderId,
           url.origin
         );
@@ -1308,7 +1441,8 @@ async function api(
          WHERE id=?`
       )
         .bind(
-          payment.id ?? null,
+          payment.id ??
+            null,
           payment.reference,
           orderId
         )
@@ -1317,14 +1451,19 @@ async function api(
       return json(
         {
           orderId,
+
           checkout:
             payment.redirectUrl,
+
           pixCode: null,
           pixQrCode: null,
           expiresAt: null,
+
           amountCents:
             chargedAmountCents,
+
           baseAmountCents,
+
           feePercent:
             LIVEPIX_FEE_PERCENT
         },
@@ -1363,11 +1502,15 @@ async function api(
 
   if (
     request.method === "GET" &&
-    path.startsWith("/api/order/")
+    path.startsWith(
+      "/api/order/"
+    )
   ) {
     const orderId =
       decodeURIComponent(
-        path.slice("/api/order/".length)
+        path.slice(
+          "/api/order/".length
+        )
       );
 
     if (!orderId) {
@@ -1406,11 +1549,16 @@ async function api(
       );
     }
 
-    if (order.status !== "paid") {
+    if (
+      order.status !==
+      "paid"
+    ) {
       return json({
         id: order.id,
-        status: order.status,
-        product: order.name,
+        status:
+          order.status,
+        product:
+          order.name,
         amountCents:
           order.amount_cents,
         delivered: false
@@ -1419,7 +1567,8 @@ async function api(
 
     const inventory =
       await env.DB.prepare(
-        `SELECT account_encrypted
+        `SELECT
+           account_encrypted
          FROM inventory
          WHERE order_id=?
            AND status='sold'
@@ -1431,8 +1580,10 @@ async function api(
     if (!inventory) {
       return json({
         id: order.id,
-        status: "paid",
-        product: order.name,
+        status:
+          "paid",
+        product:
+          order.name,
         amountCents:
           order.amount_cents,
         delivered: false
@@ -1450,18 +1601,23 @@ async function api(
       DEFAULT_DISCORD_URL;
 
     const thankYouMessage =
-`✅ Pagamento aprovado!
-🔒 Sua conta: ${account}
-🎁 Seu produto foi entregue automaticamente.
-❤️ Obrigado pela compra na ONYX!
-⭐ Deixe seu feedback no nosso Discord:
-${discordUrl}`;
+      "✅ Pagamento aprovado!\n" +
+      "🔒 Sua conta: " +
+      account +
+      "\n" +
+      "🎁 Seu produto foi entregue automaticamente.\n" +
+      "❤️ Obrigado pela compra na ONYX!\n" +
+      "⭐ Deixe seu feedback no nosso Discord:\n" +
+      discordUrl;
 
     return json({
       id: order.id,
-      status: "paid",
-      delivered: true,
-      product: order.name,
+      status:
+        "paid",
+      delivered:
+        true,
+      product:
+        order.name,
       amountCents:
         order.amount_cents,
       account,
@@ -1476,7 +1632,8 @@ ${discordUrl}`;
 
   if (
     request.method === "POST" &&
-    path === "/api/livepix/webhook"
+    path ===
+      "/api/livepix/webhook"
   ) {
     return handleLivepixWebhook(
       request,
@@ -1489,7 +1646,9 @@ ${discordUrl}`;
   ======================================================= */
 
   if (
-    path.startsWith("/api/admin/")
+    path.startsWith(
+      "/api/admin/"
+    )
   ) {
     if (
       !adminAuthorized(
@@ -1513,11 +1672,15 @@ ${discordUrl}`;
 
   if (
     request.method === "GET" &&
-    path === "/api/admin/categories"
+    path ===
+      "/api/admin/categories"
   ) {
     const rows =
       await env.DB.prepare(
-        `SELECT category, image_url, updated_at
+        `SELECT
+           category,
+           image_url,
+           updated_at
          FROM category_settings
          ORDER BY category`
       ).all();
@@ -1526,11 +1689,25 @@ ${discordUrl}`;
       Object.entries(
         CATEGORY_DEFAULTS
       ).map(
-        ([key, value]) => {
+        function (
+          entry
+        ) {
+          const key =
+            entry[0];
+
+          const value =
+            entry[1];
+
           const row =
             (rows.results || []).find(
-              (item: any) =>
-                item.category === key
+              function (
+                item: any
+              ) {
+                return (
+                  item.category ===
+                  key
+                );
+              }
             ) as any;
 
           return {
@@ -1540,7 +1717,8 @@ ${discordUrl}`;
               row?.image_url ||
               value.image,
             updated_at:
-              row?.updated_at || null
+              row?.updated_at ||
+              null
           };
         }
       );
@@ -1562,7 +1740,8 @@ ${discordUrl}`;
       normalizeCategory(
         decodeURIComponent(
           path.slice(
-            "/api/admin/categories/".length
+            "/api/admin/categories/"
+              .length
           )
         )
       );
@@ -1591,7 +1770,9 @@ ${discordUrl}`;
 
     if (
       image &&
-      !/^https?:\/\//i.test(image)
+      !/^https?:\/\//i.test(
+        image
+      )
     ) {
       return json(
         {
@@ -1602,15 +1783,21 @@ ${discordUrl}`;
       );
     }
 
-    await env.DB.prepare(`
-      INSERT INTO category_settings
-      (category, image_url, updated_at)
-      VALUES (?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(category)
-      DO UPDATE SET
-        image_url=excluded.image_url,
-        updated_at=CURRENT_TIMESTAMP
-    `)
+    await env.DB.prepare(
+      `INSERT INTO category_settings
+       (
+         category,
+         image_url,
+         updated_at
+       )
+       VALUES
+       (?, ?, CURRENT_TIMESTAMP)
+
+       ON CONFLICT(category)
+       DO UPDATE SET
+         image_url=excluded.image_url,
+         updated_at=CURRENT_TIMESTAMP`
+    )
       .bind(
         category,
         image
@@ -1630,7 +1817,8 @@ ${discordUrl}`;
 
   if (
     request.method === "GET" &&
-    path === "/api/admin/products"
+    path ===
+      "/api/admin/products"
   ) {
     const products =
       await env.DB.prepare(
@@ -1657,7 +1845,9 @@ ${discordUrl}`;
            p.created_at DESC`
       ).all();
 
-    return json(products.results);
+    return json(
+      products.results
+    );
   }
 
   /* =======================================================
@@ -1666,10 +1856,23 @@ ${discordUrl}`;
 
   if (
     request.method === "POST" &&
-    path === "/api/admin/products"
+    path ===
+      "/api/admin/products"
   ) {
-    const body =
-      await request.json<any>();
+    let body: any;
+
+    try {
+      body =
+        await request.json<any>();
+    } catch {
+      return json(
+        {
+          error:
+            "JSON inválido."
+        },
+        400
+      );
+    }
 
     const name =
       String(
@@ -1694,11 +1897,15 @@ ${discordUrl}`;
       ).trim();
 
     const price =
-      Number(body?.price);
+      Number(
+        body?.price
+      );
 
     if (
       !name ||
-      !Number.isFinite(price) ||
+      !Number.isFinite(
+        price
+      ) ||
       price <= 0
     ) {
       return json(
@@ -1712,7 +1919,9 @@ ${discordUrl}`;
 
     if (
       image &&
-      !/^https?:\/\//i.test(image)
+      !/^https?:\/\//i.test(
+        image
+      )
     ) {
       return json(
         {
@@ -1744,7 +1953,9 @@ ${discordUrl}`;
         productId,
         name,
         description,
-        Math.round(price * 100),
+        Math.round(
+          price * 100
+        ),
         category,
         image
       )
@@ -1756,6 +1967,155 @@ ${discordUrl}`;
       },
       201
     );
+  }
+
+  /* =======================================================
+     ADMIN EDITAR PRODUTO
+  ======================================================= */
+
+  if (
+    request.method === "PUT" &&
+    path.startsWith(
+      "/api/admin/products/"
+    )
+  ) {
+    const productId =
+      decodeURIComponent(
+        path.slice(
+          "/api/admin/products/"
+            .length
+        )
+      );
+
+    if (!productId) {
+      return json(
+        {
+          error:
+            "Produto inválido."
+        },
+        400
+      );
+    }
+
+    let body: any;
+
+    try {
+      body =
+        await request.json<any>();
+    } catch {
+      return json(
+        {
+          error:
+            "JSON inválido."
+        },
+        400
+      );
+    }
+
+    const name =
+      String(
+        body?.name || ""
+      ).trim();
+
+    const description =
+      String(
+        body?.description || ""
+      ).trim();
+
+    const category =
+      normalizeCategory(
+        body?.category
+      );
+
+    const image =
+      String(
+        body?.image ??
+        body?.image_url ??
+        ""
+      ).trim();
+
+    const price =
+      Number(
+        body?.price
+      );
+
+    if (
+      !name ||
+      !Number.isFinite(
+        price
+      ) ||
+      price <= 0
+    ) {
+      return json(
+        {
+          error:
+            "Nome e preço válidos são obrigatórios."
+        },
+        400
+      );
+    }
+
+    if (
+      image &&
+      !/^https?:\/\//i.test(
+        image
+      )
+    ) {
+      return json(
+        {
+          error:
+            "A imagem precisa ser uma URL válida."
+        },
+        400
+      );
+    }
+
+    const product =
+      await env.DB.prepare(
+        `SELECT id
+         FROM products
+         WHERE id=?
+         LIMIT 1`
+      )
+        .bind(productId)
+        .first<any>();
+
+    if (!product) {
+      return json(
+        {
+          error:
+            "Produto não encontrado."
+        },
+        404
+      );
+    }
+
+    await env.DB.prepare(
+      `UPDATE products
+       SET
+         name=?,
+         description=?,
+         price_cents=?,
+         category=?,
+         image_url=?
+       WHERE id=?`
+    )
+      .bind(
+        name,
+        description,
+        Math.round(
+          price * 100
+        ),
+        category,
+        image,
+        productId
+      )
+      .run();
+
+    return json({
+      ok: true,
+      id: productId
+    });
   }
 
   /* =======================================================
@@ -1771,7 +2131,8 @@ ${discordUrl}`;
     const productId =
       decodeURIComponent(
         path.slice(
-          "/api/admin/products/".length
+          "/api/admin/products/"
+            .length
         )
       );
 
@@ -1787,7 +2148,9 @@ ${discordUrl}`;
 
     const product =
       await env.DB.prepare(
-        `SELECT id, name
+        `SELECT
+           id,
+           name
          FROM products
          WHERE id=?
          LIMIT 1`
@@ -1816,7 +2179,8 @@ ${discordUrl}`;
     return json({
       ok: true,
       id: productId,
-      name: product.name
+      name:
+        product.name
     });
   }
 
@@ -1826,10 +2190,23 @@ ${discordUrl}`;
 
   if (
     request.method === "POST" &&
-    path === "/api/admin/stock"
+    path ===
+      "/api/admin/stock"
   ) {
-    const body =
-      await request.json<any>();
+    let body: any;
+
+    try {
+      body =
+        await request.json<any>();
+    } catch {
+      return json(
+        {
+          error:
+            "JSON inválido."
+        },
+        400
+      );
+    }
 
     const productId =
       String(
@@ -1903,7 +2280,8 @@ ${discordUrl}`;
 
     return json(
       {
-        id: inventoryId
+        id:
+          inventoryId
       },
       201
     );
@@ -1915,7 +2293,8 @@ ${discordUrl}`;
 
   if (
     request.method === "GET" &&
-    path === "/api/admin/orders"
+    path ===
+      "/api/admin/orders"
   ) {
     const orders =
       await env.DB.prepare(
@@ -1928,11 +2307,15 @@ ${discordUrl}`;
           o.created_at,
           o.paid_at,
           p.name AS product
+
          FROM orders o
+
          JOIN products p
            ON p.id=o.product_id
+
          ORDER BY
            o.created_at DESC
+
          LIMIT 100`
       ).all();
 
@@ -1963,7 +2346,9 @@ export default {
       new URL(request.url);
 
     if (
-      url.pathname.startsWith("/api/")
+      url.pathname.startsWith(
+        "/api/"
+      )
     ) {
       try {
         return await api(
