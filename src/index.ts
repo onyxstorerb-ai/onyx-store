@@ -1769,6 +1769,72 @@ ${discordUrl}`;
   }
 
   /* =======================================================
+     ADMIN EXCLUIR / DESATIVAR PRODUTO
+  ======================================================= */
+
+  if (
+    request.method === "DELETE" &&
+    path.startsWith("/api/admin/products/")
+  ) {
+    const productId =
+      decodeURIComponent(
+        path.slice("/api/admin/products/".length)
+      );
+
+    if (!productId) {
+      return json(
+        {
+          error:
+            "Produto inválido."
+        },
+        400
+      );
+    }
+
+    const product =
+      await env.DB.prepare(
+        `SELECT id, name
+         FROM products
+         WHERE id=?
+         LIMIT 1`
+      )
+        .bind(productId)
+        .first<any>();
+
+    if (!product) {
+      return json(
+        {
+          error:
+            "Produto não encontrado."
+        },
+        404
+      );
+    }
+
+    /*
+     * Não apagamos fisicamente o produto.
+     * Apenas desativamos (active=0), para preservar
+     * pedidos, estoque e histórico de vendas.
+     *
+     * Assim ele deixa de aparecer na loja, mas os
+     * pedidos antigos continuam funcionando.
+     */
+    await env.DB.prepare(
+      `UPDATE products
+       SET active=0
+       WHERE id=?`
+    )
+      .bind(productId)
+      .run();
+
+    return json({
+      ok: true,
+      id: productId,
+      name: product.name
+    });
+  }
+
+  /* =======================================================
      ADMIN ESTOQUE
   ======================================================= */
 
