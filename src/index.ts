@@ -1,3 +1,4 @@
+```ts
 export interface Env {
   DB: D1Database;
   ASSETS: Fetcher;
@@ -11,9 +12,7 @@ export interface Env {
   LIVEPIX_CLIENT_ID: string;
   LIVEPIX_CLIENT_SECRET: string;
 
-  // Link do servidor Discord.
   DISCORD_URL?: string;
-
   SITE_URL?: string;
 }
 
@@ -32,6 +31,8 @@ let oauthCache: {
   accessToken: string;
   expiresAt: number;
 } | null = null;
+
+let schemaReady: Promise<void> | null = null;
 
 const json = (
   data: unknown,
@@ -59,10 +60,92 @@ function adminAuthorized(
   env: Env
 ) {
   return (
-    request.headers.get(
-      "x-admin-password"
-    ) === env.ADMIN_PASSWORD
+    request.headers.get("x-admin-password") ===
+    env.ADMIN_PASSWORD
   );
+}
+
+/* =========================================================
+   BANCO / MIGRAÇÃO AUTOMÁTICA
+========================================================= */
+
+async function ensureSchema(env: Env) {
+  if (schemaReady) {
+    return schemaReady;
+  }
+
+  schemaReady = (async () => {
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS category_settings (
+        category TEXT PRIMARY KEY,
+        image_url TEXT DEFAULT '',
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run();
+
+    const columns =
+      await env.DB.prepare(
+        `PRAGMA table_info(products)`
+      ).all();
+
+    const names =
+      new Set(
+        (columns.results || []).map(
+          (column: any) => column.name
+        )
+      );
+
+    if (!names.has("category")) {
+      await env.DB.prepare(
+        `ALTER TABLE products
+         ADD COLUMN category TEXT DEFAULT 'roblox'`
+      ).run();
+    }
+
+    if (!names.has("image_url")) {
+      await env.DB.prepare(
+        `ALTER TABLE products
+         ADD COLUMN image_url TEXT DEFAULT ''`
+      ).run();
+    }
+
+    const defaults = [
+      [
+        "roblox",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/512px-Roblox_%282025%29_%28App_Icon%29.svg.png"
+      ],
+      [
+        "fortnite",
+        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png"
+      ],
+      [
+        "vbucks",
+        "https://static.wikia.nocookie.net/fortnite_ptbr_gamepedia_ptbr/images/5/5a/Icon_VBucks.png"
+      ],
+      [
+        "nitradas",
+        "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
+      ]
+    ];
+
+    for (const [category, image] of defaults) {
+      await env.DB.prepare(`
+        INSERT OR IGNORE INTO category_settings
+        (category, image_url)
+        VALUES (?, ?)
+      `).bind(
+        category,
+        image
+      ).run();
+    }
+  })();
+
+  try {
+    await schemaReady;
+  } catch (error) {
+    schemaReady = null;
+    throw error;
+  }
 }
 
 /* =========================================================
@@ -177,9 +260,7 @@ function amountWithFee(
     LIVEPIX_FEE_PERCENT / 100;
 
   if (
-    !Number.isFinite(
-      amountCents
-    ) ||
+    !Number.isFinite(amountCents) ||
     amountCents <= 0
   ) {
     throw new Error(
@@ -224,13 +305,10 @@ async function getLivepixAccessToken(
     new URLSearchParams({
       grant_type:
         "client_credentials",
-
       client_id:
         env.LIVEPIX_CLIENT_ID,
-
       client_secret:
         env.LIVEPIX_CLIENT_SECRET,
-
       scope:
         "payments:read payments:write"
     });
@@ -240,12 +318,10 @@ async function getLivepixAccessToken(
       LIVEPIX_OAUTH_URL,
       {
         method: "POST",
-
         headers: {
           "Content-Type":
             "application/x-www-form-urlencoded"
         },
-
         body
       }
     );
@@ -256,8 +332,7 @@ async function getLivepixAccessToken(
   let data: any = {};
 
   try {
-    data =
-      JSON.parse(raw);
+    data = JSON.parse(raw);
   } catch {
     data = {};
   }
@@ -276,13 +351,11 @@ async function getLivepixAccessToken(
   oauthCache = {
     accessToken:
       data.access_token,
-
     expiresAt:
       now +
       Number(
         data.expires_in || 3600
-      ) *
-      1000
+      ) * 1000
   };
 
   return data.access_token;
@@ -298,14 +371,10 @@ async function livepixRequest(
   init: RequestInit = {}
 ) {
   const accessToken =
-    await getLivepixAccessToken(
-      env
-    );
+    await getLivepixAccessToken(env);
 
   const headers =
-    new Headers(
-      init.headers
-    );
+    new Headers(init.headers);
 
   headers.set(
     "Authorization",
@@ -319,9 +388,7 @@ async function livepixRequest(
 
   if (
     init.body &&
-    !headers.has(
-      "Content-Type"
-    )
+    !headers.has("Content-Type")
   ) {
     headers.set(
       "Content-Type",
@@ -338,15 +405,11 @@ async function livepixRequest(
       }
     );
 
-  if (
-    response.status === 401
-  ) {
+  if (response.status === 401) {
     oauthCache = null;
 
     const retryToken =
-      await getLivepixAccessToken(
-        env
-      );
+      await getLivepixAccessToken(env);
 
     headers.set(
       "Authorization",
@@ -378,14 +441,10 @@ async function livepixCreatePayment(
   origin: string
 ) {
   const chargedAmountCents =
-    amountWithFee(
-      amountCents
-    );
+    amountWithFee(amountCents);
 
   const redirectUrl =
-    `${origin}/?paid=${encodeURIComponent(
-      orderId
-    )}`;
+    `${origin}/?paid=${encodeURIComponent(orderId)}`;
 
   const response =
     await livepixRequest(
@@ -393,14 +452,11 @@ async function livepixCreatePayment(
       "/payments",
       {
         method: "POST",
-
         body: JSON.stringify({
           amount:
             chargedAmountCents,
-
           currency:
             "BRL",
-
           redirectUrl
         })
       }
@@ -412,8 +468,7 @@ async function livepixCreatePayment(
   let body: any = {};
 
   try {
-    body =
-      JSON.parse(raw);
+    body = JSON.parse(raw);
   } catch {
     body = {};
   }
@@ -441,11 +496,8 @@ async function livepixCreatePayment(
 
   return {
     ...payment,
-
     description,
-
     chargedAmountCents,
-
     orderId
   };
 }
@@ -458,38 +510,27 @@ async function verifyLivepixPayment(
   env: Env,
   paymentId: string
 ) {
-  if (!paymentId) {
-    return null;
-  }
+  if (!paymentId) return null;
 
   const response =
     await livepixRequest(
       env,
-      `/payments/${encodeURIComponent(
-        paymentId
-      )}`
+      `/payments/${encodeURIComponent(paymentId)}`
     );
 
-  if (!response.ok) {
-    return null;
-  }
+  if (!response.ok) return null;
 
   const body =
     await response.json<any>();
 
-  return (
-    body?.data ??
-    null
-  );
+  return body?.data ?? null;
 }
 
 async function findLivepixPaymentByReference(
   env: Env,
   reference: string
 ) {
-  if (!reference) {
-    return null;
-  }
+  if (!reference) return null;
 
   const query =
     new URLSearchParams({
@@ -502,27 +543,21 @@ async function findLivepixPaymentByReference(
       `/payments?${query.toString()}`
     );
 
-  if (!response.ok) {
-    return null;
-  }
+  if (!response.ok) return null;
 
   const body =
     await response.json<any>();
 
   const payments =
-    Array.isArray(
-      body?.data
-    )
+    Array.isArray(body?.data)
       ? body.data
       : [];
 
   return (
     payments.find(
       (payment: any) =>
-        String(
-          payment?.reference ||
-          ""
-        ) === reference
+        String(payment?.reference || "") ===
+        reference
     ) ??
     payments[0] ??
     null
@@ -533,16 +568,6 @@ async function findLivepixPaymentByReference(
    ESTOQUE
 ========================================================= */
 
-/*
- * O estoque NÃO é reservado no checkout.
- *
- * Uma conta só passa de available -> sold
- * depois que o pagamento foi confirmado.
- *
- * A operação usa o próprio pedido como condição
- * para impedir que dois webhooks confirmem
- * o mesmo pedido simultaneamente.
- */
 async function claimInventoryForPaidOrder(
   env: Env,
   orderId: string,
@@ -552,12 +577,6 @@ async function claimInventoryForPaidOrder(
 ) {
   const result =
     await env.DB.batch([
-      /*
-       * 1. Pega uma única conta disponível.
-       *
-       * Só pode fazer isso se o pedido ainda
-       * estiver pending.
-       */
       env.DB.prepare(
         `UPDATE inventory
          SET
@@ -582,10 +601,6 @@ async function claimInventoryForPaidOrder(
         productId
       ),
 
-      /*
-       * 2. Marca o pedido como pago
-       * somente se uma conta foi atribuída.
-       */
       env.DB.prepare(
         `UPDATE orders
          SET
@@ -616,27 +631,19 @@ async function claimInventoryForPaidOrder(
         orderId
       ),
 
-      /*
-       * 3. Recupera a conta atribuída.
-       */
       env.DB.prepare(
         `SELECT
-           i.id,
-           i.product_id,
-           i.account_encrypted,
-           i.status,
-           i.order_id
-         FROM inventory i
-         WHERE i.order_id=?
-           AND i.status='sold'
+           id,
+           product_id,
+           account_encrypted,
+           status,
+           order_id
+         FROM inventory
+         WHERE order_id=?
+           AND status='sold'
          LIMIT 1`
-      ).bind(
-        orderId
-      ),
+      ).bind(orderId),
 
-      /*
-       * 4. Recupera o estado final do pedido.
-       */
       env.DB.prepare(
         `SELECT
            id,
@@ -645,26 +652,17 @@ async function claimInventoryForPaidOrder(
          FROM orders
          WHERE id=?
          LIMIT 1`
-      ).bind(
-        orderId
-      )
+      ).bind(orderId)
     ]);
 
   const inventory =
-    result[2]
-      ?.results?.[0] as any;
+    result[2]?.results?.[0] as any;
 
   const finalOrder =
-    result[3]
-      ?.results?.[0] as any;
+    result[3]?.results?.[0] as any;
 
-  /*
-   * Se o pedido já tinha sido pago,
-   * não entrega uma segunda conta.
-   */
   if (
-    finalOrder?.status ===
-      "paid" &&
+    finalOrder?.status === "paid" &&
     !inventory
   ) {
     return {
@@ -674,10 +672,6 @@ async function claimInventoryForPaidOrder(
     };
   }
 
-  /*
-   * Se não conseguiu pegar estoque,
-   * o pedido continua sem consumo.
-   */
   if (!inventory) {
     return {
       ok: false,
@@ -686,13 +680,8 @@ async function claimInventoryForPaidOrder(
     };
   }
 
-  /*
-   * Confirma que o pedido realmente
-   * terminou como paid.
-   */
   if (
-    finalOrder?.status !==
-    "paid"
+    finalOrder?.status !== "paid"
   ) {
     return {
       ok: false,
@@ -710,7 +699,7 @@ async function claimInventoryForPaidOrder(
 }
 
 /* =========================================================
-   APROVAR PAGAMENTO + ENTREGAR
+   APROVAR PAGAMENTO
 ========================================================= */
 
 async function markPaidAndDeliver(
@@ -718,21 +707,12 @@ async function markPaidAndDeliver(
   payment: any
 ) {
   const paymentId =
-    String(
-      payment?.id ||
-      ""
-    );
+    String(payment?.id || "");
 
   const reference =
-    String(
-      payment?.reference ||
-      ""
-    );
+    String(payment?.reference || "");
 
-  if (
-    !paymentId &&
-    !reference
-  ) {
+  if (!paymentId && !reference) {
     return {
       ok: false,
       reason:
@@ -740,9 +720,6 @@ async function markPaidAndDeliver(
     };
   }
 
-  /*
-   * Localiza o pedido.
-   */
   let order =
     reference
       ? await env.DB.prepare(
@@ -751,16 +728,11 @@ async function markPaidAndDeliver(
            WHERE livepix_reference=?
            LIMIT 1`
         )
-          .bind(
-            reference
-          )
+          .bind(reference)
           .first<any>()
       : null;
 
-  if (
-    !order &&
-    paymentId
-  ) {
+  if (!order && paymentId) {
     order =
       await env.DB.prepare(
         `SELECT *
@@ -768,9 +740,7 @@ async function markPaidAndDeliver(
          WHERE livepix_id=?
          LIMIT 1`
       )
-        .bind(
-          paymentId
-        )
+        .bind(paymentId)
         .first<any>();
   }
 
@@ -782,27 +752,14 @@ async function markPaidAndDeliver(
     };
   }
 
-  /*
-   * Idempotência:
-   *
-   * Se o pedido já está pago,
-   * nunca tenta pegar outra conta.
-   */
-  if (
-    order.status ===
-    "paid"
-  ) {
+  if (order.status === "paid") {
     return {
       ok: true,
       alreadyPaid: true,
-      orderId:
-        order.id
+      orderId: order.id
     };
   }
 
-  /*
-   * Confirma diretamente no LivePix.
-   */
   let verified: any = null;
 
   if (paymentId) {
@@ -813,10 +770,7 @@ async function markPaidAndDeliver(
       );
   }
 
-  if (
-    !verified &&
-    reference
-  ) {
+  if (!verified && reference) {
     verified =
       await findLivepixPaymentByReference(
         env,
@@ -832,13 +786,7 @@ async function markPaidAndDeliver(
     };
   }
 
-  /*
-   * Só aprova se o LivePix fornecer
-   * a prova de pagamento.
-   */
-  if (
-    !verified.proof
-  ) {
+  if (!verified.proof) {
     return {
       ok: false,
       reason:
@@ -846,15 +794,10 @@ async function markPaidAndDeliver(
     };
   }
 
-  /*
-   * Confere moeda.
-   */
   if (
     String(
-      verified.currency ||
-      ""
-    ).toUpperCase() !==
-    "BRL"
+      verified.currency || ""
+    ).toUpperCase() !== "BRL"
   ) {
     return {
       ok: false,
@@ -863,25 +806,15 @@ async function markPaidAndDeliver(
     };
   }
 
-  /*
-   * Confere valor.
-   */
   const livepixAmount =
-    Number(
-      verified.amount
-    );
+    Number(verified.amount);
 
   const orderAmount =
-    Number(
-      order.amount_cents
-    );
+    Number(order.amount_cents);
 
   if (
-    !Number.isFinite(
-      livepixAmount
-    ) ||
-    livepixAmount !==
-      orderAmount
+    !Number.isFinite(livepixAmount) ||
+    livepixAmount !== orderAmount
   ) {
     return {
       ok: false,
@@ -904,12 +837,6 @@ async function markPaidAndDeliver(
       ""
     );
 
-  /*
-   * Só agora o estoque é consumido.
-   *
-   * Se não houver conta disponível,
-   * nenhuma conta é removida.
-   */
   const claimed =
     await claimInventoryForPaidOrder(
       env,
@@ -923,50 +850,31 @@ async function markPaidAndDeliver(
     return claimed;
   }
 
-  /*
-   * Webhook repetido.
-   */
-  if (
-    claimed.alreadyPaid
-  ) {
+  if (claimed.alreadyPaid) {
     return {
       ok: true,
       alreadyPaid: true,
-      orderId:
-        order.id
+      orderId: order.id
     };
   }
 
-  const inventory =
-    claimed.inventory;
-
-  /*
-   * Descriptografa somente depois
-   * da confirmação do pagamento.
-   */
   const account =
     await decrypt(
-      inventory.account_encrypted,
+      claimed.inventory.account_encrypted,
       env.ENCRYPTION_KEY
     );
 
   return {
     ok: true,
-
     alreadyPaid: false,
-
     account,
-
-    orderId:
-      order.id,
-
-    product:
-      order.product_id
+    orderId: order.id,
+    product: order.product_id
   };
 }
 
 /* =========================================================
-   WEBHOOK LIVEPIX
+   WEBHOOK
 ========================================================= */
 
 async function handleLivepixWebhook(
@@ -988,17 +896,10 @@ async function handleLivepixWebhook(
     );
   }
 
-  /*
-   * Confere clientId quando enviado.
-   */
   if (
     payload?.clientId &&
-    String(
-      payload.clientId
-    ) !==
-      String(
-        env.LIVEPIX_CLIENT_ID
-      )
+    String(payload.clientId) !==
+      String(env.LIVEPIX_CLIENT_ID)
   ) {
     return json(
       {
@@ -1009,14 +910,9 @@ async function handleLivepixWebhook(
     );
   }
 
-  /*
-   * Eventos diferentes de "new"
-   * não precisam alterar o pedido.
-   */
   if (
     payload?.event &&
-    payload.event !==
-      "new"
+    payload.event !== "new"
   ) {
     return json({
       status:
@@ -1030,21 +926,12 @@ async function handleLivepixWebhook(
     payload;
 
   const paymentId =
-    String(
-      resource?.id ||
-      ""
-    );
+    String(resource?.id || "");
 
   const reference =
-    String(
-      resource?.reference ||
-      ""
-    );
+    String(resource?.reference || "");
 
-  if (
-    !paymentId &&
-    !reference
-  ) {
+  if (!paymentId && !reference) {
     return json(
       {
         error:
@@ -1064,10 +951,7 @@ async function handleLivepixWebhook(
       );
   }
 
-  if (
-    !payment &&
-    reference
-  ) {
+  if (!payment && reference) {
     payment =
       await findLivepixPaymentByReference(
         env,
@@ -1092,14 +976,10 @@ async function handleLivepixWebhook(
     return json({
       status:
         "ok",
-
       orderId:
-        result.orderId ??
-        null,
-
+        result.orderId ?? null,
       alreadyPaid:
-        result.alreadyPaid ??
-        false
+        result.alreadyPaid ?? false
     });
   }
 
@@ -1107,18 +987,9 @@ async function handleLivepixWebhook(
     result.reason ===
     "order_not_found"
   ) {
-    return json(
-      result,
-      404
-    );
+    return json(result, 404);
   }
 
-  /*
-   * Pagamento confirmado mas sem estoque.
-   *
-   * Não inventa entrega e não pega
-   * outra conta.
-   */
   if (
     result.reason ===
     "out_of_stock_after_payment"
@@ -1138,10 +1009,60 @@ async function handleLivepixWebhook(
     );
   }
 
-  return json(
-    result,
-    400
-  );
+  return json(result, 400);
+}
+
+/* =========================================================
+   CATEGORIAS
+========================================================= */
+
+const CATEGORY_DEFAULTS: Record<
+  string,
+  {
+    name: string;
+    image: string;
+  }
+> = {
+  roblox: {
+    name: "Roblox",
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/512px-Roblox_%282025%29_%28App_Icon%29.svg.png"
+  },
+  fortnite: {
+    name: "Fortnite",
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png"
+  },
+  vbucks: {
+    name: "V-Bucks",
+    image:
+      "https://static.wikia.nocookie.net/fortnite_ptbr_gamepedia_ptbr/images/5/5a/Icon_VBucks.png"
+  },
+  nitradas: {
+    name: "Nitradas",
+    image:
+      "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
+  }
+};
+
+function normalizeCategory(
+  value: unknown
+) {
+  const category =
+    String(value || "")
+      .trim()
+      .toLowerCase();
+
+  if (
+    Object.prototype.hasOwnProperty.call(
+      CATEGORY_DEFAULTS,
+      category
+    )
+  ) {
+    return category;
+  }
+
+  return "roblox";
 }
 
 /* =========================================================
@@ -1153,17 +1074,56 @@ async function api(
   env: Env,
   url: URL
 ) {
+  await ensureSchema(env);
+
   const path =
     url.pathname;
 
   /* =======================================================
-     PRODUTOS
+     CATEGORIAS PÚBLICAS
   ======================================================= */
 
   if (
     request.method === "GET" &&
-    path ===
-      "/api/products"
+    path === "/api/categories"
+  ) {
+    const rows =
+      await env.DB.prepare(
+        `SELECT category, image_url
+         FROM category_settings`
+      ).all();
+
+    const result =
+      Object.entries(
+        CATEGORY_DEFAULTS
+      ).map(
+        ([key, value]) => {
+          const row =
+            (rows.results || []).find(
+              (item: any) =>
+                item.category === key
+            ) as any;
+
+          return {
+            id: key,
+            name: value.name,
+            image:
+              row?.image_url ||
+              value.image
+          };
+        }
+      );
+
+    return json(result);
+  }
+
+  /* =======================================================
+     PRODUTOS PÚBLICOS
+  ======================================================= */
+
+  if (
+    request.method === "GET" &&
+    path === "/api/products"
   ) {
     const products =
       await env.DB.prepare(
@@ -1172,6 +1132,8 @@ async function api(
           p.name,
           p.description,
           p.price_cents,
+          p.category,
+          p.image_url,
 
           (
             SELECT COUNT(*)
@@ -1184,13 +1146,10 @@ async function api(
 
          WHERE p.active=1
 
-         ORDER BY
-           p.created_at DESC`
+         ORDER BY p.created_at DESC`
       ).all();
 
-    return json(
-      products.results
-    );
+    return json(products.results);
   }
 
   /* =======================================================
@@ -1199,8 +1158,7 @@ async function api(
 
   if (
     request.method === "POST" &&
-    path ===
-      "/api/checkout"
+    path === "/api/checkout"
   ) {
     let body: any;
 
@@ -1218,10 +1176,7 @@ async function api(
     }
 
     const productId =
-      String(
-        body?.productId ||
-        ""
-      );
+      String(body?.productId || "");
 
     if (!productId) {
       return json(
@@ -1241,9 +1196,7 @@ async function api(
            AND active=1
          LIMIT 1`
       )
-        .bind(
-          productId
-        )
+        .bind(productId)
         .first<any>();
 
     if (!product) {
@@ -1257,14 +1210,10 @@ async function api(
     }
 
     const baseAmountCents =
-      Number(
-        product.price_cents
-      );
+      Number(product.price_cents);
 
     if (
-      !Number.isFinite(
-        baseAmountCents
-      ) ||
+      !Number.isFinite(baseAmountCents) ||
       baseAmountCents <= 0
     ) {
       return json(
@@ -1276,11 +1225,6 @@ async function api(
       );
     }
 
-    /*
-     * Apenas verifica se existe estoque.
-     *
-     * NÃO reserva nenhuma conta.
-     */
     const stock =
       await env.DB.prepare(
         `SELECT COUNT(*) AS total
@@ -1288,19 +1232,13 @@ async function api(
          WHERE product_id=?
            AND status='available'`
       )
-        .bind(
-          product.id
-        )
+        .bind(product.id)
         .first<any>();
 
     const availableStock =
-      Number(
-        stock?.total || 0
-      );
+      Number(stock?.total || 0);
 
-    if (
-      availableStock <= 0
-    ) {
+    if (availableStock <= 0) {
       return json(
         {
           error:
@@ -1318,14 +1256,6 @@ async function api(
         baseAmountCents
       );
 
-    /*
-     * Cria o pedido como pending.
-     *
-     * inventory_id fica NULL.
-     *
-     * Portanto:
-     * pending != estoque consumido.
-     */
     try {
       await env.DB.prepare(
         `INSERT INTO orders
@@ -1360,9 +1290,6 @@ async function api(
       );
     }
 
-    /*
-     * Cria cobrança LivePix.
-     */
     try {
       const payment =
         await livepixCreatePayment(
@@ -1381,11 +1308,8 @@ async function api(
          WHERE id=?`
       )
         .bind(
-          payment.id ??
-            null,
-
+          payment.id ?? null,
           payment.reference,
-
           orderId
         )
         .run();
@@ -1393,44 +1317,27 @@ async function api(
       return json(
         {
           orderId,
-
           checkout:
             payment.redirectUrl,
-
-          pixCode:
-            null,
-
-          pixQrCode:
-            null,
-
-          expiresAt:
-            null,
-
+          pixCode: null,
+          pixQrCode: null,
+          expiresAt: null,
           amountCents:
             chargedAmountCents,
-
-          baseAmountCents:
-            baseAmountCents,
-
+          baseAmountCents,
           feePercent:
             LIVEPIX_FEE_PERCENT
         },
         201
       );
     } catch (error) {
-      /*
-       * Como nenhuma conta foi reservada,
-       * aqui só precisamos cancelar o pedido.
-       */
       await env.DB.prepare(
         `UPDATE orders
          SET status='cancelled'
          WHERE id=?
            AND status='pending'`
       )
-        .bind(
-          orderId
-        )
+        .bind(orderId)
         .run();
 
       console.error(
@@ -1456,15 +1363,11 @@ async function api(
 
   if (
     request.method === "GET" &&
-    path.startsWith(
-      "/api/order/"
-    )
+    path.startsWith("/api/order/")
   ) {
     const orderId =
       decodeURIComponent(
-        path.slice(
-          "/api/order/".length
-        )
+        path.slice("/api/order/".length)
       );
 
     if (!orderId) {
@@ -1490,9 +1393,7 @@ async function api(
          WHERE o.id=?
          LIMIT 1`
       )
-        .bind(
-          orderId
-        )
+        .bind(orderId)
         .first<any>();
 
     if (!order) {
@@ -1505,66 +1406,36 @@ async function api(
       );
     }
 
-    /*
-     * Enquanto não estiver pago,
-     * NÃO entrega a conta.
-     */
-    if (
-      order.status !==
-      "paid"
-    ) {
+    if (order.status !== "paid") {
       return json({
-        id:
-          order.id,
-
-        status:
-          order.status,
-
-        product:
-          order.name,
-
+        id: order.id,
+        status: order.status,
+        product: order.name,
         amountCents:
           order.amount_cents,
-
-        delivered:
-          false
+        delivered: false
       });
     }
 
-    /*
-     * Depois do pagamento,
-     * encontra a conta pelo order_id.
-     */
     const inventory =
       await env.DB.prepare(
-        `SELECT
-          account_encrypted
+        `SELECT account_encrypted
          FROM inventory
          WHERE order_id=?
            AND status='sold'
          LIMIT 1`
       )
-        .bind(
-          order.id
-        )
+        .bind(order.id)
         .first<any>();
 
     if (!inventory) {
       return json({
-        id:
-          order.id,
-
-        status:
-          "paid",
-
-        product:
-          order.name,
-
+        id: order.id,
+        status: "paid",
+        product: order.name,
         amountCents:
           order.amount_cents,
-
-        delivered:
-          false
+        delivered: false
       });
     }
 
@@ -1587,25 +1458,14 @@ async function api(
 ${discordUrl}`;
 
     return json({
-      id:
-        order.id,
-
-      status:
-        "paid",
-
-      delivered:
-        true,
-
-      product:
-        order.name,
-
+      id: order.id,
+      status: "paid",
+      delivered: true,
+      product: order.name,
       amountCents:
         order.amount_cents,
-
       account,
-
       discordUrl,
-
       thankYouMessage
     });
   }
@@ -1616,8 +1476,7 @@ ${discordUrl}`;
 
   if (
     request.method === "POST" &&
-    path ===
-      "/api/livepix/webhook"
+    path === "/api/livepix/webhook"
   ) {
     return handleLivepixWebhook(
       request,
@@ -1626,13 +1485,11 @@ ${discordUrl}`;
   }
 
   /* =======================================================
-     ADMIN
+     PROTEÇÃO ADMIN
   ======================================================= */
 
   if (
-    path.startsWith(
-      "/api/admin/"
-    )
+    path.startsWith("/api/admin/")
   ) {
     if (
       !adminAuthorized(
@@ -1651,13 +1508,129 @@ ${discordUrl}`;
   }
 
   /* =======================================================
+     ADMIN CATEGORIAS
+  ======================================================= */
+
+  if (
+    request.method === "GET" &&
+    path === "/api/admin/categories"
+  ) {
+    const rows =
+      await env.DB.prepare(
+        `SELECT category, image_url, updated_at
+         FROM category_settings
+         ORDER BY category`
+      ).all();
+
+    const result =
+      Object.entries(
+        CATEGORY_DEFAULTS
+      ).map(
+        ([key, value]) => {
+          const row =
+            (rows.results || []).find(
+              (item: any) =>
+                item.category === key
+            ) as any;
+
+          return {
+            id: key,
+            name: value.name,
+            image:
+              row?.image_url ||
+              value.image,
+            updated_at:
+              row?.updated_at || null
+          };
+        }
+      );
+
+    return json(result);
+  }
+
+  /* =======================================================
+     ADMIN ATUALIZAR CATEGORIA
+  ======================================================= */
+
+  if (
+    request.method === "PUT" &&
+    path.startsWith(
+      "/api/admin/categories/"
+    )
+  ) {
+    const category =
+      normalizeCategory(
+        decodeURIComponent(
+          path.slice(
+            "/api/admin/categories/".length
+          )
+        )
+      );
+
+    let body: any;
+
+    try {
+      body =
+        await request.json<any>();
+    } catch {
+      return json(
+        {
+          error:
+            "JSON inválido."
+        },
+        400
+      );
+    }
+
+    const image =
+      String(
+        body?.image ??
+        body?.image_url ??
+        ""
+      ).trim();
+
+    if (
+      image &&
+      !/^https?:\/\//i.test(image)
+    ) {
+      return json(
+        {
+          error:
+            "A imagem precisa ser uma URL válida."
+        },
+        400
+      );
+    }
+
+    await env.DB.prepare(`
+      INSERT INTO category_settings
+      (category, image_url, updated_at)
+      VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(category)
+      DO UPDATE SET
+        image_url=excluded.image_url,
+        updated_at=CURRENT_TIMESTAMP
+    `)
+      .bind(
+        category,
+        image
+      )
+      .run();
+
+    return json({
+      ok: true,
+      category,
+      image
+    });
+  }
+
+  /* =======================================================
      ADMIN PRODUTOS
   ======================================================= */
 
   if (
     request.method === "GET" &&
-    path ===
-      "/api/admin/products"
+    path === "/api/admin/products"
   ) {
     const products =
       await env.DB.prepare(
@@ -1684,9 +1657,7 @@ ${discordUrl}`;
            p.created_at DESC`
       ).all();
 
-    return json(
-      products.results
-    );
+    return json(products.results);
   }
 
   /* =======================================================
@@ -1695,40 +1666,58 @@ ${discordUrl}`;
 
   if (
     request.method === "POST" &&
-    path ===
-      "/api/admin/products"
+    path === "/api/admin/products"
   ) {
     const body =
       await request.json<any>();
 
     const name =
       String(
-        body?.name ||
-        ""
+        body?.name || ""
       ).trim();
 
     const description =
       String(
-        body?.description ||
+        body?.description || ""
+      ).trim();
+
+    const category =
+      normalizeCategory(
+        body?.category
+      );
+
+    const image =
+      String(
+        body?.image ??
+        body?.image_url ??
         ""
       ).trim();
 
     const price =
-      Number(
-        body?.price
-      );
+      Number(body?.price);
 
     if (
       !name ||
-      !Number.isFinite(
-        price
-      ) ||
+      !Number.isFinite(price) ||
       price <= 0
     ) {
       return json(
         {
           error:
             "Nome e preço válidos são obrigatórios."
+        },
+        400
+      );
+    }
+
+    if (
+      image &&
+      !/^https?:\/\//i.test(image)
+    ) {
+      return json(
+        {
+          error:
+            "A imagem precisa ser uma URL válida."
         },
         400
       );
@@ -1744,41 +1733,46 @@ ${discordUrl}`;
          name,
          description,
          price_cents,
+         category,
+         image_url,
          active
        )
        VALUES
-       (?, ?, ?, ?, 1)`
+       (?, ?, ?, ?, ?, ?, 1)`
     )
       .bind(
         productId,
         name,
         description,
-        Math.round(
-          price * 100
-        )
+        Math.round(price * 100),
+        category,
+        image
       )
       .run();
 
     return json(
       {
-        id:
-          productId
+        id: productId
       },
       201
     );
   }
 
   /* =======================================================
-     ADMIN EXCLUIR / DESATIVAR PRODUTO
+     ADMIN EXCLUIR PRODUTO
   ======================================================= */
 
   if (
     request.method === "DELETE" &&
-    path.startsWith("/api/admin/products/")
+    path.startsWith(
+      "/api/admin/products/"
+    )
   ) {
     const productId =
       decodeURIComponent(
-        path.slice("/api/admin/products/".length)
+        path.slice(
+          "/api/admin/products/".length
+        )
       );
 
     if (!productId) {
@@ -1811,14 +1805,6 @@ ${discordUrl}`;
       );
     }
 
-    /*
-     * Não apagamos fisicamente o produto.
-     * Apenas desativamos (active=0), para preservar
-     * pedidos, estoque e histórico de vendas.
-     *
-     * Assim ele deixa de aparecer na loja, mas os
-     * pedidos antigos continuam funcionando.
-     */
     await env.DB.prepare(
       `UPDATE products
        SET active=0
@@ -1840,22 +1826,19 @@ ${discordUrl}`;
 
   if (
     request.method === "POST" &&
-    path ===
-      "/api/admin/stock"
+    path === "/api/admin/stock"
   ) {
     const body =
       await request.json<any>();
 
     const productId =
       String(
-        body?.productId ||
-        ""
+        body?.productId || ""
       );
 
     const account =
       String(
-        body?.account ||
-        ""
+        body?.account || ""
       ).trim();
 
     if (
@@ -1878,9 +1861,7 @@ ${discordUrl}`;
          WHERE id=?
          LIMIT 1`
       )
-        .bind(
-          productId
-        )
+        .bind(productId)
         .first<any>();
 
     if (!product) {
@@ -1922,8 +1903,7 @@ ${discordUrl}`;
 
     return json(
       {
-        id:
-          inventoryId
+        id: inventoryId
       },
       201
     );
@@ -1935,8 +1915,7 @@ ${discordUrl}`;
 
   if (
     request.method === "GET" &&
-    path ===
-      "/api/admin/orders"
+    path === "/api/admin/orders"
   ) {
     const orders =
       await env.DB.prepare(
@@ -1981,14 +1960,10 @@ export default {
     env: Env
   ): Promise<Response> {
     const url =
-      new URL(
-        request.url
-      );
+      new URL(request.url);
 
     if (
-      url.pathname.startsWith(
-        "/api/"
-      )
+      url.pathname.startsWith("/api/")
     ) {
       try {
         return await api(
@@ -2005,7 +1980,9 @@ export default {
         return json(
           {
             error:
-              "Erro interno do servidor."
+              error instanceof Error
+                ? error.message
+                : "Erro interno do servidor."
           },
           500
         );
@@ -2017,3 +1994,4 @@ export default {
     );
   }
 };
+```
