@@ -1,4 +1,3 @@
-```ts
 export interface Env {
   DB: D1Database;
   ASSETS: Fetcher;
@@ -6,7 +5,6 @@ export interface Env {
   ADMIN_PASSWORD: string;
   ENCRYPTION_KEY: string;
 
-  // Mantido para compatibilidade.
   LIVEPIX_API_TOKEN: string;
 
   LIVEPIX_CLIENT_ID: string;
@@ -86,17 +84,12 @@ function normalizeCategory(
 
 let schemaReady: Promise<void> | null = null;
 
-async function ensureSchema(
-  env: Env
-) {
+async function ensureSchema(env: Env) {
   if (schemaReady) {
     return schemaReady;
   }
 
   schemaReady = (async () => {
-    /*
-     * Tabela de configurações das categorias.
-     */
     await env.DB.prepare(
       `CREATE TABLE IF NOT EXISTS category_settings (
         category TEXT PRIMARY KEY,
@@ -105,13 +98,10 @@ async function ensureSchema(
       )`
     ).run();
 
-    /*
-     * Descobre as colunas atuais da tabela products.
-     */
     const columns =
-      await env.DB.prepare(
-        `PRAGMA table_info(products)`
-      ).all<any>();
+      await env.DB
+        .prepare(`PRAGMA table_info(products)`)
+        .all<any>();
 
     const names = new Set(
       (columns.results || []).map(
@@ -120,9 +110,6 @@ async function ensureSchema(
       )
     );
 
-    /*
-     * Instala category somente se ainda não existir.
-     */
     if (!names.has("category")) {
       await env.DB.prepare(
         `ALTER TABLE products
@@ -130,9 +117,6 @@ async function ensureSchema(
       ).run();
     }
 
-    /*
-     * Instala image_url somente se ainda não existir.
-     */
     if (!names.has("image_url")) {
       await env.DB.prepare(
         `ALTER TABLE products
@@ -140,12 +124,6 @@ async function ensureSchema(
       ).run();
     }
 
-    /*
-     * Garante as categorias padrão.
-     *
-     * INSERT OR IGNORE preserva qualquer
-     * configuração já existente.
-     */
     for (const [
       category,
       data
@@ -154,13 +132,8 @@ async function ensureSchema(
     )) {
       await env.DB.prepare(
         `INSERT OR IGNORE INTO category_settings
-         (
-           category,
-           name,
-           image_url
-         )
-         VALUES
-         (?, ?, ?)`
+         (category, name, image_url)
+         VALUES (?, ?, ?)`
       )
         .bind(
           category,
@@ -170,10 +143,6 @@ async function ensureSchema(
         .run();
     }
 
-    /*
-     * Produtos antigos passam para Roblox
-     * caso tenham category NULL/vazio.
-     */
     await env.DB.prepare(
       `UPDATE products
        SET category='roblox'
@@ -339,9 +308,7 @@ function amountWithFee(
     LIVEPIX_FEE_PERCENT / 100;
 
   if (
-    !Number.isFinite(
-      amountCents
-    ) ||
+    !Number.isFinite(amountCents) ||
     amountCents <= 0
   ) {
     throw new Error(
@@ -1225,10 +1192,6 @@ async function api(
   env: Env,
   url: URL
 ) {
-  /*
-   * Garante que a estrutura de categorias/imagens
-   * exista sem alterar a estrutura antiga.
-   */
   await ensureSchema(env);
 
   const path =
@@ -2364,4 +2327,3 @@ export default {
     );
   }
 };
-```
