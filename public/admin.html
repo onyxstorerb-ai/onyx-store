@@ -4199,6 +4199,12 @@
           })
           .join('');
 
+      container.querySelectorAll('.delete-product-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          deleteProduct(button.dataset.productId, button.dataset.productName);
+        });
+      });
+
     }
 
 
@@ -4372,10 +4378,8 @@
                   <button
                     type="button"
                     class="delete-product-btn"
-                    onclick="deleteProduct(
-                      '${'${escapeHtml(product.id)}'}',
-                      '${'${escapeHtml(product.name).replace(/\\/g, "\\\\").replace(/\'/g, "\\\'")}'}'
-                    )"
+                    data-product-id="${escapeHtml(product.id)}"
+                    data-product-name="${escapeHtml(product.name)}"
                   >
                     🗑 Excluir produto
                   </button>
