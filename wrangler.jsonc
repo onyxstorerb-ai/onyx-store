@@ -1,4 +1,4 @@
-```json
+```text
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "onyx-store",
