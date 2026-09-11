@@ -3123,14 +3123,22 @@
             </div>
 
 
-            <div class="search">
-
-              <input
-                id="productSearch"
-                type="search"
-                placeholder="Pesquisar produto..."
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+              <div class="search">
+                <input
+                  id="productSearch"
+                  type="search"
+                  placeholder="Pesquisar produto..."
+                >
+              </div>
+              <button
+                id="showArchivedProducts"
+                type="button"
+                class="action-btn secondary"
+                onclick="toggleArchivedProducts()"
               >
-
+                Ver esgotados/arquivados
+              </button>
             </div>
 
           </div>
@@ -4113,6 +4121,7 @@
 
       productsData.forEach(
         product => {
+          if (Number(product.active ?? 1) !== 1) return;
 
           stock += Number(
             product.stock || 0
@@ -4163,7 +4172,7 @@
 
 
       $('statProducts').textContent =
-        productsData.length;
+        productsData.filter(product => Number(product.active ?? 1) === 1).length;
 
 
       $('statStock').textContent =
@@ -4179,7 +4188,7 @@
 
 
       $('navProducts').textContent =
-        productsData.length;
+        productsData.filter(product => Number(product.active ?? 1) === 1).length;
 
 
       $('navStock').textContent =
@@ -4202,17 +4211,19 @@
         $('stockProduct');
 
 
-      if (!productsData.length) {
+      const selectableProducts = productsData.filter(product => Number(product.active ?? 1) === 1);
+
+      if (!selectableProducts.length) {
 
         select.innerHTML =
-          '<option value="">Nenhum produto cadastrado</option>';
+          '<option value="">Nenhum produto ativo</option>';
 
         return;
       }
 
 
       select.innerHTML =
-        productsData
+        selectableProducts
           .map(product => {
 
             const stock =
@@ -4269,6 +4280,28 @@
       }
     }
 
+    let showArchivedProducts = false;
+
+    function toggleArchivedProducts() {
+      showArchivedProducts = !showArchivedProducts;
+      const button = $('showArchivedProducts');
+      if (button) {
+        button.textContent = showArchivedProducts
+          ? 'Ocultar esgotados/arquivados'
+          : 'Ver esgotados/arquivados';
+      }
+      renderProducts();
+    }
+
+    function getVisibleAdminProducts() {
+      return productsData.filter(product => {
+        const active = Number(product.active ?? 1) === 1;
+        const stock = Number(product.stock || 0);
+        if (showArchivedProducts) return !active || stock <= 0;
+        return active && stock > 0;
+      });
+    }
+
     function renderProducts() {
 
       const container =
@@ -4283,7 +4316,7 @@
 
 
       let list =
-        [...productsData];
+        [...getVisibleAdminProducts()];
 
 
       if (search) {
@@ -4444,11 +4477,15 @@
         $('inventorySummary');
 
 
-      if (!productsData.length) {
+      const inventoryProducts = productsData.filter(product =>
+        Number(product.active ?? 1) === 1 && Number(product.stock || 0) > 0
+      );
+
+      if (!inventoryProducts.length) {
 
         container.innerHTML = `
           <div class="empty">
-            Nenhum produto cadastrado.
+            Nenhum produto com estoque disponível.
           </div>
         `;
 
@@ -4458,7 +4495,7 @@
 
       const maxStock =
         Math.max(
-          ...productsData.map(
+          ...inventoryProducts.map(
             product =>
               Number(product.stock || 0)
           ),
@@ -4467,7 +4504,7 @@
 
 
       container.innerHTML =
-        productsData
+        inventoryProducts
           .slice()
           .sort(
             (a,b) =>
