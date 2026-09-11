@@ -1,228 +1,147 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ONYX — Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ONYX Admin</title>
 
   <style>
-    *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      background:#050505;
-      color:#fff;
-      font-family:Arial,Helvetica,sans-serif;
+    * {
+      box-sizing: border-box;
     }
 
-    .wrap{
-      width:min(1150px,94%);
-      margin:40px auto;
+    body {
+      margin: 0;
+      background: #050505;
+      color: #fff;
+      font-family: Arial, sans-serif;
     }
 
-    h1,h2,h3{margin-top:0}
-
-    .sub{
-      color:#888;
-      margin-bottom:25px;
+    .container {
+      width: 92%;
+      max-width: 900px;
+      margin: 40px auto;
     }
 
-    .card{
-      background:#0d0d0d;
-      border:1px solid #222;
-      border-radius:14px;
-      padding:22px;
-      margin-bottom:20px;
+    h1 {
+      margin-bottom: 5px;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:14px;
+    .subtitle {
+      color: #888;
+      margin-bottom: 25px;
     }
 
-    .stats{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:14px;
-      margin-bottom:20px;
+    .box {
+      background: #0d0d0d;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
 
-    .stat{
-      background:#0d0d0d;
-      border:1px solid #222;
-      border-radius:14px;
-      padding:20px;
+    input,
+    textarea,
+    select,
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #292929;
+      background: #151515;
+      color: #fff;
+      font-size: 14px;
     }
 
-    .stat small{
-      display:block;
-      color:#888;
-      margin-bottom:8px;
+    textarea {
+      min-height: 90px;
+      resize: vertical;
     }
 
-    .stat strong{
-      font-size:25px;
+    button {
+      background: #fff;
+      color: #000;
+      border: 0;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    input,textarea,select,button{
-      width:100%;
-      padding:13px;
-      border-radius:9px;
-      border:1px solid #292929;
-      background:#151515;
-      color:#fff;
-      font:inherit;
-      outline:none;
+    button:hover {
+      opacity: .9;
     }
 
-    input:focus,textarea:focus,select:focus{
-      border-color:#555;
+    .danger {
+      background: #b91c1c;
+      color: white;
+      width: auto;
+      padding: 9px 14px;
     }
 
-    textarea{
-      min-height:90px;
-      resize:vertical;
+    .product {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px;
+      margin-top: 10px;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 10px;
     }
 
-    button{
-      cursor:pointer;
-      background:#fff;
-      color:#000;
-      font-weight:700;
-      border:0;
+    .product img {
+      width: 65px;
+      height: 65px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #181818;
     }
 
-    button:hover{opacity:.9}
-
-    .danger{
-      background:#b91c1c;
-      color:#fff;
+    .product-info {
+      flex: 1;
     }
 
-    .full{
-      grid-column:1/-1;
+    .product-info strong {
+      display: block;
+      margin-bottom: 5px;
     }
 
-    .products{
-      display:grid;
-      gap:12px;
+    .product-info small {
+      color: #888;
     }
 
-    .product{
-      display:flex;
-      align-items:center;
-      gap:15px;
-      background:#111;
-      border:1px solid #222;
-      padding:14px;
-      border-radius:12px;
+    .sale {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 10px;
     }
 
-    .product img{
-      width:70px;
-      height:70px;
-      object-fit:cover;
-      border-radius:10px;
-      background:#181818;
+    .sale strong {
+      display: block;
+      margin-bottom: 6px;
     }
 
-    .info{
-      flex:1;
+    .sale small {
+      color: #888;
+      line-height: 1.6;
     }
 
-    .info strong{
-      display:block;
-      margin-bottom:5px;
+    .msg {
+      color: #aaa;
+      margin-top: 10px;
+      white-space: pre-wrap;
     }
 
-    .info small{
-      color:#888;
+    .hidden {
+      display: none;
     }
 
-    .sales{
-      display:grid;
-      gap:10px;
-    }
-
-    .sale{
-      background:#111;
-      border:1px solid #222;
-      border-radius:12px;
-      padding:15px;
-      display:flex;
-      justify-content:space-between;
-      gap:15px;
-      align-items:center;
-    }
-
-    .sale-left strong{
-      display:block;
-      margin-bottom:6px;
-    }
-
-    .sale-left small{
-      color:#888;
-      display:block;
-      line-height:1.5;
-    }
-
-    .sale-right{
-      text-align:right;
-      white-space:nowrap;
-    }
-
-    .sale-right strong{
-      font-size:17px;
-    }
-
-    .status{
-      display:inline-block;
-      margin-top:5px;
-      font-size:12px;
-      color:#aaa;
-    }
-
-    .login{
-      max-width:420px;
-      margin:100px auto;
-    }
-
-    .hidden{display:none}
-
-    .msg{
-      margin-top:12px;
-      color:#aaa;
-      white-space:pre-wrap;
-    }
-
-    .refresh{
-      width:auto;
-      padding:10px 16px;
-      margin-bottom:15px;
-    }
-
-    @media(max-width:700px){
-      .grid,
-      .stats{
-        grid-template-columns:1fr;
-      }
-
-      .product{
-        align-items:flex-start;
-      }
-
-      .product button{
-        width:auto;
-      }
-
-      .sale{
-        align-items:flex-start;
-        flex-direction:column;
-      }
-
-      .sale-right{
-        text-align:left;
+    @media (max-width: 600px) {
+      .product {
+        align-items: flex-start;
       }
     }
   </style>
@@ -231,97 +150,92 @@
 <body>
 
   <!-- LOGIN -->
-  <div id="login" class="wrap login">
-    <div class="card">
+  <div id="login" class="container">
+
+    <div class="box">
+
       <h1>ONYX Admin</h1>
-      <div class="sub">Painel de gerenciamento</div>
+
+      <div class="subtitle">
+        Painel administrativo
+      </div>
 
       <input
         id="password"
         type="password"
-        placeholder="Senha do administrador"
+        placeholder="Senha"
       >
 
-      <br><br>
-
-      <button onclick="login()">Entrar</button>
+      <button onclick="login()">
+        Entrar
+      </button>
 
       <div id="loginMsg" class="msg"></div>
+
     </div>
+
   </div>
 
 
   <!-- PAINEL -->
-  <div id="panel" class="wrap hidden">
+  <div id="panel" class="container hidden">
 
     <h1>ONYX Admin</h1>
-    <div class="sub">Gerencie produtos, estoque e vendas.</div>
 
-
-    <!-- ESTATÍSTICAS -->
-    <div class="stats">
-
-      <div class="stat">
-        <small>Vendas hoje</small>
-        <strong id="todaySales">R$ 0,00</strong>
-      </div>
-
-      <div class="stat">
-        <small>Pedidos hoje</small>
-        <strong id="todayOrders">0</strong>
-      </div>
-
-      <div class="stat">
-        <small>Total vendido</small>
-        <strong id="totalSales">R$ 0,00</strong>
-      </div>
-
+    <div class="subtitle">
+      Produtos e vendas
     </div>
 
 
-    <!-- NOVO PRODUTO -->
-    <div class="card">
+    <!-- PRODUTO -->
+    <div class="box">
 
       <h2>Novo produto</h2>
 
-      <div class="grid">
+      <input
+        id="name"
+        placeholder="Nome do produto"
+      >
 
-        <input
-          id="name"
-          placeholder="Nome do produto"
-        >
+      <input
+        id="price"
+        type="number"
+        step="0.01"
+        placeholder="Preço"
+      >
 
-        <input
-          id="price"
-          type="number"
-          step="0.01"
-          placeholder="Preço (ex: 29.90)"
-        >
+      <select id="category">
 
-        <select id="category">
-          <option value="roblox">Roblox</option>
-          <option value="fortnite">Fortnite</option>
-          <option value="vbucks">V-Bucks</option>
-          <option value="nitradas">Nitradas</option>
-        </select>
+        <option value="roblox">
+          Roblox
+        </option>
 
-        <input
-          id="image"
-          placeholder="URL da imagem do produto"
-        >
+        <option value="fortnite">
+          Fortnite
+        </option>
 
-        <textarea
-          id="description"
-          class="full"
-          placeholder="Descrição do produto"
-        ></textarea>
+        <option value="vbucks">
+          V-Bucks
+        </option>
 
-      </div>
+        <option value="nitradas">
+          Nitradas
+        </option>
 
-      <br>
+      </select>
+
+      <input
+        id="image"
+        placeholder="URL da foto do produto"
+      >
+
+      <textarea
+        id="description"
+        placeholder="Descrição do produto"
+      ></textarea>
 
       <button onclick="createProduct()">
-        Cadastrar produto
+        Adicionar produto
       </button>
 
       <div id="productMsg" class="msg"></div>
@@ -329,41 +243,12 @@
     </div>
 
 
-    <!-- ESTOQUE -->
-    <div class="card">
+    <!-- CATÁLOGO -->
+    <div class="box">
 
-      <h2>Adicionar estoque</h2>
+      <h2>Catálogo</h2>
 
-      <div class="grid">
-
-        <select id="stockProduct">
-          <option value="">Selecione o produto</option>
-        </select>
-
-        <textarea
-          id="stock"
-          placeholder="Cole os itens do estoque, um por linha"
-        ></textarea>
-
-      </div>
-
-      <br>
-
-      <button onclick="addStock()">
-        Adicionar estoque
-      </button>
-
-      <div id="stockMsg" class="msg"></div>
-
-    </div>
-
-
-    <!-- PRODUTOS -->
-    <div class="card">
-
-      <h2>Produtos cadastrados</h2>
-
-      <div id="products" class="products">
+      <div id="products">
         Carregando...
       </div>
 
@@ -371,18 +256,15 @@
 
 
     <!-- HISTÓRICO -->
-    <div class="card">
+    <div class="box">
 
       <h2>Histórico de vendas</h2>
 
-      <button
-        class="refresh"
-        onclick="loadOrders()"
-      >
-        Atualizar histórico
+      <button onclick="loadOrders()">
+        Atualizar
       </button>
 
-      <div id="sales" class="sales">
+      <div id="orders">
         Carregando...
       </div>
 
@@ -393,7 +275,7 @@
 
 <script>
 
-let adminPassword = "";
+let password = "";
 
 
 /* =========================
@@ -404,7 +286,7 @@ async function api(url, options = {}) {
 
   options.headers = {
     "Content-Type": "application/json",
-    "x-admin-password": adminPassword,
+    "x-admin-password": password,
     ...(options.headers || {})
   };
 
@@ -432,7 +314,7 @@ async function api(url, options = {}) {
 
 async function login() {
 
-  const password =
+  password =
     document.getElementById("password").value.trim();
 
   if (!password) {
@@ -440,8 +322,6 @@ async function login() {
       "Digite a senha.";
     return;
   }
-
-  adminPassword = password;
 
   try {
 
@@ -455,130 +335,15 @@ async function login() {
       .getElementById("panel")
       .classList.remove("hidden");
 
-    await loadProducts();
-    await loadOrders();
+    loadProducts();
+    loadOrders();
 
-  } catch(error) {
+  } catch (error) {
 
-    adminPassword = "";
+    password = "";
 
     document.getElementById("loginMsg").textContent =
       error.message;
-
-  }
-}
-
-
-/* =========================
-   PRODUTOS
-========================= */
-
-async function loadProducts() {
-
-  const container =
-    document.getElementById("products");
-
-  const select =
-    document.getElementById("stockProduct");
-
-  try {
-
-    const data =
-      await api("/api/admin/products");
-
-    const products =
-      Array.isArray(data)
-        ? data
-        : (data.products || []);
-
-    container.innerHTML = "";
-
-    select.innerHTML =
-      '<option value="">Selecione o produto</option>';
-
-
-    if (!products.length) {
-
-      container.innerHTML =
-        '<div class="sub">Nenhum produto cadastrado.</div>';
-
-      return;
-    }
-
-
-    products.forEach(product => {
-
-      const option =
-        document.createElement("option");
-
-      option.value = product.id;
-      option.textContent = product.name;
-
-      select.appendChild(option);
-
-
-      const item =
-        document.createElement("div");
-
-      item.className = "product";
-
-
-      const image =
-        document.createElement("img");
-
-      image.src =
-        product.image_url ||
-        product.image ||
-        "";
-
-      image.onerror = () => {
-        image.style.visibility = "hidden";
-      };
-
-
-      const info =
-        document.createElement("div");
-
-      info.className = "info";
-
-      const price =
-        Number(product.price || 0)
-          .toFixed(2)
-          .replace(".", ",");
-
-
-      info.innerHTML = `
-        <strong>${escapeHtml(product.name)}</strong>
-        <small>
-          ${escapeHtml(product.category || "roblox")}
-          • R$ ${price}
-          • Estoque: ${product.stock ?? 0}
-        </small>
-      `;
-
-
-      const button =
-        document.createElement("button");
-
-      button.className = "danger";
-      button.textContent = "Excluir";
-
-      button.onclick = () =>
-        deleteProduct(product.id);
-
-
-      item.appendChild(image);
-      item.appendChild(info);
-      item.appendChild(button);
-
-      container.appendChild(item);
-
-    });
-
-  } catch(error) {
-
-    container.innerHTML =
-      `<div class="msg">${escapeHtml(error.message)}</div>`;
 
   }
 }
@@ -610,14 +375,12 @@ async function createProduct() {
 
 
   if (!name) {
-    msg.textContent =
-      "Digite o nome do produto.";
+    msg.textContent = "Digite o nome.";
     return;
   }
 
   if (!price || price <= 0) {
-    msg.textContent =
-      "Digite um preço válido.";
+    msg.textContent = "Digite um preço válido.";
     return;
   }
 
@@ -626,33 +389,31 @@ async function createProduct() {
 
     await api("/api/admin/products", {
 
-      method:"POST",
+      method: "POST",
 
-      body:JSON.stringify({
-
+      body: JSON.stringify({
         name,
         price,
         category,
         image,
+        image_url: image,
         description
-
       })
 
     });
 
 
     msg.textContent =
-      "Produto cadastrado com sucesso.";
+      "Produto adicionado.";
 
     document.getElementById("name").value = "";
     document.getElementById("price").value = "";
     document.getElementById("image").value = "";
     document.getElementById("description").value = "";
 
+    loadProducts();
 
-    await loadProducts();
-
-  } catch(error) {
+  } catch (error) {
 
     msg.textContent =
       error.message;
@@ -662,82 +423,115 @@ async function createProduct() {
 
 
 /* =========================
-   ESTOQUE
+   CATÁLOGO
 ========================= */
 
-async function addStock() {
+async function loadProducts() {
 
-  const productId =
-    document.getElementById("stockProduct").value;
-
-  const stockText =
-    document.getElementById("stock").value;
-
-  const msg =
-    document.getElementById("stockMsg");
-
-
-  if (!productId) {
-    msg.textContent =
-      "Selecione um produto.";
-    return;
-  }
-
-
-  const items =
-    stockText
-      .split("\n")
-      .map(x => x.trim())
-      .filter(Boolean);
-
-
-  if (!items.length) {
-    msg.textContent =
-      "Cole pelo menos um item.";
-    return;
-  }
-
+  const container =
+    document.getElementById("products");
 
   try {
 
-    await api("/api/admin/stock", {
+    const data =
+      await api("/api/admin/products");
 
-      method:"POST",
+    const products =
+      Array.isArray(data)
+        ? data
+        : (data.products || []);
 
-      body:JSON.stringify({
 
-        product_id:Number(productId),
-        items
+    container.innerHTML = "";
 
-      })
+
+    if (!products.length) {
+
+      container.innerHTML =
+        '<div class="msg">Nenhum produto cadastrado.</div>';
+
+      return;
+    }
+
+
+    products.forEach(product => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "product";
+
+
+      const img =
+        document.createElement("img");
+
+      img.src =
+        product.image_url ||
+        product.image ||
+        "";
+
+      img.onerror = () => {
+        img.style.visibility = "hidden";
+      };
+
+
+      const info =
+        document.createElement("div");
+
+      info.className = "product-info";
+
+      const price =
+        Number(product.price || 0)
+          .toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+          });
+
+
+      info.innerHTML = `
+        <strong>${escapeHtml(product.name)}</strong>
+        <small>
+          ${escapeHtml(product.category || "roblox")}
+          • ${price}
+        </small>
+      `;
+
+
+      const button =
+        document.createElement("button");
+
+      button.className = "danger";
+      button.textContent = "Excluir";
+
+      button.onclick = () =>
+        deleteProduct(product.id);
+
+
+      div.appendChild(img);
+      div.appendChild(info);
+      div.appendChild(button);
+
+      container.appendChild(div);
 
     });
 
+  } catch (error) {
 
-    msg.textContent =
-      `${items.length} item(ns) adicionados ao estoque.`;
-
-    document.getElementById("stock").value = "";
-
-    await loadProducts();
-
-  } catch(error) {
-
-    msg.textContent =
-      error.message;
+    container.innerHTML =
+      `<div class="msg">${escapeHtml(error.message)}</div>`;
 
   }
 }
 
 
 /* =========================
-   EXCLUIR PRODUTO
+   EXCLUIR
 ========================= */
 
 async function deleteProduct(id) {
 
   if (!confirm(
-    "Tem certeza que deseja excluir este produto?"
+    "Excluir este produto?"
   )) {
     return;
   }
@@ -748,13 +542,13 @@ async function deleteProduct(id) {
     await api(
       "/api/admin/products/" + id,
       {
-        method:"DELETE"
+        method: "DELETE"
       }
     );
 
-    await loadProducts();
+    loadProducts();
 
-  } catch(error) {
+  } catch (error) {
 
     alert(error.message);
 
@@ -769,84 +563,17 @@ async function deleteProduct(id) {
 async function loadOrders() {
 
   const container =
-    document.getElementById("sales");
-
+    document.getElementById("orders");
 
   try {
 
     const data =
       await api("/api/admin/orders");
 
-
     const orders =
       Array.isArray(data)
         ? data
         : (data.orders || []);
-
-
-    let todayTotal = 0;
-    let todayCount = 0;
-    let total = 0;
-
-
-    const now = new Date();
-
-
-    orders.forEach(order => {
-
-      const value =
-        Number(
-          order.amount ??
-          order.price ??
-          order.total ??
-          0
-        );
-
-
-      const dateValue =
-        order.created_at ??
-        order.createdAt ??
-        order.paid_at ??
-        order.paidAt;
-
-
-      const date =
-        dateValue
-          ? new Date(dateValue)
-          : null;
-
-
-      total += value;
-
-
-      if (
-        date &&
-        date.getDate() === now.getDate() &&
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear()
-      ) {
-
-        todayTotal += value;
-        todayCount++;
-
-      }
-
-    });
-
-
-    document.getElementById("todaySales")
-      .textContent =
-        money(todayTotal);
-
-
-    document.getElementById("todayOrders")
-      .textContent =
-        todayCount;
-
-
-    document.getElementById("totalSales")
-      .textContent =
-        money(total);
 
 
     container.innerHTML = "";
@@ -855,7 +582,7 @@ async function loadOrders() {
     if (!orders.length) {
 
       container.innerHTML =
-        '<div class="sub">Nenhuma venda registrada.</div>';
+        '<div class="msg">Nenhuma venda registrada.</div>';
 
       return;
     }
@@ -863,110 +590,79 @@ async function loadOrders() {
 
     orders.forEach(order => {
 
+      const div =
+        document.createElement("div");
+
+      div.className = "sale";
+
+
+      const product =
+        order.product_name ||
+        order.productName ||
+        order.name ||
+        "Produto";
+
+
       const value =
         Number(
           order.amount ??
-          order.price ??
           order.total ??
+          order.price ??
           0
         );
 
 
       const dateValue =
-        order.created_at ??
-        order.createdAt ??
-        order.paid_at ??
+        order.created_at ||
+        order.createdAt ||
+        order.paid_at ||
         order.paidAt;
 
 
-      const date =
-        dateValue
-          ? new Date(dateValue)
-          : null;
+      let date = "Data não disponível";
 
+      if (dateValue) {
 
-      const product =
-        order.product_name ??
-        order.productName ??
-        order.name ??
-        "Produto";
+        const parsed =
+          new Date(dateValue);
+
+        if (!isNaN(parsed)) {
+
+          date =
+            parsed.toLocaleString(
+              "pt-BR"
+            );
+
+        }
+
+      }
 
 
       const status =
-        order.status ??
-        "unknown";
+        order.status ||
+        "desconhecido";
 
 
-      const item =
-        document.createElement("div");
+      div.innerHTML = `
+        <strong>${escapeHtml(product)}</strong>
 
-      item.className = "sale";
-
-
-      const left =
-        document.createElement("div");
-
-      left.className = "sale-left";
-
-
-      const title =
-        document.createElement("strong");
-
-      title.textContent =
-        product;
+        <small>
+          Pedido: ${escapeHtml(order.id || "—")}<br>
+          Valor: ${value.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+          })}<br>
+          Data: ${escapeHtml(date)}<br>
+          Status: ${escapeHtml(status)}
+        </small>
+      `;
 
 
-      const details =
-        document.createElement("small");
-
-      details.textContent =
-        "Pedido #" +
-        (order.id ?? "—") +
-        (date
-          ? " • " + formatDate(date)
-          : "");
-
-
-      const statusText =
-        document.createElement("span");
-
-      statusText.className = "status";
-
-      statusText.textContent =
-        "Status: " + status;
-
-
-      left.appendChild(title);
-      left.appendChild(details);
-      left.appendChild(statusText);
-
-
-      const right =
-        document.createElement("div");
-
-      right.className = "sale-right";
-
-
-      const price =
-        document.createElement("strong");
-
-      price.textContent =
-        money(value);
-
-
-      right.appendChild(price);
-
-
-      item.appendChild(left);
-      item.appendChild(right);
-
-
-      container.appendChild(item);
+      container.appendChild(div);
 
     });
 
-
-  } catch(error) {
+  } catch (error) {
 
     container.innerHTML =
       `<div class="msg">${escapeHtml(error.message)}</div>`;
@@ -976,41 +672,17 @@ async function loadOrders() {
 
 
 /* =========================
-   FORMATADORES
+   SEGURANÇA
 ========================= */
-
-function money(value) {
-
-  return Number(value || 0)
-    .toLocaleString("pt-BR", {
-      style:"currency",
-      currency:"BRL"
-    });
-
-}
-
-
-function formatDate(date) {
-
-  return date.toLocaleString(
-    "pt-BR",
-    {
-      dateStyle:"short",
-      timeStyle:"short"
-    }
-  );
-
-}
-
 
 function escapeHtml(value) {
 
   return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
