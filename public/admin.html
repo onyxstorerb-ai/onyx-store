@@ -16,13 +16,22 @@
   --bg2:#080808;
   --panel:#0b0b0b;
   --panel2:#101010;
+  --panel3:#141414;
   --border:#1b1b1b;
   --border2:#292929;
+  --border3:#343434;
+
   --text:#f5f5f5;
   --muted:#737373;
   --muted2:#999;
+
   --green:#68e38d;
+  --green2:#39c96b;
+
   --red:#ff6473;
+  --yellow:#e9c96a;
+  --blue:#72a7ff;
+
   --shadow:0 25px 80px rgba(0,0,0,.35);
 }
 
@@ -34,10 +43,11 @@ html{
 body{
   margin:0;
   min-height:100vh;
+
   background:
     radial-gradient(
       circle at 75% -10%,
-      rgba(255,255,255,.055),
+      rgba(255,255,255,.06),
       transparent 30%
     ),
     radial-gradient(
@@ -46,7 +56,9 @@ body{
       transparent 25%
     ),
     var(--bg);
+
   color:var(--text);
+
   font-family:
     Inter,
     ui-sans-serif,
@@ -68,56 +80,113 @@ button{
   cursor:pointer;
 }
 
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+  transform:none!important;
+}
+
 .hidden{
   display:none!important;
 }
 
-/* =========================
+::-webkit-scrollbar{
+  width:7px;
+  height:7px;
+}
+
+::-webkit-scrollbar-track{
+  background:#070707;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#262626;
+  border-radius:10px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+  background:#333;
+}
+
+
+/* =========================================================
    LOGIN
-========================= */
+========================================================= */
 
 .login{
   min-height:100vh;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   padding:24px;
 }
 
 .login-card{
-  width:min(400px,100%);
-  padding:36px;
+  width:min(410px,100%);
+
+  padding:38px;
+
   background:
     linear-gradient(
       145deg,
       rgba(18,18,18,.98),
-      rgba(8,8,8,.98)
+      rgba(7,7,7,.98)
     );
+
   border:1px solid var(--border2);
-  border-radius:24px;
+  border-radius:25px;
+
   box-shadow:
-    0 35px 100px rgba(0,0,0,.65);
+    0 40px 120px rgba(0,0,0,.7);
+
+  animation:
+    loginIn .35s ease;
+}
+
+@keyframes loginIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+
+  to{
+    opacity:1;
+    transform:none;
+  }
 }
 
 .login-logo{
-  width:62px;
-  height:62px;
+  width:66px;
+  height:66px;
+
   margin:0 auto 20px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   border:1px solid #303030;
-  border-radius:18px;
+  border-radius:19px;
+
   background:
-    linear-gradient(145deg,#1b1b1b,#070707);
-  font-size:22px;
+    linear-gradient(145deg,#1c1c1c,#070707);
+
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.06),
+    0 15px 40px rgba(0,0,0,.35);
+
+  font-size:23px;
   font-weight:950;
   letter-spacing:2px;
 }
 
 .login-title{
   margin:0;
+
   text-align:center;
+
   font-size:28px;
   font-weight:950;
   letter-spacing:-1px;
@@ -125,36 +194,58 @@ button{
 
 .login-subtitle{
   margin:8px 0 28px;
+
   color:#666;
+
   text-align:center;
+
   font-size:13px;
 }
 
-/* =========================
+
+/* =========================================================
    INPUTS
-========================= */
+========================================================= */
 
 label{
   display:block;
+
   margin:17px 0 8px;
+
   color:#999;
-  font-size:12px;
-  font-weight:750;
+
+  font-size:11px;
+  font-weight:800;
+
+  letter-spacing:.2px;
 }
 
 input,
 textarea,
 select{
   width:100%;
+
   padding:12px 13px;
+
   background:#070707;
+
   color:#fff;
+
   border:1px solid #242424;
   border-radius:11px;
+
   outline:none;
+
   transition:
     border-color .15s ease,
-    box-shadow .15s ease;
+    box-shadow .15s ease,
+    background .15s ease;
+}
+
+input:hover,
+textarea:hover,
+select:hover{
+  border-color:#303030;
 }
 
 input::placeholder,
@@ -166,7 +257,11 @@ input:focus,
 textarea:focus,
 select:focus{
   border-color:#555;
-  box-shadow:0 0 0 3px rgba(255,255,255,.035);
+
+  background:#090909;
+
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.035);
 }
 
 textarea{
@@ -178,21 +273,34 @@ select{
   appearance:none;
 }
 
-/* =========================
+
+/* =========================================================
    BUTTONS
-========================= */
+========================================================= */
 
 .btn{
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:7px;
+
   border:1px solid transparent;
   border-radius:10px;
+
   padding:10px 14px;
+
   background:#f3f3f3;
   color:#050505;
+
   font-weight:850;
+
   transition:
     transform .15s ease,
     filter .15s ease,
-    border-color .15s ease;
+    border-color .15s ease,
+    background .15s ease;
 }
 
 .btn:hover{
@@ -212,6 +320,7 @@ select{
 
 .btn.dark:hover{
   background:#161616;
+  border-color:#333;
 }
 
 .btn.danger{
@@ -221,7 +330,18 @@ select{
 }
 
 .btn.danger:hover{
-  background:rgba(255,70,85,.12);
+  background:rgba(255,70,85,.13);
+  border-color:rgba(255,70,85,.32);
+}
+
+.btn.green{
+  background:rgba(60,210,105,.08);
+  color:var(--green);
+  border-color:rgba(60,210,105,.2);
+}
+
+.btn.green:hover{
+  background:rgba(60,210,105,.13);
 }
 
 .btn.full{
@@ -230,12 +350,19 @@ select{
 
 .btn.small{
   padding:8px 11px;
-  font-size:12px;
+  font-size:11px;
 }
 
-/* =========================
+.btn.icon{
+  width:37px;
+  height:37px;
+  padding:0;
+}
+
+
+/* =========================================================
    LAYOUT
-========================= */
+========================================================= */
 
 .app{
   min-height:100vh;
@@ -243,14 +370,21 @@ select{
 
 .sidebar{
   position:fixed;
+
   left:0;
   top:0;
   bottom:0;
-  width:235px;
-  padding:24px 15px;
-  background:rgba(6,6,6,.94);
+
+  width:245px;
+
+  padding:25px 15px;
+
+  background:rgba(6,6,6,.95);
+
   border-right:1px solid var(--border);
+
   backdrop-filter:blur(18px);
+
   z-index:20;
 }
 
@@ -258,21 +392,29 @@ select{
   display:flex;
   align-items:center;
   gap:11px;
-  padding:0 10px 30px;
+
+  padding:0 10px 31px;
 }
 
 .brand-symbol{
-  width:42px;
-  height:42px;
+  width:43px;
+  height:43px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   border:1px solid #292929;
   border-radius:13px;
+
   background:
     linear-gradient(145deg,#1a1a1a,#070707);
+
   font-weight:950;
   letter-spacing:1px;
+
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.04);
 }
 
 .brand-name{
@@ -283,7 +425,9 @@ select{
 
 .brand-sub{
   margin-top:2px;
+
   color:#555;
+
   font-size:9px;
   font-weight:800;
   letter-spacing:1.5px;
@@ -291,10 +435,13 @@ select{
 
 .nav-label{
   margin:0 10px 8px;
+
   color:#484848;
+
   font-size:9px;
   font-weight:850;
   letter-spacing:1.5px;
+
   text-transform:uppercase;
 }
 
@@ -305,14 +452,22 @@ select{
 
 .nav button{
   width:100%;
+
   padding:11px 12px;
+
   border:1px solid transparent;
   border-radius:10px;
+
   background:transparent;
+
   color:#777;
+
   font-size:13px;
   font-weight:750;
+
   text-align:left;
+
+  transition:.15s ease;
 }
 
 .nav button:hover,
@@ -324,48 +479,93 @@ select{
 
 .sidebar-bottom{
   position:absolute;
+
   left:15px;
   right:15px;
   bottom:18px;
 }
 
+.sidebar-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  padding:10px 11px;
+
+  margin-bottom:9px;
+
+  border:1px solid #191919;
+  border-radius:10px;
+
+  background:#0b0b0b;
+
+  color:#656565;
+
+  font-size:10px;
+}
+
+.status-dot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:var(--green);
+
+  box-shadow:
+    0 0 12px rgba(104,227,141,.55);
+}
+
 .content{
-  width:calc(100% - 235px);
-  margin-left:235px;
+  width:calc(100% - 245px);
+
+  margin-left:245px;
+
   padding:34px;
 }
 
 .container{
-  width:min(1250px,100%);
+  width:min(1320px,100%);
   margin:0 auto;
 }
 
-/* =========================
-   HEADER
-========================= */
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
 
 .mobile-header{
   display:none;
 }
 
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
 .page-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+
   gap:20px;
-  margin-bottom:27px;
+
+  margin-bottom:25px;
 }
 
 .eyebrow{
   color:#5b5b5b;
+
   font-size:10px;
   font-weight:850;
   letter-spacing:1.7px;
+
   text-transform:uppercase;
 }
 
 .page-title{
   margin:5px 0 0;
+
   font-size:32px;
   font-weight:950;
   letter-spacing:-1.5px;
@@ -373,50 +573,77 @@ select{
 
 .page-subtitle{
   margin:6px 0 0;
+
   color:#666;
+
   font-size:13px;
 }
 
-/* =========================
+
+/* =========================================================
    STATS
-========================= */
+========================================================= */
 
 .stats{
   display:grid;
+
   grid-template-columns:
     repeat(4,1fr);
+
   gap:12px;
 }
 
 .stat{
   position:relative;
+
   overflow:hidden;
-  min-height:125px;
+
+  min-height:130px;
+
   padding:20px;
+
   background:
     linear-gradient(
       145deg,
       #111,
       #090909
     );
+
   border:1px solid var(--border);
   border-radius:16px;
-  box-shadow:0 12px 35px rgba(0,0,0,.15);
+
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.15);
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease;
+}
+
+.stat:hover{
+  transform:translateY(-2px);
+  border-color:#292929;
 }
 
 .stat::after{
   content:"";
+
   position:absolute;
-  width:90px;
-  height:90px;
-  right:-42px;
-  top:-42px;
+
+  width:110px;
+  height:110px;
+
+  right:-50px;
+  top:-50px;
+
   border-radius:50%;
+
   background:rgba(255,255,255,.025);
 }
 
 .stat-label{
   color:#707070;
+
   font-size:10px;
   font-weight:800;
   letter-spacing:1px;
@@ -424,6 +651,7 @@ select{
 
 .stat-value{
   margin-top:12px;
+
   font-size:26px;
   font-weight:950;
   letter-spacing:-1px;
@@ -431,73 +659,157 @@ select{
 
 .stat-description{
   margin-top:5px;
+
   color:#4e4e4e;
+
   font-size:11px;
 }
 
-/* =========================
+
+/* =========================================================
    SECTION
-========================= */
+========================================================= */
 
 .section{
   margin-top:16px;
+
   padding:20px;
+
   background:rgba(9,9,9,.92);
+
   border:1px solid var(--border);
   border-radius:17px;
-  box-shadow:0 15px 45px rgba(0,0,0,.12);
+
+  box-shadow:
+    0 15px 45px rgba(0,0,0,.12);
 }
 
 .section-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+
   gap:15px;
+
   margin-bottom:17px;
 }
 
 .section-title{
   margin:0;
+
   font-size:17px;
   font-weight:900;
 }
 
 .section-subtitle{
   margin-top:5px;
+
   color:#5e5e5e;
+
   font-size:12px;
 }
 
-/* =========================
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.toolbar{
+  display:grid;
+
+  grid-template-columns:
+    minmax(220px,1.8fr)
+    minmax(150px,1fr)
+    minmax(150px,1fr)
+    auto;
+
+  gap:8px;
+
+  margin-bottom:15px;
+}
+
+.search-box{
+  position:relative;
+}
+
+.search-box input{
+  padding-left:38px;
+}
+
+.search-icon{
+  position:absolute;
+
+  left:13px;
+  top:50%;
+
+  transform:translateY(-50%);
+
+  color:#555;
+
+  font-size:13px;
+
+  pointer-events:none;
+}
+
+.results-info{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:10px;
+
+  margin-bottom:12px;
+
+  color:#555;
+
+  font-size:11px;
+}
+
+
+/* =========================================================
    PRODUCTS
-========================= */
+========================================================= */
 
 .products{
   display:grid;
+
   grid-template-columns:
-    repeat(auto-fill,minmax(245px,1fr));
+    repeat(auto-fill,minmax(250px,1fr));
+
   gap:12px;
 }
 
 .product{
   overflow:hidden;
+
   background:#0b0b0b;
+
   border:1px solid #1a1a1a;
   border-radius:14px;
+
   transition:
     transform .18s ease,
-    border-color .18s ease;
+    border-color .18s ease,
+    box-shadow .18s ease;
 }
 
 .product:hover{
-  transform:translateY(-2px);
+  transform:translateY(-3px);
+
   border-color:#292929;
+
+  box-shadow:
+    0 18px 50px rgba(0,0,0,.2);
 }
 
 .product-image{
   position:relative;
-  height:145px;
+
+  height:155px;
+
   overflow:hidden;
+
   background:
     radial-gradient(
       circle at 50% 0%,
@@ -509,17 +821,58 @@ select{
 .product-image img{
   width:100%;
   height:100%;
+
   object-fit:cover;
+
   display:block;
+
+  transition:
+    transform .25s ease;
+}
+
+.product:hover .product-image img{
+  transform:scale(1.035);
+}
+
+.product-stock-badge{
+  position:absolute;
+
+  top:10px;
+  right:10px;
+
+  padding:5px 8px;
+
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:7px;
+
+  background:rgba(0,0,0,.72);
+
+  backdrop-filter:blur(8px);
+
+  color:#aaa;
+
+  font-size:9px;
+  font-weight:850;
+}
+
+.product-stock-badge.good{
+  color:var(--green);
+}
+
+.product-stock-badge.empty{
+  color:var(--red);
 }
 
 .no-image{
   width:100%;
   height:100%;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   color:#414141;
+
   font-size:10px;
   font-weight:850;
   letter-spacing:1px;
@@ -532,24 +885,33 @@ select{
 .product-name{
   font-size:15px;
   font-weight:850;
+
   line-height:1.3;
 }
 
 .category{
   display:inline-flex;
+
   margin-top:7px;
+
   padding:4px 7px;
+
   background:#111;
+
   border:1px solid #242424;
   border-radius:6px;
+
   color:#777;
+
   font-size:9px;
   font-weight:800;
+
   text-transform:uppercase;
 }
 
 .product-price{
   margin-top:13px;
+
   font-size:20px;
   font-weight:950;
 }
@@ -557,9 +919,13 @@ select{
 .product-meta{
   display:flex;
   justify-content:space-between;
+
   gap:10px;
+
   margin-top:7px;
+
   color:#666;
+
   font-size:11px;
 }
 
@@ -571,17 +937,35 @@ select{
   color:var(--red);
 }
 
+.stock-warning{
+  color:var(--yellow);
+}
+
 .product-description{
   margin:10px 0 0;
+
   color:#666;
+
   font-size:11px;
+
   line-height:1.5;
+
+  display:
+    -webkit-box;
+
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+
+  overflow:hidden;
 }
 
 .product-actions{
   display:grid;
+
   grid-template-columns:1fr 1fr;
+
   gap:6px;
+
   margin-top:14px;
 }
 
@@ -589,25 +973,45 @@ select{
   grid-column:1/-1;
 }
 
-/* =========================
+
+/* =========================================================
    ORDERS
-========================= */
+========================================================= */
 
 .orders{
   display:flex;
   flex-direction:column;
+
   gap:7px;
 }
 
 .order{
   display:flex;
+
   justify-content:space-between;
   align-items:center;
+
   gap:15px;
-  padding:13px;
+
+  padding:14px;
+
   background:#0b0b0b;
+
   border:1px solid #191919;
   border-radius:11px;
+
+  transition:
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.order:hover{
+  border-color:#292929;
+  background:#0d0d0d;
+}
+
+.order-left{
+  min-width:0;
 }
 
 .order-name{
@@ -617,7 +1021,9 @@ select{
 
 .order-info{
   margin-top:5px;
+
   color:#5f5f5f;
+
   font-size:10px;
 }
 
@@ -626,34 +1032,60 @@ select{
 }
 
 .order-value{
+  flex-shrink:0;
+
   color:var(--green);
+
   font-size:14px;
   font-weight:950;
 }
 
+.order-id{
+  margin-top:4px;
+
+  color:#414141;
+
+  font-size:9px;
+
+  word-break:break-all;
+}
+
 .empty{
   grid-column:1/-1;
+
   padding:35px 20px;
+
   border:1px dashed #242424;
   border-radius:11px;
+
   color:#505050;
+
   text-align:center;
+
   font-size:12px;
 }
 
-/* =========================
+
+/* =========================================================
    MODALS
-========================= */
+========================================================= */
 
 .modal{
   position:fixed;
+
   inset:0;
+
   z-index:100;
+
   display:none;
+
   align-items:center;
   justify-content:center;
+
   padding:18px;
+
   background:rgba(0,0,0,.78);
+
   backdrop-filter:blur(8px);
 }
 
@@ -662,24 +1094,48 @@ select{
 }
 
 .modal-box{
-  width:min(540px,100%);
+  width:min(560px,100%);
+
   max-height:90vh;
+
   overflow:auto;
+
   padding:23px;
+
   background:#0b0b0b;
+
   border:1px solid #292929;
   border-radius:18px;
-  box-shadow:0 35px 100px rgba(0,0,0,.7);
+
+  box-shadow:
+    0 35px 100px rgba(0,0,0,.7);
+
+  animation:
+    modalIn .18s ease;
+}
+
+@keyframes modalIn{
+  from{
+    opacity:0;
+    transform:translateY(8px) scale(.99);
+  }
+
+  to{
+    opacity:1;
+    transform:none;
+  }
 }
 
 .modal-header{
   display:flex;
+
   justify-content:space-between;
   align-items:center;
 }
 
 .modal-title{
   margin:0;
+
   font-size:19px;
   font-weight:900;
 }
@@ -687,32 +1143,186 @@ select{
 .close-btn{
   width:33px;
   height:33px;
+
   border:1px solid #252525;
   border-radius:9px;
+
   background:#111;
   color:#aaa;
+
   font-size:20px;
+
+  transition:.15s ease;
 }
 
 .close-btn:hover{
   color:#fff;
+  background:#171717;
 }
 
 .row{
   display:grid;
+
   grid-template-columns:1fr 1fr;
+
   gap:10px;
 }
 
 .modal-footer{
   display:flex;
+
   gap:8px;
+
   margin-top:18px;
 }
 
-/* =========================
+
+/* =========================================================
+   TOASTS
+========================================================= */
+
+#toastContainer{
+  position:fixed;
+
+  right:20px;
+  bottom:20px;
+
+  z-index:500;
+
+  display:flex;
+  flex-direction:column;
+
+  gap:8px;
+
+  width:min(360px,calc(100vw - 40px));
+
+  pointer-events:none;
+}
+
+.toast{
+  display:flex;
+  align-items:flex-start;
+
+  gap:10px;
+
+  padding:13px 14px;
+
+  background:#111;
+
+  border:1px solid #292929;
+  border-radius:12px;
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.5);
+
+  animation:
+    toastIn .2s ease;
+
+  pointer-events:auto;
+}
+
+@keyframes toastIn{
+  from{
+    opacity:0;
+    transform:translateY(8px);
+  }
+
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+.toast.success{
+  border-color:rgba(104,227,141,.25);
+}
+
+.toast.error{
+  border-color:rgba(255,100,115,.25);
+}
+
+.toast-dot{
+  width:7px;
+  height:7px;
+
+  flex-shrink:0;
+
+  margin-top:5px;
+
+  border-radius:50%;
+
+  background:#777;
+}
+
+.toast.success .toast-dot{
+  background:var(--green);
+}
+
+.toast.error .toast-dot{
+  background:var(--red);
+}
+
+.toast-text{
+  color:#ddd;
+
+  font-size:12px;
+
+  line-height:1.45;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading{
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:8px;
+}
+
+.spinner{
+  width:13px;
+  height:13px;
+
+  border:2px solid #333;
+  border-top-color:#fff;
+
+  border-radius:50%;
+
+  animation:
+    spin .7s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+
+/* =========================================================
    MOBILE
-========================= */
+========================================================= */
+
+@media(max-width:1050px){
+
+  .toolbar{
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .toolbar .btn{
+    width:100%;
+  }
+
+  .stats{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+}
 
 @media(max-width:900px){
 
@@ -723,13 +1333,16 @@ select{
   .content{
     width:100%;
     margin-left:0;
+
     padding:20px 14px 40px;
   }
 
   .mobile-header{
     display:flex;
+
     justify-content:space-between;
     align-items:center;
+
     margin-bottom:22px;
   }
 
@@ -737,10 +1350,6 @@ select{
     font-size:18px;
     font-weight:950;
     letter-spacing:2px;
-  }
-
-  .stats{
-    grid-template-columns:1fr 1fr;
   }
 }
 
@@ -752,6 +1361,11 @@ select{
 
   .page-header{
     align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .page-header > .btn{
+    width:100%;
   }
 
   .page-title{
@@ -764,6 +1378,19 @@ select{
 
   .section{
     padding:14px;
+  }
+
+  .section-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .section-header .btn{
+    width:100%;
+  }
+
+  .toolbar{
+    grid-template-columns:1fr;
   }
 
   .products{
@@ -779,6 +1406,10 @@ select{
     flex-direction:column;
   }
 
+  .order-value{
+    width:100%;
+  }
+
   .modal{
     padding:10px;
   }
@@ -790,13 +1421,19 @@ select{
   .modal-footer{
     flex-direction:column;
   }
+
+  .modal-footer .btn{
+    width:100%;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- =======================================================
+     LOGIN
+======================================================= -->
 
 <div id="login" class="login">
 
@@ -829,6 +1466,7 @@ select{
     <br><br>
 
     <button
+      id="loginButton"
       class="btn full"
       onclick="login()"
     >
@@ -850,9 +1488,13 @@ select{
 </div>
 
 
-<!-- ADMIN -->
+<!-- =======================================================
+     ADMIN
+======================================================= -->
 
 <div id="admin" class="app hidden">
+
+  <!-- SIDEBAR -->
 
   <aside class="sidebar">
 
@@ -876,6 +1518,7 @@ select{
 
     </div>
 
+
     <div class="nav-label">
       Painel
     </div>
@@ -883,21 +1526,34 @@ select{
     <div class="nav">
 
       <button
+        id="navProducts"
         class="active"
-        onclick="scrollToSection('productsSection')"
+        onclick="scrollToSection('productsSection');setActiveNav(this)"
       >
         ▦ &nbsp; Produtos
       </button>
 
       <button
-        onclick="scrollToSection('ordersSection')"
+        id="navOrders"
+        onclick="scrollToSection('ordersSection');setActiveNav(this)"
       >
         ◷ &nbsp; Vendas
       </button>
 
     </div>
 
+
     <div class="sidebar-bottom">
+
+      <div class="sidebar-status">
+
+        <span class="status-dot"></span>
+
+        <span>
+          Sistema operacional
+        </span>
+
+      </div>
 
       <button
         class="btn dark full"
@@ -910,6 +1566,8 @@ select{
 
   </aside>
 
+
+  <!-- CONTENT -->
 
   <main class="content">
 
@@ -930,6 +1588,8 @@ select{
 
       </div>
 
+
+      <!-- HEADER -->
 
       <div class="page-header">
 
@@ -1066,14 +1726,140 @@ select{
 
           </div>
 
-          <button
-            class="btn small"
-            onclick="openProductModal()"
-          >
-            + Produto
-          </button>
+          <div style="display:flex;gap:7px;">
+
+            <button
+              class="btn dark small"
+              onclick="loadAll(true)"
+            >
+              ↻ Atualizar
+            </button>
+
+            <button
+              class="btn small"
+              onclick="openProductModal()"
+            >
+              + Produto
+            </button>
+
+          </div>
 
         </div>
+
+
+        <!-- TOOLBAR -->
+
+        <div class="toolbar">
+
+          <div class="search-box">
+
+            <span class="search-icon">
+              ⌕
+            </span>
+
+            <input
+              id="productSearch"
+              placeholder="Buscar produto..."
+              oninput="applyProductFilters()"
+            >
+
+          </div>
+
+
+          <select
+            id="categoryFilter"
+            onchange="applyProductFilters()"
+          >
+
+            <option value="all">
+              Todas as categorias
+            </option>
+
+            <option value="roblox">
+              Roblox
+            </option>
+
+            <option value="fortnite">
+              Fortnite
+            </option>
+
+            <option value="vbucks">
+              V-Bucks
+            </option>
+
+            <option value="nitradas">
+              Nitradas
+            </option>
+
+          </select>
+
+
+          <select
+            id="stockFilter"
+            onchange="applyProductFilters()"
+          >
+
+            <option value="all">
+              Todo estoque
+            </option>
+
+            <option value="available">
+              Com estoque
+            </option>
+
+            <option value="low">
+              Estoque baixo
+            </option>
+
+            <option value="empty">
+              Sem estoque
+            </option>
+
+          </select>
+
+
+          <select
+            id="sortFilter"
+            onchange="applyProductFilters()"
+          >
+
+            <option value="name">
+              Nome
+            </option>
+
+            <option value="priceAsc">
+              Menor preço
+            </option>
+
+            <option value="priceDesc">
+              Maior preço
+            </option>
+
+            <option value="stockDesc">
+              Maior estoque
+            </option>
+
+            <option value="stockAsc">
+              Menor estoque
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="results-info">
+
+          <span id="productResults">
+            0 produtos
+          </span>
+
+          <span>
+            Estoque atualizado em tempo real
+          </span>
+
+        </div>
+
 
         <div
           id="products"
@@ -1110,7 +1896,15 @@ select{
 
           </div>
 
+          <button
+            class="btn dark small"
+            onclick="loadAll(true)"
+          >
+            ↻ Atualizar
+          </button>
+
         </div>
+
 
         <div
           id="orders"
@@ -1132,7 +1926,9 @@ select{
 </div>
 
 
-<!-- PRODUTO MODAL -->
+<!-- =======================================================
+     PRODUCT MODAL
+======================================================= -->
 
 <div
   id="productModal"
@@ -1257,6 +2053,7 @@ select{
       </button>
 
       <button
+        id="saveProductButton"
         class="btn"
         style="flex:1"
         onclick="saveProduct()"
@@ -1282,7 +2079,9 @@ select{
 </div>
 
 
-<!-- ESTOQUE MODAL -->
+<!-- =======================================================
+     STOCK MODAL
+======================================================= -->
 
 <div
   id="stockModal"
@@ -1340,6 +2139,7 @@ select{
       </button>
 
       <button
+        id="saveStockButton"
         class="btn"
         style="flex:1"
         onclick="saveStock()"
@@ -1354,7 +2154,52 @@ select{
 </div>
 
 
+<!-- =======================================================
+     ORDER MODAL
+======================================================= -->
+
+<div
+  id="orderModal"
+  class="modal"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2 class="modal-title">
+        Detalhes da venda
+      </h2>
+
+      <button
+        class="close-btn"
+        onclick="closeOrderModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div
+      id="orderDetails"
+      style="margin-top:20px;"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div id="toastContainer"></div>
+
+
 <script>
+
+/* =========================================================
+   STATE
+========================================================= */
 
 let ADMIN_PASSWORD =
   localStorage.getItem(
@@ -1362,23 +2207,37 @@ let ADMIN_PASSWORD =
   ) || "";
 
 let products = [];
+let filteredProducts = [];
 let orders = [];
+
 let editingId = null;
 
-const $ = id =>
-  document.getElementById(id);
+let loading = false;
 
 
-/* =========================
+/* =========================================================
+   SHORTCUT
+========================================================= */
+
+const $ =
+  id =>
+    document.getElementById(id);
+
+
+/* =========================================================
    API
-========================= */
+========================================================= */
 
 function headers(){
 
   return {
-    "Content-Type":"application/json",
+
+    "Content-Type":
+      "application/json",
+
     "x-admin-password":
       ADMIN_PASSWORD
+
   };
 
 }
@@ -1393,13 +2252,19 @@ async function api(
     await fetch(
       url,
       {
+
         cache:"no-store",
+
         ...options,
 
         headers:{
+
           ...headers(),
+
           ...(options.headers || {})
+
         }
+
       }
     );
 
@@ -1421,7 +2286,9 @@ async function api(
 
     }catch{}
 
-    throw new Error(message);
+    throw new Error(
+      message
+    );
 
   }
 
@@ -1439,31 +2306,42 @@ async function api(
 }
 
 
-/* =========================
+/* =========================================================
    MONEY
-========================= */
+========================================================= */
 
-function money(value){
+function money(
+  value
+){
 
   const n =
     Number(value || 0);
 
-  if(!Number.isFinite(n)){
+  if(
+    !Number.isFinite(n)
+  ){
+
     return "R$ 0,00";
+
   }
 
   return n.toLocaleString(
     "pt-BR",
     {
+
       style:"currency",
+
       currency:"BRL"
+
     }
   );
 
 }
 
 
-function getOrderAmount(order){
+function getOrderAmount(
+  order
+){
 
   if(
     order &&
@@ -1472,9 +2350,13 @@ function getOrderAmount(order){
   ){
 
     const cents =
-      Number(order.amount_cents);
+      Number(
+        order.amount_cents
+      );
 
-    return Number.isFinite(cents)
+    return Number.isFinite(
+      cents
+    )
       ? cents / 100
       : 0;
 
@@ -1488,9 +2370,13 @@ function getOrderAmount(order){
   ){
 
     const amount =
-      Number(order.amount);
+      Number(
+        order.amount
+      );
 
-    return Number.isFinite(amount)
+    return Number.isFinite(
+      amount
+    )
       ? amount
       : 0;
 
@@ -1504,9 +2390,13 @@ function getOrderAmount(order){
   ){
 
     const price =
-      Number(order.price);
+      Number(
+        order.price
+      );
 
-    return Number.isFinite(price)
+    return Number.isFinite(
+      price
+    )
       ? price
       : 0;
 
@@ -1518,7 +2408,9 @@ function getOrderAmount(order){
 }
 
 
-function getProductPrice(product){
+function getProductPrice(
+  product
+){
 
   if(
     product &&
@@ -1527,9 +2419,33 @@ function getProductPrice(product){
   ){
 
     const cents =
-      Number(product.price_cents);
+      Number(
+        product.price_cents
+      );
 
-    return Number.isFinite(cents)
+    return Number.isFinite(
+      cents
+    )
+      ? cents / 100
+      : 0;
+
+  }
+
+
+  if(
+    product &&
+    product.priceCents !== undefined &&
+    product.priceCents !== null
+  ){
+
+    const cents =
+      Number(
+        product.priceCents
+      );
+
+    return Number.isFinite(
+      cents
+    )
       ? cents / 100
       : 0;
 
@@ -1541,14 +2457,18 @@ function getProductPrice(product){
       product?.price || 0
     );
 
-  return Number.isFinite(price)
+  return Number.isFinite(
+    price
+  )
     ? price
     : 0;
 
 }
 
 
-function getProductStock(product){
+function getProductStock(
+  product
+){
 
   return Number(
     product?.stock ??
@@ -1561,36 +2481,53 @@ function getProductStock(product){
 }
 
 
-/* =========================
-   PAGAMENTO
-========================= */
+/* =========================================================
+   PAYMENT STATUS
+========================================================= */
 
-function isPaidOrder(order){
+function isPaidOrder(
+  order
+){
 
   if(!order){
     return false;
   }
 
 
-  const status = String(
-    order.status ??
-    order.payment_status ??
-    order.paymentStatus ??
-    ""
-  )
-  .toLowerCase()
-  .trim();
+  const status =
+    String(
+
+      order.status ??
+
+      order.payment_status ??
+
+      order.paymentStatus ??
+
+      ""
+
+    )
+      .toLowerCase()
+      .trim();
 
 
   const paidStatuses = [
+
     "paid",
+
     "completed",
+
     "complete",
+
     "approved",
+
     "confirmed",
+
     "success",
+
     "succeeded",
+
     "finished"
+
   ];
 
 
@@ -1601,9 +2538,9 @@ function isPaidOrder(order){
 }
 
 
-/* =========================
+/* =========================================================
    LOGIN
-========================= */
+========================================================= */
 
 async function login(){
 
@@ -1624,7 +2561,24 @@ async function login(){
   }
 
 
-  ADMIN_PASSWORD = pass;
+  const button =
+    $("loginButton");
+
+
+  button.disabled =
+    true;
+
+  button.innerHTML =
+    `
+      <span class="loading">
+        <span class="spinner"></span>
+        Entrando...
+      </span>
+    `;
+
+
+  ADMIN_PASSWORD =
+    pass;
 
 
   try{
@@ -1633,13 +2587,17 @@ async function login(){
       await fetch(
         "/api/admin/products",
         {
+
           headers:{
+
             "x-admin-password":
               ADMIN_PASSWORD,
 
             "Cache-Control":
               "no-cache"
+
           }
+
         }
       );
 
@@ -1670,19 +2628,29 @@ async function login(){
 
 
     $("loginError")
-      .textContent = "";
+      .textContent =
+      "";
 
 
     await loadAll();
 
   }catch(error){
 
-    ADMIN_PASSWORD = "";
+    ADMIN_PASSWORD =
+      "";
 
     $("loginError")
       .textContent =
       error.message ||
       "Erro ao entrar.";
+
+  }finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Entrar no painel";
 
   }
 
@@ -1695,36 +2663,49 @@ function logout(){
     "onyx_admin_password"
   );
 
-  ADMIN_PASSWORD = "";
-
+  ADMIN_PASSWORD =
+    "";
 
   $("admin")
     .classList
     .add("hidden");
 
-
   $("login")
     .classList
     .remove("hidden");
 
-
   $("password")
-    .value = "";
+    .value =
+    "";
 
 }
 
 
-/* =========================
-   LOAD
-========================= */
+/* =========================================================
+   LOAD ALL
+========================================================= */
 
-async function loadAll(){
+async function loadAll(
+  silent = false
+){
+
+  if(loading){
+    return;
+  }
+
+
+  loading =
+    true;
+
 
   try{
 
     const [
+
       productsData,
+
       ordersData
+
     ] = await Promise.all([
 
       api(
@@ -1739,31 +2720,34 @@ async function loadAll(){
 
 
     products =
-      Array.isArray(productsData)
-      ? productsData
-      : (
-          productsData.products ||
-          []
-        );
+      Array.isArray(
+        productsData
+      )
+
+        ? productsData
+
+        : (
+            productsData.products ||
+            []
+          );
 
 
     const allOrders =
-      Array.isArray(ordersData)
-      ? ordersData
-      : (
-          ordersData.orders ||
-          []
-        );
+      Array.isArray(
+        ordersData
+      )
+
+        ? ordersData
+
+        : (
+            ordersData.orders ||
+            []
+          );
 
 
     /*
-      MUITO IMPORTANTE:
-
-      Carrinho / checkout / pagamento pendente
-      NÃO entra aqui.
-
-      Só pedidos cujo status realmente
-      representa pagamento confirmado.
+      SOMENTE PEDIDOS PAGOS
+      ENTRAM NO FATURAMENTO.
     */
 
     orders =
@@ -1773,37 +2757,264 @@ async function loadAll(){
 
 
     renderProducts();
+
     renderOrders();
+
     updateStats();
+
+
+    if(!silent){
+
+      showToast(
+        "Painel atualizado.",
+        "success"
+      );
+
+    }
 
   }catch(error){
 
-    alert(
+    showToast(
       error.message ||
-      "Erro ao carregar o painel."
+      "Erro ao carregar o painel.",
+      "error"
     );
+
+  }finally{
+
+    loading =
+      false;
 
   }
 
 }
 
 
-/* =========================
+/* =========================================================
    PRODUCTS
-========================= */
+========================================================= */
+
+function applyProductFilters(){
+
+  const search =
+    String(
+      $("productSearch")
+        .value ||
+      ""
+    )
+      .toLowerCase()
+      .trim();
+
+
+  const category =
+    $("categoryFilter")
+      .value;
+
+
+  const stockFilter =
+    $("stockFilter")
+      .value;
+
+
+  const sort =
+    $("sortFilter")
+      .value;
+
+
+  filteredProducts =
+    products.filter(
+      product => {
+
+        const name =
+          String(
+            product.name ||
+            ""
+          )
+            .toLowerCase();
+
+
+        const description =
+          String(
+            product.description ||
+            ""
+          )
+            .toLowerCase();
+
+
+        const productCategory =
+          normalizeCategory(
+            product.category ||
+            "roblox"
+          );
+
+
+        const stock =
+          getProductStock(
+            product
+          );
+
+
+        const matchesSearch =
+          !search ||
+          name.includes(search) ||
+          description.includes(search);
+
+
+        const matchesCategory =
+          category === "all" ||
+          productCategory === category;
+
+
+        let matchesStock =
+          true;
+
+
+        if(
+          stockFilter ===
+          "available"
+        ){
+
+          matchesStock =
+            stock > 0;
+
+        }
+
+
+        if(
+          stockFilter ===
+          "low"
+        ){
+
+          matchesStock =
+            stock > 0 &&
+            stock <= 3;
+
+        }
+
+
+        if(
+          stockFilter ===
+          "empty"
+        ){
+
+          matchesStock =
+            stock <= 0;
+
+        }
+
+
+        return (
+
+          matchesSearch &&
+
+          matchesCategory &&
+
+          matchesStock
+
+        );
+
+      }
+    );
+
+
+  filteredProducts.sort(
+    (
+      a,
+      b
+    ) => {
+
+      if(sort === "priceAsc"){
+
+        return (
+          getProductPrice(a) -
+          getProductPrice(b)
+        );
+
+      }
+
+
+      if(sort === "priceDesc"){
+
+        return (
+          getProductPrice(b) -
+          getProductPrice(a)
+        );
+
+      }
+
+
+      if(sort === "stockDesc"){
+
+        return (
+          getProductStock(b) -
+          getProductStock(a)
+        );
+
+      }
+
+
+      if(sort === "stockAsc"){
+
+        return (
+          getProductStock(a) -
+          getProductStock(b)
+        );
+
+      }
+
+
+      return String(
+        a.name ||
+        ""
+      ).localeCompare(
+        String(
+          b.name ||
+          ""
+        ),
+        "pt-BR"
+      );
+
+    }
+  );
+
+
+  renderFilteredProducts();
+
+}
+
 
 function renderProducts(){
+
+  applyProductFilters();
+
+}
+
+
+function renderFilteredProducts(){
 
   const box =
     $("products");
 
 
-  if(!products.length){
+  $("productResults")
+    .textContent =
+    `${filteredProducts.length} produto${
+      filteredProducts.length === 1
+        ? ""
+        : "s"
+    }`;
+
+
+  if(!filteredProducts.length){
 
     box.innerHTML = `
+
       <div class="empty">
-        Nenhum produto cadastrado.
+
+        Nenhum produto encontrado.
+
       </div>
+
     `;
 
     return;
@@ -1812,208 +3023,268 @@ function renderProducts(){
 
 
   box.innerHTML =
-    products
-      .map(product => {
-
-        const id =
-          product.id;
-
-        const image =
-          product.image_url ||
-          product.image ||
-          "";
-
-        const category =
-          normalizeCategory(
-            product.category ||
-            "roblox"
-          );
-
-        const stock =
-          getProductStock(
-            product
-          );
-
-        const productPrice =
-          getProductPrice(
-            product
-          );
-
-
-        const stockClass =
-          stock > 0
-          ? "stock-good"
-          : "stock-empty";
-
-
-        return `
-
-          <article class="product">
-
-            <div class="product-image">
-
-              ${
-                image
-
-                ? `
-
-                  <img
-                    src="${escapeHtml(image)}"
-                    alt="${escapeHtml(
-                      product.name ||
-                      "Produto"
-                    )}"
-
-                    onerror="
-                      this.style.display='none';
-                      this.nextElementSibling.style.display='flex';
-                    "
-                  >
-
-                  <div
-                    class="no-image"
-                    style="display:none"
-                  >
-                    SEM IMAGEM
-                  </div>
-
-                `
-
-                : `
-
-                  <div class="no-image">
-                    SEM IMAGEM
-                  </div>
-
-                `
-              }
-
-            </div>
-
-
-            <div class="product-content">
-
-              <div class="product-name">
-                ${escapeHtml(
-                  product.name ||
-                  "Sem nome"
-                )}
-              </div>
-
-
-              <span class="category">
-                ${escapeHtml(
-                  categoryName(category)
-                )}
-              </span>
-
-
-              <div class="product-price">
-                ${money(productPrice)}
-              </div>
-
-
-              <div class="product-meta">
-
-                <span
-                  class="${
-                    stock > 0
-                    ? "stock-good"
-                    : "stock-empty"
-                  }"
-                >
-                  ${stock}
-                  ${
-                    stock === 1
-                    ? "item"
-                    : "itens"
-                  }
-                </span>
-
-                <span>
-                  ID ${escapeHtml(id)}
-                </span>
-
-              </div>
-
-
-              ${
-                product.description
-
-                ? `
-
-                  <div class="product-description">
-                    ${escapeHtml(
-                      product.description
-                    )}
-                  </div>
-
-                `
-
-                : ""
-              }
-
-
-              <div class="product-actions">
-
-                <button
-                  class="btn dark small"
-                  onclick="
-                    openEditProduct(
-                      '${encodeURIComponent(
-                        String(id)
-                      )}'
-                    )
-                  "
-                >
-                  Editar
-                </button>
-
-
-                <button
-                  class="btn dark small"
-                  onclick="
-                    openStock(
-                      '${encodeURIComponent(
-                        String(id)
-                      )}'
-                    )
-                  "
-                >
-                  Estoque
-                </button>
-
-
-                <button
-                  class="btn danger small product-delete"
-                  onclick="
-                    deleteProduct(
-                      '${encodeURIComponent(
-                        String(id)
-                      )}'
-                    )
-                  "
-                >
-                  Excluir produto
-                </button>
-
-              </div>
-
-            </div>
-
-          </article>
-
-        `;
-
-      })
+    filteredProducts
+      .map(
+        renderProductCard
+      )
       .join("");
 
 }
 
 
-/* =========================
+function renderProductCard(
+  product
+){
+
+  const id =
+    product.id;
+
+
+  const image =
+    product.image_url ||
+    product.image ||
+    "";
+
+
+  const category =
+    normalizeCategory(
+      product.category ||
+      "roblox"
+    );
+
+
+  const stock =
+    getProductStock(
+      product
+    );
+
+
+  const productPrice =
+    getProductPrice(
+      product
+    );
+
+
+  let stockClass =
+    "good";
+
+
+  if(stock <= 0){
+
+    stockClass =
+      "empty";
+
+  }else if(stock <= 3){
+
+    stockClass =
+      "warning";
+
+  }
+
+
+  const stockText =
+    stock <= 0
+      ? "Sem estoque"
+      : `${stock} ${
+          stock === 1
+            ? "item"
+            : "itens"
+        }`;
+
+
+  return `
+
+    <article class="product">
+
+      <div class="product-image">
+
+        ${
+          image
+
+          ? `
+
+            <img
+              src="${escapeHtml(image)}"
+              alt="${escapeHtml(
+                product.name ||
+                "Produto"
+              )}"
+
+              onerror="
+                this.style.display='none';
+                this.nextElementSibling.style.display='flex';
+              "
+            >
+
+            <div
+              class="no-image"
+              style="display:none"
+            >
+              SEM IMAGEM
+            </div>
+
+          `
+
+          : `
+
+            <div class="no-image">
+              SEM IMAGEM
+            </div>
+
+          `
+        }
+
+
+        <div
+          class="product-stock-badge ${stockClass}"
+        >
+          ${escapeHtml(
+            stockText
+          )}
+        </div>
+
+      </div>
+
+
+      <div class="product-content">
+
+        <div class="product-name">
+
+          ${escapeHtml(
+            product.name ||
+            "Sem nome"
+          )}
+
+        </div>
+
+
+        <span class="category">
+
+          ${escapeHtml(
+            categoryName(
+              category
+            )
+          )}
+
+        </span>
+
+
+        <div class="product-price">
+
+          ${money(
+            productPrice
+          )}
+
+        </div>
+
+
+        <div class="product-meta">
+
+          <span
+            class="${
+              stock > 3
+                ? "stock-good"
+                : stock > 0
+                  ? "stock-warning"
+                  : "stock-empty"
+            }"
+          >
+
+            ${stockText}
+
+          </span>
+
+
+          <span>
+
+            ID ${
+              escapeHtml(
+                String(id)
+              )
+            }
+
+          </span>
+
+        </div>
+
+
+        ${
+          product.description
+
+          ? `
+
+            <div class="product-description">
+
+              ${escapeHtml(
+                product.description
+              )}
+
+            </div>
+
+          `
+
+          : ""
+
+        }
+
+
+        <div class="product-actions">
+
+          <button
+            class="btn dark small"
+            onclick="
+              openEditProduct(
+                '${encodeURIComponent(
+                  String(id)
+                )}'
+              )
+            "
+          >
+            Editar
+          </button>
+
+
+          <button
+            class="btn dark small"
+            onclick="
+              openStock(
+                '${encodeURIComponent(
+                  String(id)
+                )}'
+              )
+            "
+          >
+            + Estoque
+          </button>
+
+
+          <button
+            class="btn danger small product-delete"
+            onclick="
+              deleteProduct(
+                '${encodeURIComponent(
+                  String(id)
+                )}'
+              )
+            "
+          >
+            Excluir produto
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  `;
+
+}
+
+
+/* =========================================================
    ORDERS
-========================= */
+========================================================= */
 
 function renderOrders(){
 
@@ -2024,9 +3295,13 @@ function renderOrders(){
   if(!orders.length){
 
     box.innerHTML = `
+
       <div class="empty">
+
         Nenhuma venda paga registrada.
+
       </div>
+
     `;
 
     return;
@@ -2036,77 +3311,343 @@ function renderOrders(){
 
   box.innerHTML =
     orders
-      .slice(0,50)
-      .map(order => {
+      .slice(0,100)
+      .map(
+        (
+          order,
+          index
+        ) => {
 
-        const amount =
-          getOrderAmount(
-            order
-          );
-
-
-        const product =
-          order.product_name ||
-          order.product ||
-          order.name ||
-          "Produto";
+          const amount =
+            getOrderAmount(
+              order
+            );
 
 
-        const date =
-          order.paid_at ||
-          order.created_at ||
-          order.updated_at;
+          const product =
+            order.product_name ||
+            order.product ||
+            order.name ||
+            "Produto";
 
 
-        return `
-
-          <div class="order">
-
-            <div>
-
-              <div class="order-name">
-                ${escapeHtml(
-                  product
-                )}
-              </div>
+          const date =
+            order.paid_at ||
+            order.created_at ||
+            order.updated_at;
 
 
-              <div class="order-info">
+          const orderId =
+            order.id ||
+            order.order_id ||
+            order.reference ||
+            "";
+
+
+          return `
+
+            <div
+              class="order"
+              onclick="
+                openOrderDetails(
+                  ${index}
+                )
+              "
+              style="cursor:pointer"
+            >
+
+              <div class="order-left">
+
+                <div class="order-name">
+
+                  ${escapeHtml(
+                    product
+                  )}
+
+                </div>
+
+
+                <div class="order-info">
+
+                  ${
+                    date
+                      ? formatDate(date)
+                      : "Data não informada"
+                  }
+
+                  ·
+
+                  <span class="order-paid">
+
+                    Pagamento confirmado
+
+                  </span>
+
+                </div>
+
 
                 ${
-                  date
-                  ? formatDate(date)
-                  : "Data não informada"
+                  orderId
+
+                  ? `
+
+                    <div class="order-id">
+
+                      ID:
+                      ${escapeHtml(
+                        String(
+                          orderId
+                        )
+                      )}
+
+                    </div>
+
+                  `
+
+                  : ""
+
                 }
 
-                ·
+              </div>
 
-                <span class="order-paid">
-                  Pagamento confirmado
-                </span>
+
+              <div class="order-value">
+
+                ${money(
+                  amount
+                )}
 
               </div>
 
             </div>
 
+          `;
 
-            <div class="order-value">
-              ${money(amount)}
-            </div>
-
-          </div>
-
-        `;
-
-      })
+        }
+      )
       .join("");
 
 }
 
 
-/* =========================
+/* =========================================================
+   ORDER DETAILS
+========================================================= */
+
+function openOrderDetails(
+  index
+){
+
+  const order =
+    orders[index];
+
+
+  if(!order){
+    return;
+  }
+
+
+  const amount =
+    getOrderAmount(
+      order
+    );
+
+
+  const product =
+    order.product_name ||
+    order.product ||
+    order.name ||
+    "Produto";
+
+
+  const date =
+    order.paid_at ||
+    order.created_at ||
+    order.updated_at;
+
+
+  $("orderDetails")
+    .innerHTML = `
+
+      <div
+        style="
+          display:grid;
+          gap:10px;
+        "
+      >
+
+        <div
+          style="
+            padding:14px;
+            background:#111;
+            border:1px solid #202020;
+            border-radius:11px;
+          "
+        >
+
+          <div
+            style="
+              color:#555;
+              font-size:10px;
+              font-weight:800;
+              text-transform:uppercase;
+            "
+          >
+            Produto
+          </div>
+
+          <div
+            style="
+              margin-top:6px;
+              font-size:15px;
+              font-weight:850;
+            "
+          >
+            ${escapeHtml(
+              product
+            )}
+          </div>
+
+        </div>
+
+
+        <div
+          style="
+            padding:14px;
+            background:#111;
+            border:1px solid #202020;
+            border-radius:11px;
+          "
+        >
+
+          <div
+            style="
+              color:#555;
+              font-size:10px;
+              font-weight:800;
+              text-transform:uppercase;
+            "
+          >
+            Valor
+          </div>
+
+          <div
+            style="
+              margin-top:6px;
+              color:#68e38d;
+              font-size:22px;
+              font-weight:950;
+            "
+          >
+            ${money(
+              amount
+            )}
+          </div>
+
+        </div>
+
+
+        <div
+          style="
+            padding:14px;
+            background:#111;
+            border:1px solid #202020;
+            border-radius:11px;
+          "
+        >
+
+          <div
+            style="
+              color:#555;
+              font-size:10px;
+              font-weight:800;
+              text-transform:uppercase;
+            "
+          >
+            Status
+          </div>
+
+          <div
+            style="
+              margin-top:6px;
+              color:#68e38d;
+              font-size:13px;
+              font-weight:850;
+            "
+          >
+            Pagamento confirmado
+          </div>
+
+        </div>
+
+
+        ${
+          date
+
+          ? `
+
+            <div
+              style="
+                padding:14px;
+                background:#111;
+                border:1px solid #202020;
+                border-radius:11px;
+              "
+            >
+
+              <div
+                style="
+                  color:#555;
+                  font-size:10px;
+                  font-weight:800;
+                  text-transform:uppercase;
+                "
+              >
+                Data
+              </div>
+
+              <div
+                style="
+                  margin-top:6px;
+                  color:#ccc;
+                  font-size:12px;
+                "
+              >
+                ${formatDate(date)}
+              </div>
+
+            </div>
+
+          `
+
+          : ""
+
+        }
+
+      </div>
+
+    `;
+
+
+  $("orderModal")
+    .classList
+    .add("show");
+
+}
+
+
+function closeOrderModal(){
+
+  $("orderModal")
+    .classList
+    .remove("show");
+
+}
+
+
+/* =========================================================
    STATS
-========================= */
+========================================================= */
 
 function updateStats(){
 
@@ -2115,30 +3656,26 @@ function updateStats(){
     products.length;
 
 
-  $("statStock")
-    .textContent =
+  const stock =
     products.reduce(
       (
         total,
         product
       ) =>
+
         total +
         getProductStock(
           product
         ),
+
       0
     );
 
 
-  /*
-    IMPORTANTE:
+  $("statStock")
+    .textContent =
+    stock;
 
-    orders já foi filtrado por
-    isPaidOrder() dentro de loadAll().
-
-    Portanto somente vendas pagas
-    chegam aqui.
-  */
 
   $("statOrders")
     .textContent =
@@ -2151,28 +3688,33 @@ function updateStats(){
         total,
         order
       ) =>
+
         total +
         getOrderAmount(
           order
         ),
+
       0
     );
 
 
   $("statRevenue")
     .textContent =
-    money(revenue);
+    money(
+      revenue
+    );
 
 }
 
 
-/* =========================
+/* =========================================================
    PRODUCT MODAL
-========================= */
+========================================================= */
 
 function openProductModal(){
 
-  editingId = null;
+  editingId =
+    null;
 
 
   $("modalTitle")
@@ -2181,27 +3723,33 @@ function openProductModal(){
 
 
   $("productId")
-    .value = "";
+    .value =
+    "";
 
 
   $("productName")
-    .value = "";
+    .value =
+    "";
 
 
   $("productPrice")
-    .value = "";
+    .value =
+    "";
 
 
   $("productCategory")
-    .value = "roblox";
+    .value =
+    "roblox";
 
 
   $("productImage")
-    .value = "";
+    .value =
+    "";
 
 
   $("productDescription")
-    .value = "";
+    .value =
+    "";
 
 
   $("deleteFromModal")
@@ -2212,6 +3760,17 @@ function openProductModal(){
   $("productModal")
     .classList
     .add("show");
+
+
+  setTimeout(
+    () => {
+
+      $("productName")
+        .focus();
+
+    },
+    50
+  );
 
 }
 
@@ -2229,17 +3788,31 @@ function openEditProduct(
   const product =
     products.find(
       item =>
-        String(item.id) ===
-        String(id)
+
+        String(
+          item.id
+        ) ===
+
+        String(
+          id
+        )
     );
 
 
   if(!product){
+
+    showToast(
+      "Produto não encontrado.",
+      "error"
+    );
+
     return;
+
   }
 
 
-  editingId = id;
+  editingId =
+    id;
 
 
   $("modalTitle")
@@ -2248,12 +3821,14 @@ function openEditProduct(
 
 
   $("productId")
-    .value = id;
+    .value =
+    id;
 
 
   $("productName")
     .value =
-    product.name || "";
+    product.name ||
+    "";
 
 
   $("productPrice")
@@ -2296,9 +3871,9 @@ function openEditProduct(
 }
 
 
-/* =========================
+/* =========================================================
    SAVE PRODUCT
-========================= */
+========================================================= */
 
 async function saveProduct(){
 
@@ -2336,8 +3911,9 @@ async function saveProduct(){
 
   if(!name){
 
-    alert(
-      "Digite o nome do produto."
+    showToast(
+      "Digite o nome do produto.",
+      "error"
     );
 
     return;
@@ -2350,8 +3926,9 @@ async function saveProduct(){
     price < 0
   ){
 
-    alert(
-      "Digite um preço válido."
+    showToast(
+      "Digite um preço válido.",
+      "error"
     );
 
     return;
@@ -2376,6 +3953,23 @@ async function saveProduct(){
   };
 
 
+  const button =
+    $("saveProductButton");
+
+
+  button.disabled =
+    true;
+
+
+  button.innerHTML =
+    `
+      <span class="loading">
+        <span class="spinner"></span>
+        Salvando...
+      </span>
+    `;
+
+
   try{
 
     if(editingId){
@@ -2385,13 +3979,21 @@ async function saveProduct(){
           editingId
         )}`,
         {
+
           method:"PUT",
 
           body:
             JSON.stringify(
               payload
             )
+
         }
+      );
+
+
+      showToast(
+        "Produto atualizado.",
+        "success"
       );
 
     }else{
@@ -2399,13 +4001,21 @@ async function saveProduct(){
       await api(
         "/api/admin/products",
         {
+
           method:"POST",
 
           body:
             JSON.stringify(
               payload
             )
+
         }
+      );
+
+
+      showToast(
+        "Produto criado.",
+        "success"
       );
 
     }
@@ -2413,23 +4023,34 @@ async function saveProduct(){
 
     closeModal();
 
-    await loadAll();
+    await loadAll(
+      true
+    );
 
   }catch(error){
 
-    alert(
+    showToast(
       error.message ||
-      "Não foi possível salvar o produto."
+      "Não foi possível salvar o produto.",
+      "error"
     );
+
+  }finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Salvar produto";
 
   }
 
 }
 
 
-/* =========================
+/* =========================================================
    DELETE
-========================= */
+========================================================= */
 
 async function deleteCurrentProduct(){
 
@@ -2443,9 +4064,6 @@ async function deleteCurrentProduct(){
       editingId
     )
   );
-
-
-  closeModal();
 
 }
 
@@ -2463,17 +4081,25 @@ async function deleteProduct(
   const product =
     products.find(
       item =>
-        String(item.id) ===
-        String(id)
+
+        String(
+          item.id
+        ) ===
+
+        String(
+          id
+        )
     );
+
+
+  const name =
+    product?.name ||
+    "este produto";
 
 
   if(
     !confirm(
-      `Excluir "${
-        product?.name ||
-        "este produto"
-      }"?`
+      `Excluir "${name}"?\n\nEssa ação não pode ser desfeita.`
     )
   ){
 
@@ -2489,18 +4115,31 @@ async function deleteProduct(
         id
       )}`,
       {
+
         method:"DELETE"
+
       }
     );
 
 
-    await loadAll();
+    closeModal();
+
+    showToast(
+      "Produto excluído.",
+      "success"
+    );
+
+
+    await loadAll(
+      true
+    );
 
   }catch(error){
 
-    alert(
+    showToast(
       error.message ||
-      "Erro ao excluir produto."
+      "Erro ao excluir produto.",
+      "error"
     );
 
   }
@@ -2508,9 +4147,9 @@ async function deleteProduct(
 }
 
 
-/* =========================
+/* =========================================================
    STOCK
-========================= */
+========================================================= */
 
 function openStock(
   encodedId
@@ -2524,40 +4163,64 @@ function openStock(
 
   $("stockProduct")
     .innerHTML =
-    products
-      .map(
-        product => `
 
-          <option
-            value="${escapeHtml(
-              String(product.id)
-            )}"
+      products
+        .map(
+          product => `
 
-            ${
-              String(product.id) ===
-              String(id)
-              ? "selected"
-              : ""
-            }
-          >
-            ${escapeHtml(
-              product.name ||
-              "Produto"
-            )}
-          </option>
+            <option
+              value="${escapeHtml(
+                String(
+                  product.id
+                )
+              )}"
 
-        `
-      )
-      .join("");
+              ${
+                String(
+                  product.id
+                ) ===
+
+                String(
+                  id
+                )
+
+                  ? "selected"
+
+                  : ""
+              }
+            >
+
+              ${escapeHtml(
+                product.name ||
+                "Produto"
+              )}
+
+            </option>
+
+          `
+        )
+        .join("");
 
 
   $("stockItems")
-    .value = "";
+    .value =
+    "";
 
 
   $("stockModal")
     .classList
     .add("show");
+
+
+  setTimeout(
+    () => {
+
+      $("stockItems")
+        .focus();
+
+    },
+    50
+  );
 
 }
 
@@ -2577,8 +4240,9 @@ async function saveStock(){
 
   if(!productId){
 
-    alert(
-      "Selecione um produto."
+    showToast(
+      "Selecione um produto.",
+      "error"
     );
 
     return;
@@ -2588,8 +4252,9 @@ async function saveStock(){
 
   if(!text){
 
-    alert(
-      "Adicione pelo menos um item."
+    showToast(
+      "Adicione pelo menos um item.",
+      "error"
     );
 
     return;
@@ -2607,7 +4272,28 @@ async function saveStock(){
       .filter(Boolean);
 
 
+  const button =
+    $("saveStockButton");
+
+
+  button.disabled =
+    true;
+
+
+  button.innerHTML =
+    `
+      <span class="loading">
+        <span class="spinner"></span>
+        Adicionando...
+      </span>
+    `;
+
+
   try{
+
+    let added =
+      0;
+
 
     for(
       const account
@@ -2617,43 +4303,72 @@ async function saveStock(){
       await api(
         "/api/admin/stock",
         {
+
           method:"POST",
 
           body:
             JSON.stringify({
+
               productId,
+
               account
+
             })
+
         }
       );
+
+
+      added++;
 
     }
 
 
     closeStockModal();
 
-    await loadAll();
+
+    showToast(
+      `${added} item${
+        added === 1
+          ? ""
+          : "ns"
+      } adicionado${
+        added === 1
+          ? ""
+          : "s"
+      } ao estoque.`,
+      "success"
+    );
 
 
-    alert(
-      `${items.length} item(ns) adicionado(s) ao estoque.`
+    await loadAll(
+      true
     );
 
   }catch(error){
 
-    alert(
+    showToast(
       error.message ||
-      "Erro ao adicionar estoque."
+      "Erro ao adicionar estoque.",
+      "error"
     );
+
+  }finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Adicionar estoque";
 
   }
 
 }
 
 
-/* =========================
+/* =========================================================
    HELPERS
-========================= */
+========================================================= */
 
 function normalizeCategory(
   category
@@ -2690,13 +4405,17 @@ function categoryName(
 
   const names = {
 
-    roblox:"Roblox",
+    roblox:
+      "Roblox",
 
-    fortnite:"Fortnite",
+    fortnite:
+      "Fortnite",
 
-    vbucks:"V-Bucks",
+    vbucks:
+      "V-Bucks",
 
-    nitradas:"Nitradas"
+    nitradas:
+      "Nitradas"
 
   };
 
@@ -2740,11 +4459,37 @@ function scrollToSection(
   if(element){
 
     element.scrollIntoView({
+
       behavior:"smooth",
+
       block:"start"
+
     });
 
   }
+
+}
+
+
+function setActiveNav(
+  button
+){
+
+  document
+    .querySelectorAll(
+      ".nav button"
+    )
+    .forEach(
+      item =>
+        item.classList
+          .remove(
+            "active"
+          )
+    );
+
+
+  button.classList
+    .add("active");
 
 }
 
@@ -2754,7 +4499,9 @@ function formatDate(
 ){
 
   const date =
-    new Date(value);
+    new Date(
+      value
+    );
 
 
   if(
@@ -2764,14 +4511,23 @@ function formatDate(
   ){
 
     return escapeHtml(
-      String(value)
+      String(
+        value
+      )
     );
 
   }
 
 
   return date.toLocaleString(
-    "pt-BR"
+    "pt-BR",
+    {
+
+      dateStyle:"short",
+
+      timeStyle:"short"
+
+    }
   );
 
 }
@@ -2808,9 +4564,74 @@ function escapeHtml(
 }
 
 
-/* =========================
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(
+  message,
+  type = "success"
+){
+
+  const container =
+    $("toastContainer");
+
+
+  const toast =
+    document.createElement(
+      "div"
+    );
+
+
+  toast.className =
+    `toast ${type}`;
+
+
+  toast.innerHTML = `
+
+    <span class="toast-dot"></span>
+
+    <div class="toast-text">
+
+      ${escapeHtml(
+        message
+      )}
+
+    </div>
+
+  `;
+
+
+  container.appendChild(
+    toast
+  );
+
+
+  setTimeout(
+    () => {
+
+      toast.style.opacity =
+        "0";
+
+      toast.style.transform =
+        "translateY(8px)";
+
+      setTimeout(
+        () =>
+          toast.remove(),
+        180
+      );
+
+    },
+    3000
+  );
+
+}
+
+
+/* =========================================================
    MODAL EVENTS
-========================= */
+========================================================= */
 
 $("productModal")
   .addEventListener(
@@ -2848,6 +4669,24 @@ $("stockModal")
   );
 
 
+$("orderModal")
+  .addEventListener(
+    "click",
+    function(event){
+
+      if(
+        event.target ===
+        this
+      ){
+
+        closeOrderModal();
+
+      }
+
+    }
+  );
+
+
 document.addEventListener(
   "keydown",
   function(event){
@@ -2861,28 +4700,34 @@ document.addEventListener(
 
       closeStockModal();
 
+      closeOrderModal();
+
     }
 
   }
 );
 
 
-/* =========================
+/* =========================================================
    AUTO LOGIN
-========================= */
+========================================================= */
 
 if(ADMIN_PASSWORD){
 
   fetch(
     "/api/admin/products",
     {
+
       headers:{
+
         "x-admin-password":
           ADMIN_PASSWORD,
 
         "Cache-Control":
           "no-cache"
+
       }
+
     }
   )
 
@@ -2906,7 +4751,9 @@ if(ADMIN_PASSWORD){
         .remove("hidden");
 
 
-      return loadAll();
+      return loadAll(
+        true
+      );
 
     }
   )
@@ -2918,7 +4765,8 @@ if(ADMIN_PASSWORD){
         "onyx_admin_password"
       );
 
-      ADMIN_PASSWORD = "";
+      ADMIN_PASSWORD =
+        "";
 
     }
   );
