@@ -2512,21 +2512,14 @@
     .delete-product-btn:hover { background:rgba(255,70,70,.16); border-color:rgba(255,90,90,.45); transform:translateY(-1px); }
     .delete-product-btn:disabled { opacity:.55; cursor:wait; transform:none; }
 
-    /* ONYX CATEGORY CENTER */
-    .category-center { margin: 0 0 28px; }
-    .category-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
-    .category-card { position:relative; overflow:hidden; min-height:118px; padding:18px; text-align:left; border:1px solid var(--line); border-radius:16px; color:var(--text); background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012)); transition:.22s var(--ease); }
-    .category-card:hover { transform:translateY(-3px); border-color:var(--line2); background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.02)); }
-    .category-card.active { border-color:rgba(255,255,255,.22); box-shadow:0 15px 40px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.05); }
-    .category-icon { width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:rgba(255,255,255,.055);border:1px solid var(--line2);font-weight:1000;font-size:12px; }
-    .category-name { margin-top:14px;font-size:12px;font-weight:950; }
-    .category-count { margin-top:4px;color:var(--muted);font-size:9px; }
-    .category-filter { margin-top:12px;display:flex;gap:7px;flex-wrap:wrap; }
-    .category-chip { padding:8px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:rgba(255,255,255,.025);font-size:9px;font-weight:900;cursor:pointer; }
-    .category-chip.active { color:#f2f2f3;background:rgba(255,255,255,.08);border-color:var(--line2); }
-    .product-category { margin-top:8px;display:inline-flex;padding:5px 8px;border:1px solid var(--line);border-radius:999px;color:#9ea2aa;background:rgba(255,255,255,.025);font-size:8px;font-weight:900; }
-    @media (max-width:1050px){ .category-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
-    @media (max-width:620px){ .category-grid{grid-template-columns:1fr 1fr;} .category-card{min-height:105px;padding:14px;} }
+    .product-image-wrap { width:52px; height:52px; flex:0 0 52px; border:1px solid var(--line2); border-radius:12px; overflow:hidden; background:#08090b; display:grid; place-items:center; }
+    .product-image-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+    .product-image-fallback { color:#555a63; font-size:18px; }
+    .category-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 7px; border:1px solid var(--line2); border-radius:7px; color:#c8cbd1; background:rgba(255,255,255,.025); font-size:8px; font-weight:900; }
+    .image-preview { margin-top:8px; width:100%; min-height:120px; border:1px dashed var(--line2); border-radius:12px; background:#070809; display:grid; place-items:center; overflow:hidden; color:#555a63; font-size:9px; }
+    .image-preview img { width:100%; max-height:180px; object-fit:contain; display:block; }
+    .product-modal-grid { display:grid; grid-template-columns:minmax(0,1fr) 180px; gap:11px; }
+    @media(max-width:650px){ .product-modal-grid{grid-template-columns:1fr;} }
   </style>
 </head>
 
@@ -2706,11 +2699,6 @@
 
       </nav>
 
-
-      <button class="nav-item" onclick="scrollToCategoryCenter(this)">
-        <span class="nav-icon">◇</span>
-        <span class="nav-label">Categorias</span>
-      </button>
 
       <div class="sidebar-section">
         Sistema
@@ -3026,7 +3014,7 @@
 
         <button
           class="quick-card main"
-          onclick="openModal('productModal')"
+          onclick="openProductModal()"
         >
 
           <div class="quick-icon">
@@ -3364,7 +3352,7 @@
       <div class="modal-head">
 
         <div>
-          <div class="modal-title">
+          <div id="productModalTitle" class="modal-title">
             Criar novo produto
           </div>
 
@@ -3382,6 +3370,8 @@
 
       </div>
 
+
+      <input id="productEditId" type="hidden" value="">
 
       <div class="form-grid">
 
@@ -3428,6 +3418,25 @@
         placeholder="Descrição que será exibida para os clientes..."
       ></textarea>
 
+      <div class="product-modal-grid">
+        <div>
+          <label for="productCategory">Jogo / categoria</label>
+          <select id="productCategory">
+            <option value="roblox">🎮 Roblox</option>
+            <option value="fortnite">🟣 Fortnite</option>
+            <option value="vbucks">🪙 V-Bucks</option>
+            <option value="nitradas">💠 Nitro</option>
+          </select>
+        </div>
+        <div>
+          <label for="productImage">Imagem do produto</label>
+          <input id="productImage" type="url" placeholder="https://...">
+        </div>
+      </div>
+
+      <div id="productImagePreview" class="image-preview">
+        Pré-visualização da imagem
+      </div>
 
       <div class="modal-actions">
 
@@ -3441,7 +3450,7 @@
         <button
           id="addProductButton"
           class="action-btn"
-          onclick="addProduct()"
+          onclick="saveProduct()"
         >
           Criar produto
         </button>
@@ -3549,66 +3558,11 @@
     let productsData = [];
 
     let ordersData = [];
-    let activeCategory = 'all';
 
 
     const $ = id =>
       document.getElementById(id);
 
-
-
-    function isPaidOrder(order) {
-      const status = String(order?.status ?? order?.payment_status ?? '').toLowerCase().trim();
-      return ['paid','completed','complete','approved','confirmed','success','succeeded','finished'].includes(status);
-    }
-
-    function productCategory(product) {
-      const raw = String(product?.category ?? product?.category_slug ?? '').toLowerCase().trim();
-      if (raw.includes('roblox')) return 'roblox';
-      if (raw.includes('fortnite')) return 'fortnite';
-      if (raw.includes('vbucks') || raw.includes('v-bucks') || raw.includes('vbucks')) return 'vbucks';
-      if (raw.includes('nitr') || raw.includes('nitro') || raw.includes('discord')) return 'nitradas';
-      const text = `${product?.name || ''} ${product?.description || ''}`.toLowerCase();
-      if (text.includes('v-bucks') || text.includes('vbucks')) return 'vbucks';
-      if (text.includes('fortnite')) return 'fortnite';
-      if (text.includes('nitro') || text.includes('discord')) return 'nitradas';
-      if (text.includes('roblox') || text.includes('robux')) return 'roblox';
-      return 'outros';
-    }
-
-    function categoryLabel(key) {
-      return ({all:'Todos',roblox:'Roblox',fortnite:'Fortnite',vbucks:'V-Bucks',nitradas:'Nitradas',outros:'Outros'})[key] || key;
-    }
-
-    function renderCategories() {
-      const grid = $('categoryGrid');
-      const filters = $('categoryFilters');
-      if (!grid || !filters) return;
-      const keys = ['roblox','fortnite','vbucks','nitradas'];
-      const counts = Object.fromEntries(keys.map(k => [k, productsData.filter(p => productCategory(p) === k).length]));
-      const icons = {roblox:'R',fortnite:'F',vbucks:'V',nitradas:'N'};
-      grid.innerHTML = keys.map(k => `
-        <button type="button" class="category-card ${activeCategory===k?'active':''}" onclick="setCategory('${k}')">
-          <div class="category-icon">${icons[k]}</div>
-          <div class="category-name">${categoryLabel(k)}</div>
-          <div class="category-count">${counts[k]} produto${counts[k]===1?'':'s'} cadastrado${counts[k]===1?'':'s'}</div>
-        </button>`).join('');
-      filters.innerHTML = ['all',...keys,'outros'].map(k => `
-        <button type="button" class="category-chip ${activeCategory===k?'active':''}" onclick="setCategory('${k}')">${categoryLabel(k)}</button>`).join('');
-    }
-
-    function setCategory(category) {
-      activeCategory = category;
-      renderCategories();
-      renderProducts();
-      scrollToSection('productsSection');
-    }
-
-    function scrollToCategoryCenter(button) {
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      button?.classList.add('active');
-      document.querySelector('.category-center')?.scrollIntoView({behavior:'smooth',block:'start'});
-    }
 
     /* =====================================================
        API
@@ -4076,7 +4030,6 @@
 
         renderProductSelect();
 
-        renderCategories();
         renderProducts();
 
         renderInventory();
@@ -4333,10 +4286,6 @@
         [...productsData];
 
 
-      if (activeCategory !== 'all') {
-        list = list.filter(product => productCategory(product) === activeCategory);
-      }
-
       if (search) {
 
         list =
@@ -4410,8 +4359,12 @@
 
                 <div class="product-main">
 
-                  <div>
-
+                  <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+                    <div class="product-image-wrap">
+                      ${product.image_url ? `<img src="${escapeHtml(product.image_url)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">` : ''}
+                      <span class="product-image-fallback" style="${product.image_url ? 'display:none' : ''}">◈</span>
+                    </div>
+                    <div style="min-width:0;">
                     <div class="product-name">
                       ${escapeHtml(product.name)}
                     </div>
@@ -4422,7 +4375,10 @@
                         'Sem descrição.'
                       )}
                     </div>
-
+                    <div style="margin-top:7px;">
+                      <span class="category-badge">${escapeHtml(({roblox:'🎮 Roblox',fortnite:'🟣 Fortnite',vbucks:'🪙 V-Bucks',nitradas:'💠 Nitro'})[product.category] || product.category || 'Roblox')}</span>
+                    </div>
+                    </div>
                   </div>
 
                   <div class="product-price">
@@ -4450,6 +4406,13 @@
                 </div>
 
                 <div class="product-actions">
+                  <button
+                    type="button"
+                    class="action-btn secondary"
+                    onclick="openProductModal('${escapeHtml(product.id)}')"
+                  >
+                    ✏ Editar
+                  </button>
                   <button
                     type="button"
                     class="delete-product-btn"
@@ -4896,125 +4859,70 @@
        ADD PRODUCT
     ====================================================== */
 
-    async function addProduct() {
+    function openProductModal(productId = '') {
+      clearProductForm();
+      const product = productsData.find(p => String(p.id) === String(productId));
+      $('productEditId').value = product ? product.id : '';
+      $('productModalTitle').textContent = product ? 'Editar produto' : 'Criar novo produto';
+      $('addProductButton').textContent = product ? 'Salvar alterações' : 'Criar produto';
+      if (product) {
+        $('productName').value = product.name || '';
+        $('productPrice').value = (Number(product.price_cents || 0) / 100).toFixed(2);
+        $('productDescription').value = product.description || '';
+        $('productCategory').value = product.category || 'roblox';
+        $('productImage').value = product.image_url || '';
+        updateProductImagePreview();
+      }
+      openModal('productModal');
+    }
 
-      const name =
-        $('productName')
-          .value
-          .trim();
-
-
-      const price =
-        $('productPrice')
-          .value
-          .trim();
-
-
-      const description =
-        $('productDescription')
-          .value
-          .trim();
-
-
-      if (!name) {
-
-        showAlert(
-          'Digite o nome do produto.',
-          'error'
-        );
-
+    function updateProductImagePreview() {
+      const box = $('productImagePreview');
+      const url = $('productImage').value.trim();
+      if (!url) {
+        box.innerHTML = 'Pré-visualização da imagem';
         return;
       }
+      box.innerHTML = `<img src="${escapeHtml(url)}" alt="Pré-visualização" onerror="this.parentElement.innerHTML='Não foi possível carregar esta imagem.'">`;
+    }
 
+    async function saveProduct() {
+      const editId = $('productEditId').value.trim();
+      const name = $('productName').value.trim();
+      const price = $('productPrice').value.trim();
+      const description = $('productDescription').value.trim();
+      const category = $('productCategory').value;
+      const image_url = $('productImage').value.trim();
 
-      if (
-        !price ||
-        Number(price) <= 0
-      ) {
+      if (!name) return showAlert('Digite o nome do produto.', 'error');
+      if (!price || Number(price) <= 0) return showAlert('Digite um preço válido.', 'error');
 
-        showAlert(
-          'Digite um preço válido.',
-          'error'
-        );
-
-        return;
-      }
-
-
-      const button =
-        $('addProductButton');
-
-
+      const button = $('addProductButton');
       button.disabled = true;
-
-      button.textContent =
-        'Criando...';
-
+      button.textContent = editId ? 'Salvando...' : 'Criando...';
 
       try {
-
-        const response =
-          await fetch(
-            '/api/admin/products',
-            {
-              method: 'POST',
-              headers: headers(),
-              body: JSON.stringify({
-                name,
-                price,
-                description
-              })
-            }
-          );
-
-
-        const data =
-          await response.json()
-            .catch(() => ({}));
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            data.error ||
-            'Não foi possível criar o produto.'
-          );
-
-        }
-
+        const response = await fetch(
+          editId ? `/api/admin/products/${encodeURIComponent(editId)}` : '/api/admin/products',
+          {
+            method: editId ? 'PUT' : 'POST',
+            headers: headers(),
+            body: JSON.stringify({ name, price, description, category, image_url })
+          }
+        );
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Não foi possível salvar o produto.');
 
         clearProductForm();
-
-        closeModal(
-          'productModal'
-        );
-
-
-        showAlert(
-          'Produto criado com sucesso!'
-        );
-
-
+        closeModal('productModal');
+        showAlert(editId ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!');
         await refresh();
-
-
       } catch (error) {
-
-        showAlert(
-          error.message ||
-          'Erro ao criar produto.',
-          'error'
-        );
-
+        showAlert(error.message || 'Erro ao salvar produto.', 'error');
       } finally {
-
         button.disabled = false;
-
-        button.textContent =
-          'Criar produto';
-
+        button.textContent = 'Criar produto';
       }
-
     }
 
 
@@ -5143,6 +5051,12 @@
       $('productPrice').value = '';
 
       $('productDescription').value = '';
+      $('productCategory').value = 'roblox';
+      $('productImage').value = '';
+      $('productEditId').value = '';
+      $('productModalTitle').textContent = 'Criar novo produto';
+      $('addProductButton').textContent = 'Criar produto';
+      updateProductImagePreview();
 
     }
 
@@ -5152,6 +5066,9 @@
       $('stockAccount').value = '';
 
     }
+
+
+    $('productImage')?.addEventListener('input', updateProductImagePreview);
 
 
     /* =====================================================
