@@ -2506,6 +2506,11 @@
         padding: 18px;
       }
     }
+
+    .product-actions { display:flex; align-items:center; gap:8px; margin-top:14px; }
+    .delete-product-btn { border:1px solid rgba(255,90,90,.25); background:rgba(255,70,70,.08); color:#ff8b8b; border-radius:9px; padding:8px 12px; font:inherit; font-size:12px; font-weight:700; cursor:pointer; transition:.18s ease; }
+    .delete-product-btn:hover { background:rgba(255,70,70,.16); border-color:rgba(255,90,90,.45); transform:translateY(-1px); }
+    .delete-product-btn:disabled { opacity:.55; cursor:wait; transform:none; }
   </style>
 </head>
 
@@ -4201,6 +4206,39 @@
        PRODUCTS
     ====================================================== */
 
+    /* =====================================================
+       DELETE PRODUCT
+    ====================================================== */
+
+    async function deleteProduct(productId, productName) {
+      if (!productId) {
+        showAlert('Produto inválido.', 'error');
+        return;
+      }
+
+      if (!confirm(`Excluir o produto "${productName}"?\n\nEle será removido da loja, mas o histórico de vendas será preservado.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/admin/products/${encodeURIComponent(productId)}`,
+          { method:'DELETE', headers:headers(), cache:'no-store' }
+        );
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.error || 'Não foi possível excluir o produto.');
+        }
+
+        showAlert(`Produto "${productName}" removido da loja.`);
+        await refresh();
+      } catch (error) {
+        console.error(error);
+        showAlert(error.message || 'Erro ao excluir produto.', 'error');
+      }
+    }
+
     function renderProducts() {
 
       const container =
@@ -4328,6 +4366,19 @@
                     ID: ${escapeHtml(product.id)}
                   </span>
 
+                </div>
+
+                <div class="product-actions">
+                  <button
+                    type="button"
+                    class="delete-product-btn"
+                    onclick="deleteProduct(
+                      '${'${escapeHtml(product.id)}'}',
+                      '${'${escapeHtml(product.name).replace(/\\/g, "\\\\").replace(/\'/g, "\\\'")}'}'
+                    )"
+                  >
+                    🗑 Excluir produto
+                  </button>
                 </div>
 
               </article>
