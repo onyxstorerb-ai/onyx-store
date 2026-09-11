@@ -1,1458 +1,3 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>ONYX — Admin</title>
-
-<style>
-*{
-  box-sizing:border-box;
-}
-
-:root{
-  --bg:#050505;
-  --bg2:#080808;
-  --panel:#0b0b0b;
-  --panel2:#101010;
-  --border:#1d1d1d;
-  --border2:#292929;
-  --text:#f5f5f5;
-  --muted:#777;
-  --muted2:#999;
-  --white:#fff;
-  --green:#65e38a;
-  --red:#ff5d6c;
-  --gold:#d8b46a;
-}
-
-html{
-  background:var(--bg);
-}
-
-body{
-  margin:0;
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 15% 0%,#161616 0,transparent 32%),
-    radial-gradient(circle at 90% 10%,#111 0,transparent 25%),
-    var(--bg);
-  color:var(--text);
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-}
-
-button,
-input,
-textarea,
-select{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-.hidden{
-  display:none!important;
-}
-
-/* =========================
-   LOGIN
-========================= */
-
-.login{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-}
-
-.login-card{
-  width:min(420px,100%);
-  background:rgba(12,12,12,.92);
-  border:1px solid var(--border);
-  border-radius:24px;
-  padding:36px;
-  box-shadow:
-    0 30px 100px rgba(0,0,0,.65),
-    inset 0 1px 0 rgba(255,255,255,.025);
-}
-
-.login-brand{
-  text-align:center;
-  margin-bottom:30px;
-}
-
-.login-logo{
-  width:68px;
-  height:68px;
-  margin:0 auto 18px;
-  border:1px solid #303030;
-  border-radius:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    linear-gradient(145deg,#181818,#070707);
-  box-shadow:
-    0 15px 35px rgba(0,0,0,.45),
-    inset 0 1px 0 rgba(255,255,255,.06);
-  font-size:24px;
-  font-weight:950;
-  letter-spacing:2px;
-}
-
-.login-title{
-  margin:0;
-  font-size:28px;
-  font-weight:900;
-  letter-spacing:-1px;
-}
-
-.login-subtitle{
-  margin:8px 0 0;
-  color:var(--muted);
-  font-size:14px;
-}
-
-.login-error{
-  min-height:20px;
-  margin:12px 0 0;
-  text-align:center;
-  color:#ff6d7b;
-  font-size:13px;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-.btn{
-  border:1px solid transparent;
-  border-radius:11px;
-  padding:11px 16px;
-  background:#f4f4f4;
-  color:#050505;
-  font-weight:800;
-  transition:
-    transform .15s ease,
-    background .15s ease,
-    border-color .15s ease,
-    opacity .15s ease;
-}
-
-.btn:hover{
-  transform:translateY(-1px);
-}
-
-.btn:active{
-  transform:translateY(0);
-}
-
-.btn.dark{
-  background:#111;
-  color:#eee;
-  border-color:#242424;
-}
-
-.btn.dark:hover{
-  background:#171717;
-  border-color:#333;
-}
-
-.btn.danger{
-  background:rgba(255,70,85,.08);
-  color:#ff6976;
-  border-color:rgba(255,70,85,.22);
-}
-
-.btn.danger:hover{
-  background:rgba(255,70,85,.13);
-}
-
-.btn.full{
-  width:100%;
-}
-
-.btn.small{
-  padding:8px 11px;
-  font-size:12px;
-}
-
-/* =========================
-   INPUTS
-========================= */
-
-label{
-  display:block;
-  margin:18px 0 8px;
-  color:#a1a1a1;
-  font-size:12px;
-  font-weight:700;
-}
-
-input,
-textarea,
-select{
-  width:100%;
-  background:#080808;
-  border:1px solid #242424;
-  border-radius:11px;
-  color:#fff;
-  padding:12px 13px;
-  outline:none;
-  transition:
-    border-color .15s ease,
-    box-shadow .15s ease;
-}
-
-input::placeholder,
-textarea::placeholder{
-  color:#4e4e4e;
-}
-
-input:focus,
-textarea:focus,
-select:focus{
-  border-color:#555;
-  box-shadow:0 0 0 3px rgba(255,255,255,.035);
-}
-
-textarea{
-  min-height:115px;
-  resize:vertical;
-}
-
-select{
-  appearance:none;
-}
-
-/* =========================
-   LAYOUT
-========================= */
-
-.app{
-  min-height:100vh;
-  display:flex;
-}
-
-.sidebar{
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  width:245px;
-  padding:24px 16px;
-  border-right:1px solid var(--border);
-  background:rgba(6,6,6,.92);
-  backdrop-filter:blur(18px);
-  z-index:10;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:4px 10px 26px;
-}
-
-.brand-symbol{
-  width:42px;
-  height:42px;
-  border:1px solid #292929;
-  border-radius:13px;
-  background:linear-gradient(145deg,#1a1a1a,#070707);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  font-weight:950;
-  letter-spacing:1px;
-}
-
-.brand-name{
-  font-size:17px;
-  font-weight:950;
-  letter-spacing:2px;
-}
-
-.brand-admin{
-  margin-top:2px;
-  color:#5e5e5e;
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-}
-
-.nav-title{
-  padding:0 11px;
-  margin:12px 0 8px;
-  color:#4e4e4e;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:1.4px;
-  text-transform:uppercase;
-}
-
-.nav-item{
-  display:flex;
-  align-items:center;
-  gap:11px;
-  width:100%;
-  padding:11px;
-  margin-bottom:4px;
-  border:1px solid transparent;
-  border-radius:10px;
-  color:#888;
-  background:transparent;
-  font-size:13px;
-  font-weight:700;
-  text-align:left;
-}
-
-.nav-item.active{
-  color:#fff;
-  background:#111;
-  border-color:#202020;
-}
-
-.nav-icon{
-  width:18px;
-  text-align:center;
-  opacity:.8;
-}
-
-.sidebar-bottom{
-  position:absolute;
-  left:16px;
-  right:16px;
-  bottom:20px;
-}
-
-.content{
-  width:calc(100% - 245px);
-  margin-left:245px;
-  padding:32px 38px 60px;
-}
-
-.container{
-  width:min(1250px,100%);
-  margin:0 auto;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.page-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-  margin-bottom:28px;
-}
-
-.page-title{
-  margin:0;
-  font-size:30px;
-  font-weight:950;
-  letter-spacing:-1.3px;
-}
-
-.page-subtitle{
-  margin:7px 0 0;
-  color:var(--muted);
-  font-size:13px;
-}
-
-.header-actions{
-  display:flex;
-  gap:9px;
-}
-
-/* =========================
-   STATS
-========================= */
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:13px;
-  margin-bottom:22px;
-}
-
-.stat{
-  position:relative;
-  overflow:hidden;
-  min-height:126px;
-  padding:20px;
-  background:
-    linear-gradient(145deg,#101010,#0a0a0a);
-  border:1px solid var(--border);
-  border-radius:16px;
-  box-shadow:0 12px 35px rgba(0,0,0,.16);
-}
-
-.stat::after{
-  content:"";
-  position:absolute;
-  width:100px;
-  height:100px;
-  right:-45px;
-  top:-45px;
-  border-radius:50%;
-  background:rgba(255,255,255,.025);
-}
-
-.stat-label{
-  color:#777;
-  font-size:12px;
-  font-weight:700;
-}
-
-.stat-value{
-  margin-top:13px;
-  font-size:27px;
-  font-weight:950;
-  letter-spacing:-1px;
-}
-
-.stat-bottom{
-  margin-top:6px;
-  color:#4f4f4f;
-  font-size:11px;
-}
-
-/* =========================
-   SECTIONS
-========================= */
-
-.section{
-  margin-top:18px;
-  padding:21px;
-  background:rgba(10,10,10,.9);
-  border:1px solid var(--border);
-  border-radius:18px;
-  box-shadow:0 15px 45px rgba(0,0,0,.15);
-}
-
-.section-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:18px;
-}
-
-.section-title{
-  margin:0;
-  font-size:18px;
-  font-weight:900;
-  letter-spacing:-.4px;
-}
-
-.section-subtitle{
-  margin-top:5px;
-  color:#666;
-  font-size:12px;
-}
-
-/* =========================
-   PRODUCTS
-========================= */
-
-.products{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(255px,1fr));
-  gap:13px;
-}
-
-.product{
-  overflow:hidden;
-  background:#0b0b0b;
-  border:1px solid #1c1c1c;
-  border-radius:15px;
-  transition:
-    transform .18s ease,
-    border-color .18s ease,
-    box-shadow .18s ease;
-}
-
-.product:hover{
-  transform:translateY(-2px);
-  border-color:#292929;
-  box-shadow:0 15px 35px rgba(0,0,0,.3);
-}
-
-.product-image{
-  position:relative;
-  height:155px;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 0%,#191919,#080808 65%);
-}
-
-.product-image img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.no-image{
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#414141;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:1px;
-}
-
-.product-content{
-  padding:16px;
-}
-
-.product-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-}
-
-.product-name{
-  font-size:16px;
-  font-weight:850;
-  line-height:1.25;
-}
-
-.category{
-  display:inline-flex;
-  margin-top:9px;
-  padding:5px 8px;
-  border:1px solid #252525;
-  border-radius:7px;
-  background:#121212;
-  color:#888;
-  font-size:10px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-.product-price{
-  margin-top:14px;
-  font-size:21px;
-  font-weight:950;
-  letter-spacing:-.5px;
-}
-
-.product-meta{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-top:8px;
-  color:#777;
-  font-size:12px;
-}
-
-.stock-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-}
-
-.stock-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#666;
-}
-
-.stock-good .stock-dot{
-  background:var(--green);
-  box-shadow:0 0 8px rgba(101,227,138,.45);
-}
-
-.stock-empty .stock-dot{
-  background:var(--red);
-}
-
-.product-description{
-  margin:12px 0 0;
-  color:#696969;
-  font-size:12px;
-  line-height:1.55;
-}
-
-.product-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-  margin-top:15px;
-}
-
-.product-delete{
-  margin-top:7px;
-}
-
-/* =========================
-   ORDERS
-========================= */
-
-.orders{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.order{
-  padding:14px 15px;
-  background:#0b0b0b;
-  border:1px solid #1b1b1b;
-  border-radius:12px;
-  transition:border-color .15s ease;
-}
-
-.order:hover{
-  border-color:#292929;
-}
-
-.order-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-}
-
-.order-product{
-  font-size:13px;
-  font-weight:800;
-}
-
-.order-value{
-  color:var(--green);
-  font-size:14px;
-  font-weight:900;
-}
-
-.order-info{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-top:7px;
-  color:#666;
-  font-size:11px;
-}
-
-.status{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-}
-
-.status-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#777;
-}
-
-.status-paid{
-  color:#70d88e;
-}
-
-.status-paid .status-dot{
-  background:#70d88e;
-}
-
-/* =========================
-   EMPTY
-========================= */
-
-.empty{
-  grid-column:1/-1;
-  padding:40px 20px;
-  border:1px dashed #242424;
-  border-radius:13px;
-  color:#555;
-  text-align:center;
-  font-size:13px;
-}
-
-/* =========================
-   MODAL
-========================= */
-
-.modal{
-  position:fixed;
-  inset:0;
-  z-index:100;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:rgba(0,0,0,.78);
-  backdrop-filter:blur(8px);
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modal-box{
-  width:min(560px,100%);
-  max-height:90vh;
-  overflow:auto;
-  padding:24px;
-  background:#0b0b0b;
-  border:1px solid #292929;
-  border-radius:20px;
-  box-shadow:
-    0 35px 100px rgba(0,0,0,.7),
-    inset 0 1px 0 rgba(255,255,255,.03);
-}
-
-.modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:4px;
-}
-
-.modal-title{
-  margin:0;
-  font-size:20px;
-  font-weight:900;
-}
-
-.close-btn{
-  width:34px;
-  height:34px;
-  border:1px solid #252525;
-  border-radius:9px;
-  background:#111;
-  color:#999;
-  cursor:pointer;
-}
-
-.close-btn:hover{
-  color:#fff;
-  background:#171717;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.divider{
-  height:1px;
-  margin:20px 0;
-  background:#1d1d1d;
-}
-
-.modal-footer{
-  display:flex;
-  gap:8px;
-  margin-top:20px;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-.mobile-header{
-  display:none;
-}
-
-@media(max-width:900px){
-
-  .sidebar{
-    display:none;
-  }
-
-  .content{
-    width:100%;
-    margin-left:0;
-    padding:22px 18px 40px;
-  }
-
-  .mobile-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:22px;
-  }
-
-  .mobile-brand{
-    font-size:18px;
-    font-weight:950;
-    letter-spacing:2px;
-  }
-
-  .stats{
-    grid-template-columns:1fr 1fr;
-  }
-
-}
-
-@media(max-width:600px){
-
-  .content{
-    padding:16px 12px 35px;
-  }
-
-  .page-header{
-    align-items:flex-start;
-  }
-
-  .page-title{
-    font-size:25px;
-  }
-
-  .header-actions{
-    flex-direction:column;
-  }
-
-  .stats{
-    gap:8px;
-  }
-
-  .stat{
-    min-height:110px;
-    padding:15px;
-  }
-
-  .stat-value{
-    font-size:21px;
-  }
-
-  .section{
-    padding:14px;
-    border-radius:15px;
-  }
-
-  .section-header{
-    align-items:flex-start;
-  }
-
-  .products{
-    grid-template-columns:1fr;
-  }
-
-  .row{
-    grid-template-columns:1fr;
-  }
-
-  .order-top{
-    align-items:flex-start;
-    flex-direction:column;
-    gap:5px;
-  }
-
-  .modal{
-    padding:10px;
-  }
-
-  .modal-box{
-    padding:18px;
-    border-radius:16px;
-  }
-
-}
-
-@media(max-width:420px){
-
-  .stats{
-    grid-template-columns:1fr;
-  }
-
-  .login-card{
-    padding:25px 20px;
-  }
-
-}
-</style>
-</head>
-
-<body>
-
-<!-- =========================
-     LOGIN
-========================= -->
-
-<div id="login" class="login">
-
-  <div class="login-card">
-
-    <div class="login-brand">
-
-      <div class="login-logo">
-        O
-      </div>
-
-      <h1 class="login-title">
-        ONYX ADMIN
-      </h1>
-
-      <p class="login-subtitle">
-        Painel administrativo da loja
-      </p>
-
-    </div>
-
-    <label for="password">
-      Senha de administrador
-    </label>
-
-    <input
-      id="password"
-      type="password"
-      placeholder="Digite sua senha"
-      autocomplete="current-password"
-      onkeydown="if(event.key==='Enter') login()"
-    >
-
-    <br><br>
-
-    <button class="btn full" onclick="login()">
-      Entrar no painel
-    </button>
-
-    <p id="loginError" class="login-error"></p>
-
-  </div>
-
-</div>
-
-
-<!-- =========================
-     ADMIN
-========================= -->
-
-<div id="admin" class="hidden">
-
-  <aside class="sidebar">
-
-    <div class="brand">
-
-      <div class="brand-symbol">
-        O
-      </div>
-
-      <div>
-        <div class="brand-name">
-          ONYX
-        </div>
-
-        <div class="brand-admin">
-          ADMIN PANEL
-        </div>
-      </div>
-
-    </div>
-
-    <div class="nav-title">
-      Gerenciamento
-    </div>
-
-    <button class="nav-item active" onclick="scrollToSection('productsSection')">
-      <span class="nav-icon">▦</span>
-      Produtos
-    </button>
-
-    <button class="nav-item" onclick="scrollToSection('ordersSection')">
-      <span class="nav-icon">◷</span>
-      Vendas
-    </button>
-
-    <div class="sidebar-bottom">
-
-      <button
-        class="btn dark full"
-        onclick="logout()"
-      >
-        Sair da conta
-      </button>
-
-    </div>
-
-  </aside>
-
-
-  <main class="content">
-
-    <div class="container">
-
-      <div class="mobile-header">
-
-        <div class="mobile-brand">
-          ONYX ADMIN
-        </div>
-
-        <button
-          class="btn dark small"
-          onclick="logout()"
-        >
-          Sair
-        </button>
-
-      </div>
-
-
-      <!-- HEADER -->
-
-      <div class="page-header">
-
-        <div>
-          <h1 class="page-title">
-            Dashboard
-          </h1>
-
-          <p class="page-subtitle">
-            Controle sua loja, produtos, estoque e vendas.
-          </p>
-        </div>
-
-        <div class="header-actions">
-
-          <button
-            class="btn"
-            onclick="openProductModal()"
-          >
-            + Novo produto
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <!-- STATS -->
-
-      <div class="stats">
-
-        <div class="stat">
-
-          <div class="stat-label">
-            Produtos
-          </div>
-
-          <div
-            class="stat-value"
-            id="statProducts"
-          >
-            0
-          </div>
-
-          <div class="stat-bottom">
-            cadastrados na loja
-          </div>
-
-        </div>
-
-
-        <div class="stat">
-
-          <div class="stat-label">
-            Estoque
-          </div>
-
-          <div
-            class="stat-value"
-            id="statStock"
-          >
-            0
-          </div>
-
-          <div class="stat-bottom">
-            itens disponíveis
-          </div>
-
-        </div>
-
-
-        <div class="stat">
-
-          <div class="stat-label">
-            Vendas
-          </div>
-
-          <div
-            class="stat-value"
-            id="statOrders"
-          >
-            0
-          </div>
-
-          <div class="stat-bottom">
-            pedidos registrados
-          </div>
-
-        </div>
-
-
-        <div class="stat">
-
-          <div class="stat-label">
-            Faturamento
-          </div>
-
-          <div
-            class="stat-value"
-            id="statRevenue"
-          >
-            R$ 0,00
-          </div>
-
-          <div class="stat-bottom">
-            vendas registradas
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- PRODUTOS -->
-
-      <section
-        id="productsSection"
-        class="section"
-      >
-
-        <div class="section-header">
-
-          <div>
-
-            <h2 class="section-title">
-              Produtos
-            </h2>
-
-            <div class="section-subtitle">
-              Gerencie o catálogo e o estoque da ONYX.
-            </div>
-
-          </div>
-
-          <button
-            class="btn small"
-            onclick="openProductModal()"
-          >
-            + Produto
-          </button>
-
-        </div>
-
-
-        <div
-          id="products"
-          class="products"
-        >
-
-          <div class="empty">
-            Carregando produtos...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- PEDIDOS -->
-
-      <section
-        id="ordersSection"
-        class="section"
-      >
-
-        <div class="section-header">
-
-          <div>
-
-            <h2 class="section-title">
-              Histórico de vendas
-            </h2>
-
-            <div class="section-subtitle">
-              Últimos pedidos registrados no sistema.
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div
-          id="orders"
-          class="orders"
-        >
-
-          <div class="empty">
-            Carregando vendas...
-          </div>
-
-        </div>
-
-      </section>
-
-    </div>
-
-  </main>
-
-</div>
-
-
-<!-- =========================
-     PRODUTO MODAL
-========================= -->
-
-<div
-  id="productModal"
-  class="modal"
->
-
-  <div class="modal-box">
-
-    <div class="modal-header">
-
-      <h2
-        id="modalTitle"
-        class="modal-title"
-      >
-        Novo produto
-      </h2>
-
-      <button
-        class="close-btn"
-        onclick="closeModal()"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <div class="section-subtitle">
-      Configure as informações do produto.
-    </div>
-
-    <input
-      id="productId"
-      type="hidden"
-    >
-
-
-    <label for="productName">
-      Nome do produto
-    </label>
-
-    <input
-      id="productName"
-      placeholder="Ex: Conta Roblox"
-    >
-
-
-    <div class="row">
-
-      <div>
-
-        <label for="productPrice">
-          Preço (R$)
-        </label>
-
-        <input
-          id="productPrice"
-          type="number"
-          step="0.01"
-          min="0"
-          placeholder="10.00"
-        >
-
-      </div>
-
-
-      <div>
-
-        <label for="productCategory">
-          Categoria
-        </label>
-
-        <select id="productCategory">
-
-          <option value="roblox">
-            Roblox
-          </option>
-
-          <option value="fortnite">
-            Fortnite
-          </option>
-
-          <option value="vbucks">
-            V-Bucks
-          </option>
-
-          <option value="nitradas">
-            Nitradas
-          </option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-
-    <label for="productImage">
-      URL da imagem
-    </label>
-
-    <input
-      id="productImage"
-      placeholder="https://..."
-    >
-
-
-    <label for="productDescription">
-      Descrição
-    </label>
-
-    <textarea
-      id="productDescription"
-      placeholder="Descrição do produto"
-    ></textarea>
-
-
-    <div class="divider"></div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="btn dark"
-        style="flex:1"
-        onclick="closeModal()"
-      >
-        Cancelar
-      </button>
-
-      <button
-        class="btn"
-        style="flex:1"
-        onclick="saveProduct()"
-      >
-        Salvar produto
-      </button>
-
-    </div>
-
-
-    <br>
-
-    <button
-      id="deleteFromModal"
-      class="btn danger full hidden"
-      onclick="deleteCurrentProduct()"
-    >
-      Excluir produto
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- =========================
-     ESTOQUE MODAL
-========================= -->
-
-<div
-  id="stockModal"
-  class="modal"
->
-
-  <div class="modal-box">
-
-    <div class="modal-header">
-
-      <h2 class="modal-title">
-        Adicionar estoque
-      </h2>
-
-      <button
-        class="close-btn"
-        onclick="closeStockModal()"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <div class="section-subtitle">
-      Adicione uma conta ou item por linha.
-    </div>
-
-
-    <label for="stockProduct">
-      Produto
-    </label>
-
-    <select id="stockProduct"></select>
-
-
-    <label for="stockItems">
-      Contas / itens
-    </label>
-
-    <textarea
-      id="stockItems"
-      placeholder="conta1:senha1&#10;conta2:senha2&#10;conta3:senha3"
-    ></textarea>
-
-
-    <div class="divider"></div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="btn dark"
-        style="flex:1"
-        onclick="closeStockModal()"
-      >
-        Cancelar
-      </button>
-
-      <button
-        class="btn"
-        style="flex:1"
-        onclick="saveStock()"
-      >
-        Adicionar estoque
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
 <script>
 
 let ADMIN_PASSWORD =
@@ -1528,22 +73,9 @@ async function api(url,options={}){
    MONEY
 ========================= */
 
-/*
-  IMPORTANTE:
-  Cada função normaliza o valor apenas UMA vez.
-
-  amount_cents -> centavos -> reais
-  amount       -> usado como valor em reais
-  price        -> usado como valor em reais
-
-  Não existe mais a antiga conversão automática
-  dentro do money(), que podia converter o mesmo
-  valor duas vezes.
-*/
-
 function money(value){
 
-  const n = Number(value || 0);
+  const n = Number(value);
 
   if(!Number.isFinite(n)){
     return "R$ 0,00";
@@ -1557,52 +89,130 @@ function money(value){
 }
 
 
+/*
+  Normaliza o valor do pedido.
+
+  Prioridade:
+  1. amount_cents -> centavos
+  2. amount
+  3. price
+
+  Se "amount" vier absurdamente alto,
+  tratamos como centavos para evitar
+  faturamento de bilhões por erro de unidade.
+*/
+
 function getOrderAmount(order){
 
+  if(!order){
+    return 0;
+  }
+
+
   if(
-    order &&
     order.amount_cents !== undefined &&
-    order.amount_cents !== null
+    order.amount_cents !== null &&
+    order.amount_cents !== ""
   ){
 
     const cents =
       Number(order.amount_cents);
 
-    return Number.isFinite(cents)
-      ? cents / 100
-      : 0;
+    if(
+      Number.isFinite(cents) &&
+      cents >= 0
+    ){
+
+      return cents / 100;
+
+    }
 
   }
 
 
   if(
-    order &&
     order.amount !== undefined &&
-    order.amount !== null
+    order.amount !== null &&
+    order.amount !== ""
   ){
 
     const amount =
       Number(order.amount);
 
-    return Number.isFinite(amount)
-      ? amount
-      : 0;
+    if(
+      Number.isFinite(amount) &&
+      amount >= 0
+    ){
+
+      /*
+        Valores muito grandes normalmente
+        significam centavos vindos da API.
+
+        Exemplo:
+        1000 -> R$10,00
+        5000 -> R$50,00
+
+        Valores normais continuam em reais.
+      */
+
+      if(amount >= 1000000){
+        return amount / 100;
+      }
+
+      /*
+        Corrige casos como:
+        1000 = R$10,00
+        5000 = R$50,00
+        10000 = R$100,00
+
+        Mas não altera:
+        10 = R$10,00
+        50 = R$50,00
+        100 = R$100,00
+      */
+
+      if(
+        Number.isInteger(amount) &&
+        amount >= 1000
+      ){
+
+        return amount / 100;
+
+      }
+
+      return amount;
+
+    }
 
   }
 
 
   if(
-    order &&
     order.price !== undefined &&
-    order.price !== null
+    order.price !== null &&
+    order.price !== ""
   ){
 
     const price =
       Number(order.price);
 
-    return Number.isFinite(price)
-      ? price
-      : 0;
+    if(
+      Number.isFinite(price) &&
+      price >= 0
+    ){
+
+      if(
+        Number.isInteger(price) &&
+        price >= 1000
+      ){
+
+        return price / 100;
+
+      }
+
+      return price;
+
+    }
 
   }
 
@@ -1633,11 +243,6 @@ function getProductPrice(product){
   const price =
     Number(product?.price || 0);
 
-  /*
-    O backend atual normalmente trabalha com
-    price em reais. Mantemos isso diretamente.
-  */
-
   return Number.isFinite(price)
     ? price
     : 0;
@@ -1654,6 +259,92 @@ function getProductStock(p){
     p?.available ??
     0
   ) || 0;
+
+}
+
+
+/* =========================
+   STATUS DOS PEDIDOS
+========================= */
+
+/*
+  SOMENTE estes estados entram
+  no faturamento e na quantidade
+  de vendas.
+
+  Pending / created / waiting / unpaid
+  NÃO entram.
+*/
+
+function isPaidOrder(order){
+
+  if(!order){
+    return false;
+  }
+
+
+  const status = String(
+    order.status ??
+    order.payment_status ??
+    order.paymentStatus ??
+    ""
+  )
+  .trim()
+  .toLowerCase();
+
+
+  const paidStatuses = [
+    "paid",
+    "completed",
+    "complete",
+    "approved",
+    "confirmed",
+    "success",
+    "succeeded",
+    "finished"
+  ];
+
+
+  if(
+    paidStatuses.includes(status)
+  ){
+
+    return true;
+
+  }
+
+
+  /*
+    Algumas versões podem não retornar
+    status, mas retornam paid_at quando
+    o pagamento foi confirmado.
+  */
+
+  if(
+    !status &&
+    (
+      order.paid_at ||
+      order.paidAt ||
+      order.payment_confirmed_at ||
+      order.paymentConfirmedAt
+    )
+  ){
+
+    return true;
+
+  }
+
+
+  return false;
+
+}
+
+
+function getPaidOrders(){
+
+  return orders.filter(
+    order => isPaidOrder(order)
+  );
 
 }
 
@@ -2028,11 +719,22 @@ function renderOrders(){
   const box =
     $("orders");
 
-  if(!orders.length){
+
+  /*
+    IMPORTANTE:
+    O histórico agora mostra SOMENTE
+    pedidos realmente pagos.
+  */
+
+  const paidOrders =
+    getPaidOrders();
+
+
+  if(!paidOrders.length){
 
     box.innerHTML = `
       <div class="empty">
-        Nenhuma venda registrada.
+        Nenhuma venda paga registrada.
       </div>
     `;
 
@@ -2042,7 +744,7 @@ function renderOrders(){
 
 
   box.innerHTML =
-    orders
+    paidOrders
       .slice(0,50)
       .map(order => {
 
@@ -2057,17 +759,14 @@ function renderOrders(){
 
         const status =
           order.status ||
+          order.payment_status ||
           "paid";
 
         const date =
-          order.created_at ||
           order.paid_at ||
+          order.paidAt ||
+          order.created_at ||
           order.updated_at;
-
-
-        const paid =
-          String(status)
-            .toLowerCase() === "paid";
 
 
         return `
@@ -2091,14 +790,12 @@ function renderOrders(){
 
               <span class="
                 status
-                ${paid ? "status-paid" : ""}
+                status-paid
               ">
 
                 <span class="status-dot"></span>
 
-                ${escapeHtml(
-                  status
-                )}
+                Pago
 
               </span>
 
@@ -2148,23 +845,49 @@ function updateStats(){
       );
 
 
+  /*
+    SOMENTE PEDIDOS PAGOS.
+  */
+
+  const paidOrders =
+    getPaidOrders();
+
+
   $("statOrders")
     .textContent =
-      orders.length;
+      paidOrders.length;
 
 
   /*
-    IMPORTANTE:
-    getOrderAmount() já retorna REAIS.
-    Portanto aqui NÃO fazemos nenhuma
-    divisão adicional.
+    SOMENTE FATURAMENTO REAL.
   */
 
   const revenue =
-    orders.reduce(
-      (total,order) =>
-        total +
-        getOrderAmount(order),
+    paidOrders.reduce(
+      (total,order) => {
+
+        const value =
+          getOrderAmount(order);
+
+        /*
+          Proteção extra contra
+          valores absurdos vindos
+          de algum registro quebrado.
+        */
+
+        if(
+          !Number.isFinite(value) ||
+          value < 0 ||
+          value > 1000000
+        ){
+
+          return total;
+
+        }
+
+        return total + value;
+
+      },
       0
     );
 
@@ -2871,6 +1594,3 @@ if(ADMIN_PASSWORD){
 }
 
 </script>
-
-</body>
-</html>
