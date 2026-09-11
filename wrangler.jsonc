@@ -1,8 +1,12 @@
+```json
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "onyx-store",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-10",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "assets": {
     "directory": "./public",
     "binding": "ASSETS"
@@ -16,3 +20,4 @@
     }
   ]
 }
+```
