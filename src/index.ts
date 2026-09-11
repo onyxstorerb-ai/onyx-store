@@ -6,6 +6,7 @@ export interface Env {
   ADMIN_PASSWORD: string;
   ENCRYPTION_KEY: string;
 
+  // Mantido para compatibilidade.
   LIVEPIX_API_TOKEN: string;
 
   LIVEPIX_CLIENT_ID: string;
@@ -26,50 +27,179 @@ const LIVEPIX_FEE_PERCENT = 5;
 const DEFAULT_DISCORD_URL =
   "https://discord.gg/p9ZmkncQ8q";
 
-const CATEGORY_DEFAULTS: Record<
-  string,
-  {
-    name: string;
-    image: string;
-  }
-> = {
+/* =========================================================
+   CATEGORIAS
+========================================================= */
+
+const CATEGORY_DEFAULTS = {
   roblox: {
     name: "Roblox",
-    image:
+    image_url:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/512px-Roblox_%282025%29_%28App_Icon%29.svg.png"
   },
 
   fortnite: {
     name: "Fortnite",
-    image:
+    image_url:
       "https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png"
   },
 
   vbucks: {
     name: "V-Bucks",
-    image:
+    image_url:
       "https://static.wikia.nocookie.net/fortnite_ptbr_gamepedia_ptbr/images/5/5a/Icon_VBucks.png"
   },
 
   nitradas: {
-    name: "Nitradas",
-    image:
-      "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
+    name: "Nitro",
+    image_url:
+      "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ijJMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
   }
-};
+} as const;
+
+type CategoryKey =
+  keyof typeof CATEGORY_DEFAULTS;
+
+function normalizeCategory(
+  value: unknown
+): CategoryKey {
+  const category =
+    String(value || "")
+      .trim()
+      .toLowerCase();
+
+  if (
+    category === "fortnite" ||
+    category === "vbucks" ||
+    category === "nitradas" ||
+    category === "roblox"
+  ) {
+    return category;
+  }
+
+  return "roblox";
+}
+
+/* =========================================================
+   SCHEMA / MIGRAÇÃO
+========================================================= */
+
+let schemaReady: Promise<void> | null = null;
+
+async function ensureSchema(
+  env: Env
+) {
+  if (schemaReady) {
+    return schemaReady;
+  }
+
+  schemaReady = (async () => {
+    /*
+     * Tabela de configurações das categorias.
+     */
+    await env.DB.prepare(
+      `CREATE TABLE IF NOT EXISTS category_settings (
+        category TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        image_url TEXT
+      )`
+    ).run();
+
+    /*
+     * Descobre as colunas atuais da tabela products.
+     */
+    const columns =
+      await env.DB.prepare(
+        `PRAGMA table_info(products)`
+      ).all<any>();
+
+    const names = new Set(
+      (columns.results || []).map(
+        (column: any) =>
+          String(column.name)
+      )
+    );
+
+    /*
+     * Instala category somente se ainda não existir.
+     */
+    if (!names.has("category")) {
+      await env.DB.prepare(
+        `ALTER TABLE products
+         ADD COLUMN category TEXT DEFAULT 'roblox'`
+      ).run();
+    }
+
+    /*
+     * Instala image_url somente se ainda não existir.
+     */
+    if (!names.has("image_url")) {
+      await env.DB.prepare(
+        `ALTER TABLE products
+         ADD COLUMN image_url TEXT`
+      ).run();
+    }
+
+    /*
+     * Garante as categorias padrão.
+     *
+     * INSERT OR IGNORE preserva qualquer
+     * configuração já existente.
+     */
+    for (const [
+      category,
+      data
+    ] of Object.entries(
+      CATEGORY_DEFAULTS
+    )) {
+      await env.DB.prepare(
+        `INSERT OR IGNORE INTO category_settings
+         (
+           category,
+           name,
+           image_url
+         )
+         VALUES
+         (?, ?, ?)`
+      )
+        .bind(
+          category,
+          data.name,
+          data.image_url
+        )
+        .run();
+    }
+
+    /*
+     * Produtos antigos passam para Roblox
+     * caso tenham category NULL/vazio.
+     */
+    await env.DB.prepare(
+      `UPDATE products
+       SET category='roblox'
+       WHERE category IS NULL
+          OR category=''`
+    ).run();
+  })();
+
+  try {
+    await schemaReady;
+  } catch (error) {
+    schemaReady = null;
+    throw error;
+  }
+}
 
 let oauthCache: {
   accessToken: string;
   expiresAt: number;
 } | null = null;
 
-let schemaReady: Promise<void> | null = null;
-
 const json = (
   data: unknown,
   status = 200
-) => {
-  return new Response(
+) =>
+  new Response(
     JSON.stringify(data),
     {
       status,
@@ -81,14 +211,9 @@ const json = (
       }
     }
   );
-};
 
 function id(prefix: string) {
-  return (
-    prefix +
-    "_" +
-    crypto.randomUUID().replaceAll("-", "")
-  );
+  return `${prefix}_${crypto.randomUUID().replaceAll("-", "")}`;
 }
 
 function adminAuthorized(
@@ -103,120 +228,6 @@ function adminAuthorized(
 }
 
 /* =========================================================
-   BANCO / MIGRAÇÃO AUTOMÁTICA
-========================================================= */
-
-async function ensureSchema(
-  env: Env
-) {
-  if (schemaReady) {
-    return schemaReady;
-  }
-
-  schemaReady = (async () => {
-    await env.DB.prepare(
-      "CREATE TABLE IF NOT EXISTS category_settings (" +
-        "category TEXT PRIMARY KEY, " +
-        "image_url TEXT DEFAULT '', " +
-        "updated_at DATETIME DEFAULT CURRENT_TIMESTAMP" +
-      ")"
-    ).run();
-
-    const columns =
-      await env.DB.prepare(
-        "PRAGMA table_info(products)"
-      ).all();
-
-    const names =
-      new Set(
-        (columns.results || []).map(
-          (column: any) =>
-            column.name
-        )
-      );
-
-    if (!names.has("category")) {
-      await env.DB.prepare(
-        "ALTER TABLE products " +
-        "ADD COLUMN category TEXT DEFAULT 'roblox'"
-      ).run();
-    }
-
-    if (!names.has("image_url")) {
-      await env.DB.prepare(
-        "ALTER TABLE products " +
-        "ADD COLUMN image_url TEXT DEFAULT ''"
-      ).run();
-    }
-
-    const defaults = [
-      [
-        "roblox",
-        CATEGORY_DEFAULTS.roblox.image
-      ],
-      [
-        "fortnite",
-        CATEGORY_DEFAULTS.fortnite.image
-      ],
-      [
-        "vbucks",
-        CATEGORY_DEFAULTS.vbucks.image
-      ],
-      [
-        "nitradas",
-        CATEGORY_DEFAULTS.nitradas.image
-      ]
-    ];
-
-    for (
-      const item of defaults
-    ) {
-      await env.DB.prepare(
-        "INSERT OR IGNORE INTO category_settings " +
-        "(category, image_url) " +
-        "VALUES (?, ?)"
-      )
-        .bind(
-          item[0],
-          item[1]
-        )
-        .run();
-    }
-  })();
-
-  try {
-    await schemaReady;
-  } catch (error) {
-    schemaReady = null;
-    throw error;
-  }
-}
-
-/* =========================================================
-   CATEGORIAS
-========================================================= */
-
-function normalizeCategory(
-  value: unknown
-) {
-  const category =
-    String(value || "")
-      .trim()
-      .toLowerCase();
-
-  if (
-    Object.prototype.hasOwnProperty.call(
-      CATEGORY_DEFAULTS,
-      category
-    )
-  ) {
-    return category;
-  }
-
-  return "roblox";
-}
-
-/* =========================================================
    CRIPTOGRAFIA
 ========================================================= */
 
@@ -224,9 +235,7 @@ async function keyFromSecret(
   secret: string
 ) {
   const bytes =
-    new TextEncoder().encode(
-      secret
-    );
+    new TextEncoder().encode(secret);
 
   const hash =
     await crypto.subtle.digest(
@@ -237,9 +246,7 @@ async function keyFromSecret(
   return crypto.subtle.importKey(
     "raw",
     hash,
-    {
-      name: "AES-GCM"
-    },
+    { name: "AES-GCM" },
     false,
     [
       "encrypt",
@@ -253,9 +260,7 @@ async function encrypt(
   secret: string
 ) {
   const key =
-    await keyFromSecret(
-      secret
-    );
+    await keyFromSecret(secret);
 
   const iv =
     crypto.getRandomValues(
@@ -269,9 +274,7 @@ async function encrypt(
         iv
       },
       key,
-      new TextEncoder().encode(
-        text
-      )
+      new TextEncoder().encode(text)
     );
 
   const result =
@@ -288,9 +291,7 @@ async function encrypt(
   );
 
   return btoa(
-    String.fromCharCode(
-      ...result
-    )
+    String.fromCharCode(...result)
   );
 }
 
@@ -301,9 +302,7 @@ async function decrypt(
   const raw =
     Uint8Array.from(
       atob(value),
-      function (c) {
-        return c.charCodeAt(0);
-      }
+      c => c.charCodeAt(0)
     );
 
   const iv =
@@ -313,9 +312,7 @@ async function decrypt(
     raw.slice(12);
 
   const key =
-    await keyFromSecret(
-      secret
-    );
+    await keyFromSecret(secret);
 
   const decrypted =
     await crypto.subtle.decrypt(
@@ -354,7 +351,7 @@ function amountWithFee(
 
   return Math.ceil(
     amountCents /
-      (1 - fee)
+    (1 - fee)
   );
 }
 
@@ -380,43 +377,37 @@ async function getLivepixAccessToken(
   if (
     oauthCache &&
     oauthCache.expiresAt >
-      now + 60000
+      now + 60_000
   ) {
     return oauthCache.accessToken;
   }
 
   const body =
-    new URLSearchParams();
+    new URLSearchParams({
+      grant_type:
+        "client_credentials",
 
-  body.set(
-    "grant_type",
-    "client_credentials"
-  );
+      client_id:
+        env.LIVEPIX_CLIENT_ID,
 
-  body.set(
-    "client_id",
-    env.LIVEPIX_CLIENT_ID
-  );
+      client_secret:
+        env.LIVEPIX_CLIENT_SECRET,
 
-  body.set(
-    "client_secret",
-    env.LIVEPIX_CLIENT_SECRET
-  );
-
-  body.set(
-    "scope",
-    "payments:read payments:write"
-  );
+      scope:
+        "payments:read payments:write"
+    });
 
   const response =
     await fetch(
       LIVEPIX_OAUTH_URL,
       {
         method: "POST",
+
         headers: {
           "Content-Type":
             "application/x-www-form-urlencoded"
         },
+
         body
       }
     );
@@ -440,9 +431,7 @@ async function getLivepixAccessToken(
     throw new Error(
       data?.error_description ||
       data?.message ||
-      "Falha OAuth2 LivePix (" +
-        response.status +
-        ")."
+      `Falha OAuth2 LivePix (${response.status}).`
     );
   }
 
@@ -455,7 +444,7 @@ async function getLivepixAccessToken(
       Number(
         data.expires_in || 3600
       ) *
-        1000
+      1000
   };
 
   return data.access_token;
@@ -482,8 +471,7 @@ async function livepixRequest(
 
   headers.set(
     "Authorization",
-    "Bearer " +
-      accessToken
+    `Bearer ${accessToken}`
   );
 
   headers.set(
@@ -505,8 +493,7 @@ async function livepixRequest(
 
   let response =
     await fetch(
-      LIVEPIX_API_URL +
-        path,
+      `${LIVEPIX_API_URL}${path}`,
       {
         ...init,
         headers
@@ -525,14 +512,12 @@ async function livepixRequest(
 
     headers.set(
       "Authorization",
-      "Bearer " +
-        retryToken
+      `Bearer ${retryToken}`
     );
 
     response =
       await fetch(
-        LIVEPIX_API_URL +
-          path,
+        `${LIVEPIX_API_URL}${path}`,
         {
           ...init,
           headers
@@ -560,11 +545,9 @@ async function livepixCreatePayment(
     );
 
   const redirectUrl =
-    origin +
-    "/?paid=" +
-    encodeURIComponent(
+    `${origin}/?paid=${encodeURIComponent(
       orderId
-    );
+    )}`;
 
   const response =
     await livepixRequest(
@@ -572,14 +555,16 @@ async function livepixCreatePayment(
       "/payments",
       {
         method: "POST",
-        body:
-          JSON.stringify({
-            amount:
-              chargedAmountCents,
-            currency:
-              "BRL",
-            redirectUrl
-          })
+
+        body: JSON.stringify({
+          amount:
+            chargedAmountCents,
+
+          currency:
+            "BRL",
+
+          redirectUrl
+        })
       }
     );
 
@@ -600,9 +585,7 @@ async function livepixCreatePayment(
       body?.message ||
       body?.error_description ||
       body?.error ||
-      "Falha ao criar pagamento LivePix (" +
-        response.status +
-        ")."
+      `Falha ao criar pagamento LivePix (${response.status}).`
     );
   }
 
@@ -620,8 +603,11 @@ async function livepixCreatePayment(
 
   return {
     ...payment,
+
     description,
+
     chargedAmountCents,
+
     orderId
   };
 }
@@ -641,10 +627,9 @@ async function verifyLivepixPayment(
   const response =
     await livepixRequest(
       env,
-      "/payments/" +
-        encodeURIComponent(
-          paymentId
-        )
+      `/payments/${encodeURIComponent(
+        paymentId
+      )}`
     );
 
   if (!response.ok) {
@@ -654,7 +639,10 @@ async function verifyLivepixPayment(
   const body =
     await response.json<any>();
 
-  return body?.data ?? null;
+  return (
+    body?.data ??
+    null
+  );
 }
 
 async function findLivepixPaymentByReference(
@@ -666,18 +654,14 @@ async function findLivepixPaymentByReference(
   }
 
   const query =
-    new URLSearchParams();
-
-  query.set(
-    "reference",
-    reference
-  );
+    new URLSearchParams({
+      reference
+    });
 
   const response =
     await livepixRequest(
       env,
-      "/payments?" +
-        query.toString()
+      `/payments?${query.toString()}`
     );
 
   if (!response.ok) {
@@ -699,7 +683,7 @@ async function findLivepixPaymentByReference(
       (payment: any) =>
         String(
           payment?.reference ||
-            ""
+          ""
         ) === reference
     ) ??
     payments[0] ??
@@ -721,22 +705,23 @@ async function claimInventoryForPaidOrder(
   const result =
     await env.DB.batch([
       env.DB.prepare(
-        "UPDATE inventory " +
-        "SET " +
-        "status='sold', " +
-        "order_id=?, " +
-        "sold_at=CURRENT_TIMESTAMP " +
-        "WHERE id = (" +
-          "SELECT i.id " +
-          "FROM inventory i " +
-          "JOIN orders o ON o.id=? " +
-          "WHERE i.product_id=? " +
-          "AND i.status='available' " +
-          "AND o.status='pending' " +
-          "ORDER BY i.created_at ASC " +
-          "LIMIT 1" +
-        ") " +
-        "AND status='available'"
+        `UPDATE inventory
+         SET
+           status='sold',
+           order_id=?,
+           sold_at=CURRENT_TIMESTAMP
+         WHERE id = (
+           SELECT i.id
+           FROM inventory i
+           JOIN orders o
+             ON o.id=?
+           WHERE i.product_id=?
+             AND i.status='available'
+             AND o.status='pending'
+           ORDER BY i.created_at ASC
+           LIMIT 1
+         )
+         AND status='available'`
       ).bind(
         orderId,
         orderId,
@@ -744,27 +729,27 @@ async function claimInventoryForPaidOrder(
       ),
 
       env.DB.prepare(
-        "UPDATE orders " +
-        "SET " +
-        "status='paid', " +
-        "inventory_id=(" +
-          "SELECT id " +
-          "FROM inventory " +
-          "WHERE order_id=? " +
-          "AND status='sold' " +
-          "LIMIT 1" +
-        "), " +
-        "livepix_id=?, " +
-        "livepix_reference=?, " +
-        "paid_at=CURRENT_TIMESTAMP " +
-        "WHERE id=? " +
-        "AND status='pending' " +
-        "AND EXISTS (" +
-          "SELECT 1 " +
-          "FROM inventory " +
-          "WHERE order_id=? " +
-          "AND status='sold'" +
-        ")"
+        `UPDATE orders
+         SET
+           status='paid',
+           inventory_id=(
+             SELECT id
+             FROM inventory
+             WHERE order_id=?
+               AND status='sold'
+             LIMIT 1
+           ),
+           livepix_id=?,
+           livepix_reference=?,
+           paid_at=CURRENT_TIMESTAMP
+         WHERE id=?
+           AND status='pending'
+           AND EXISTS (
+             SELECT 1
+             FROM inventory
+             WHERE order_id=?
+               AND status='sold'
+           )`
       ).bind(
         orderId,
         paymentId,
@@ -774,34 +759,40 @@ async function claimInventoryForPaidOrder(
       ),
 
       env.DB.prepare(
-        "SELECT " +
-          "id, " +
-          "product_id, " +
-          "account_encrypted, " +
-          "status, " +
-          "order_id " +
-        "FROM inventory " +
-        "WHERE order_id=? " +
-        "AND status='sold' " +
-        "LIMIT 1"
-      ).bind(orderId),
+        `SELECT
+           i.id,
+           i.product_id,
+           i.account_encrypted,
+           i.status,
+           i.order_id
+         FROM inventory i
+         WHERE i.order_id=?
+           AND i.status='sold'
+         LIMIT 1`
+      ).bind(
+        orderId
+      ),
 
       env.DB.prepare(
-        "SELECT " +
-          "id, " +
-          "status, " +
-          "inventory_id " +
-        "FROM orders " +
-        "WHERE id=? " +
-        "LIMIT 1"
-      ).bind(orderId)
+        `SELECT
+           id,
+           status,
+           inventory_id
+         FROM orders
+         WHERE id=?
+         LIMIT 1`
+      ).bind(
+        orderId
+      )
     ]);
 
   const inventory =
-    result[2]?.results?.[0] as any;
+    result[2]
+      ?.results?.[0] as any;
 
   const finalOrder =
-    result[3]?.results?.[0] as any;
+    result[3]
+      ?.results?.[0] as any;
 
   if (
     finalOrder?.status ===
@@ -843,7 +834,7 @@ async function claimInventoryForPaidOrder(
 }
 
 /* =========================================================
-   APROVAR PAGAMENTO
+   APROVAR PAGAMENTO + ENTREGAR
 ========================================================= */
 
 async function markPaidAndDeliver(
@@ -852,13 +843,14 @@ async function markPaidAndDeliver(
 ) {
   const paymentId =
     String(
-      payment?.id || ""
+      payment?.id ||
+      ""
     );
 
   const reference =
     String(
       payment?.reference ||
-        ""
+      ""
     );
 
   if (
@@ -875,12 +867,14 @@ async function markPaidAndDeliver(
   let order =
     reference
       ? await env.DB.prepare(
-          "SELECT * " +
-          "FROM orders " +
-          "WHERE livepix_reference=? " +
-          "LIMIT 1"
+          `SELECT *
+           FROM orders
+           WHERE livepix_reference=?
+           LIMIT 1`
         )
-          .bind(reference)
+          .bind(
+            reference
+          )
           .first<any>()
       : null;
 
@@ -890,12 +884,14 @@ async function markPaidAndDeliver(
   ) {
     order =
       await env.DB.prepare(
-        "SELECT * " +
-        "FROM orders " +
-        "WHERE livepix_id=? " +
-        "LIMIT 1"
+        `SELECT *
+         FROM orders
+         WHERE livepix_id=?
+         LIMIT 1`
       )
-        .bind(paymentId)
+        .bind(
+          paymentId
+        )
         .first<any>();
   }
 
@@ -919,8 +915,7 @@ async function markPaidAndDeliver(
     };
   }
 
-  let verified: any =
-    null;
+  let verified: any = null;
 
   if (paymentId) {
     verified =
@@ -949,7 +944,9 @@ async function markPaidAndDeliver(
     };
   }
 
-  if (!verified.proof) {
+  if (
+    !verified.proof
+  ) {
     return {
       ok: false,
       reason:
@@ -960,7 +957,7 @@ async function markPaidAndDeliver(
   if (
     String(
       verified.currency ||
-        ""
+      ""
     ).toUpperCase() !==
     "BRL"
   ) {
@@ -998,15 +995,15 @@ async function markPaidAndDeliver(
   const finalPaymentId =
     String(
       verified.id ||
-        paymentId ||
-        ""
+      paymentId ||
+      ""
     );
 
   const finalReference =
     String(
       verified.reference ||
-        reference ||
-        ""
+      reference ||
+      ""
     );
 
   const claimed =
@@ -1033,10 +1030,12 @@ async function markPaidAndDeliver(
     };
   }
 
+  const inventory =
+    claimed.inventory;
+
   const account =
     await decrypt(
-      claimed.inventory
-        .account_encrypted,
+      inventory.account_encrypted,
       env.ENCRYPTION_KEY
     );
 
@@ -1052,7 +1051,7 @@ async function markPaidAndDeliver(
 }
 
 /* =========================================================
-   WEBHOOK
+   WEBHOOK LIVEPIX
 ========================================================= */
 
 async function handleLivepixWebhook(
@@ -1110,13 +1109,14 @@ async function handleLivepixWebhook(
 
   const paymentId =
     String(
-      resource?.id || ""
+      resource?.id ||
+      ""
     );
 
   const reference =
     String(
       resource?.reference ||
-        ""
+      ""
     );
 
   if (
@@ -1132,8 +1132,7 @@ async function handleLivepixWebhook(
     );
   }
 
-  let payment: any =
-    null;
+  let payment: any = null;
 
   if (paymentId) {
     payment =
@@ -1171,9 +1170,11 @@ async function handleLivepixWebhook(
     return json({
       status:
         "ok",
+
       orderId:
         result.orderId ??
         null,
+
       alreadyPaid:
         result.alreadyPaid ??
         false
@@ -1224,9 +1225,11 @@ async function api(
   env: Env,
   url: URL
 ) {
-  await ensureSchema(
-    env
-  );
+  /*
+   * Garante que a estrutura de categorias/imagens
+   * exista sem alterar a estrutura antiga.
+   */
+  await ensureSchema(env);
 
   const path =
     url.pathname;
@@ -1237,57 +1240,28 @@ async function api(
 
   if (
     request.method === "GET" &&
-    path ===
-      "/api/categories"
+    path === "/api/categories"
   ) {
-    const rows =
+    const categories =
       await env.DB.prepare(
-        "SELECT " +
-          "category, image_url " +
-        "FROM category_settings"
+        `SELECT
+           c.category,
+           c.name,
+           c.image_url,
+
+           (
+             SELECT COUNT(*)
+             FROM products p
+             WHERE p.category=c.category
+               AND p.active=1
+           ) AS products
+
+         FROM category_settings c
+         ORDER BY c.rowid ASC`
       ).all();
 
-    const result =
-      Object.entries(
-        CATEGORY_DEFAULTS
-      ).map(
-        function (
-          entry
-        ) {
-          const key =
-            entry[0];
-
-          const value =
-            entry[1];
-
-          const row =
-            (
-              rows.results ||
-              []
-            ).find(
-              function (
-                item: any
-              ) {
-                return (
-                  item.category ===
-                  key
-                );
-              }
-            ) as any;
-
-          return {
-            id: key,
-            name:
-              value.name,
-            image:
-              row?.image_url ||
-              value.image
-          };
-        }
-      );
-
     return json(
-      result
+      categories.results
     );
   }
 
@@ -1297,27 +1271,31 @@ async function api(
 
   if (
     request.method === "GET" &&
-    path ===
-      "/api/products"
+    path === "/api/products"
   ) {
     const products =
       await env.DB.prepare(
-        "SELECT " +
-          "p.id, " +
-          "p.name, " +
-          "p.description, " +
-          "p.price_cents, " +
-          "p.category, " +
-          "p.image_url, " +
-          "(" +
-            "SELECT COUNT(*) " +
-            "FROM inventory i " +
-            "WHERE i.product_id=p.id " +
-            "AND i.status='available'" +
-          ") AS stock " +
-        "FROM products p " +
-        "WHERE p.active=1 " +
-        "ORDER BY p.created_at DESC"
+        `SELECT
+          p.id,
+          p.name,
+          p.description,
+          p.price_cents,
+          p.category,
+          p.image_url,
+
+          (
+            SELECT COUNT(*)
+            FROM inventory i
+            WHERE i.product_id=p.id
+              AND i.status='available'
+          ) AS stock
+
+         FROM products p
+
+         WHERE p.active=1
+
+         ORDER BY
+           p.created_at DESC`
       ).all();
 
     return json(
@@ -1331,8 +1309,7 @@ async function api(
 
   if (
     request.method === "POST" &&
-    path ===
-      "/api/checkout"
+    path === "/api/checkout"
   ) {
     let body: any;
 
@@ -1352,7 +1329,7 @@ async function api(
     const productId =
       String(
         body?.productId ||
-          ""
+        ""
       );
 
     if (!productId) {
@@ -1367,13 +1344,15 @@ async function api(
 
     const product =
       await env.DB.prepare(
-        "SELECT * " +
-        "FROM products " +
-        "WHERE id=? " +
-        "AND active=1 " +
-        "LIMIT 1"
+        `SELECT *
+         FROM products
+         WHERE id=?
+           AND active=1
+         LIMIT 1`
       )
-        .bind(productId)
+        .bind(
+          productId
+        )
         .first<any>();
 
     if (!product) {
@@ -1408,12 +1387,14 @@ async function api(
 
     const stock =
       await env.DB.prepare(
-        "SELECT COUNT(*) AS total " +
-        "FROM inventory " +
-        "WHERE product_id=? " +
-        "AND status='available'"
+        `SELECT COUNT(*) AS total
+         FROM inventory
+         WHERE product_id=?
+           AND status='available'`
       )
-        .bind(product.id)
+        .bind(
+          product.id
+        )
         .first<any>();
 
     const availableStock =
@@ -1443,9 +1424,16 @@ async function api(
 
     try {
       await env.DB.prepare(
-        "INSERT INTO orders " +
-        "(id, product_id, inventory_id, amount_cents, status) " +
-        "VALUES (?, ?, NULL, ?, 'pending')"
+        `INSERT INTO orders
+         (
+           id,
+           product_id,
+           inventory_id,
+           amount_cents,
+           status
+         )
+         VALUES
+         (?, ?, NULL, ?, 'pending')`
       )
         .bind(
           orderId,
@@ -1473,20 +1461,20 @@ async function api(
         await livepixCreatePayment(
           env,
           baseAmountCents,
-          "ONYX - " +
-            product.name,
+          `ONYX - ${product.name}`,
           orderId,
           url.origin
         );
 
       await env.DB.prepare(
-        "UPDATE orders " +
-        "SET livepix_id=?, livepix_reference=? " +
-        "WHERE id=?"
+        `UPDATE orders
+         SET
+           livepix_id=?,
+           livepix_reference=?
+         WHERE id=?`
       )
         .bind(
-          payment.id ??
-            null,
+          payment.id ?? null,
           payment.reference,
           orderId
         )
@@ -1511,7 +1499,8 @@ async function api(
           amountCents:
             chargedAmountCents,
 
-          baseAmountCents,
+          baseAmountCents:
+            baseAmountCents,
 
           feePercent:
             LIVEPIX_FEE_PERCENT
@@ -1520,12 +1509,14 @@ async function api(
       );
     } catch (error) {
       await env.DB.prepare(
-        "UPDATE orders " +
-        "SET status='cancelled' " +
-        "WHERE id=? " +
-        "AND status='pending'"
+        `UPDATE orders
+         SET status='cancelled'
+         WHERE id=?
+           AND status='pending'`
       )
-        .bind(orderId)
+        .bind(
+          orderId
+        )
         .run();
 
       console.error(
@@ -1558,8 +1549,7 @@ async function api(
     const orderId =
       decodeURIComponent(
         path.slice(
-          "/api/order/"
-            .length
+          "/api/order/".length
         )
       );
 
@@ -1575,18 +1565,20 @@ async function api(
 
     const order =
       await env.DB.prepare(
-        "SELECT " +
-          "o.id, " +
-          "o.status, " +
-          "o.amount_cents, " +
-          "p.name " +
-        "FROM orders o " +
-        "JOIN products p " +
-        "ON p.id=o.product_id " +
-        "WHERE o.id=? " +
-        "LIMIT 1"
+        `SELECT
+          o.id,
+          o.status,
+          o.amount_cents,
+          p.name
+         FROM orders o
+         JOIN products p
+           ON p.id=o.product_id
+         WHERE o.id=?
+         LIMIT 1`
       )
-        .bind(orderId)
+        .bind(
+          orderId
+        )
         .first<any>();
 
     if (!order) {
@@ -1623,13 +1615,16 @@ async function api(
 
     const inventory =
       await env.DB.prepare(
-        "SELECT account_encrypted " +
-        "FROM inventory " +
-        "WHERE order_id=? " +
-        "AND status='sold' " +
-        "LIMIT 1"
+        `SELECT
+          account_encrypted
+         FROM inventory
+         WHERE order_id=?
+           AND status='sold'
+         LIMIT 1`
       )
-        .bind(order.id)
+        .bind(
+          order.id
+        )
         .first<any>();
 
     if (!inventory) {
@@ -1662,14 +1657,12 @@ async function api(
       DEFAULT_DISCORD_URL;
 
     const thankYouMessage =
-      "✅ Pagamento aprovado!\n" +
-      "🔒 Sua conta: " +
-      account +
-      "\n" +
-      "🎁 Seu produto foi entregue automaticamente.\n" +
-      "❤️ Obrigado pela compra na ONYX!\n" +
-      "⭐ Deixe seu feedback no nosso Discord:\n" +
-      discordUrl;
+`✅ Pagamento aprovado!
+🔒 Sua conta: ${account}
+🎁 Seu produto foi entregue automaticamente.
+❤️ Obrigado pela compra na ONYX!
+⭐ Deixe seu feedback no nosso Discord:
+${discordUrl}`;
 
     return json({
       id:
@@ -1701,8 +1694,7 @@ async function api(
 
   if (
     request.method === "POST" &&
-    path ===
-      "/api/livepix/webhook"
+    path === "/api/livepix/webhook"
   ) {
     return handleLivepixWebhook(
       request,
@@ -1741,73 +1733,29 @@ async function api(
 
   if (
     request.method === "GET" &&
-    path ===
-      "/api/admin/categories"
+    path === "/api/admin/categories"
   ) {
-    const rows =
+    const categories =
       await env.DB.prepare(
-        "SELECT " +
-          "category, " +
-          "image_url, " +
-          "updated_at " +
-        "FROM category_settings " +
-        "ORDER BY category"
+        `SELECT
+           c.category,
+           c.name,
+           c.image_url,
+
+           (
+             SELECT COUNT(*)
+             FROM products p
+             WHERE p.category=c.category
+           ) AS products
+
+         FROM category_settings c
+         ORDER BY c.rowid ASC`
       ).all();
 
-    const result =
-      Object.entries(
-        CATEGORY_DEFAULTS
-      ).map(
-        function (
-          entry
-        ) {
-          const key =
-            entry[0];
-
-          const value =
-            entry[1];
-
-          const row =
-            (
-              rows.results ||
-              []
-            ).find(
-              function (
-                item: any
-              ) {
-                return (
-                  item.category ===
-                  key
-                );
-              }
-            ) as any;
-
-          return {
-            id:
-              key,
-
-            name:
-              value.name,
-
-            image:
-              row?.image_url ||
-              value.image,
-
-            updated_at:
-              row?.updated_at ||
-              null
-          };
-        }
-      );
-
     return json(
-      result
+      categories.results
     );
   }
-
-  /* =======================================================
-     ADMIN ATUALIZAR CATEGORIA
-  ======================================================= */
 
   if (
     request.method === "PUT" &&
@@ -1840,77 +1788,75 @@ async function api(
       );
     }
 
-    const image =
+    const name =
       String(
-        body?.image ??
+        body?.name ||
+        CATEGORY_DEFAULTS[
+          category
+        ].name
+      ).trim();
+
+    const imageUrl =
+      String(
         body?.image_url ??
+        body?.image ??
         ""
       ).trim();
 
-    if (
-      image &&
-      !/^https?:\/\//i.test(
-        image
-      )
-    ) {
-      return json(
-        {
-          error:
-            "A imagem precisa ser uma URL válida."
-        },
-        400
-      );
-    }
-
     await env.DB.prepare(
-      "INSERT INTO category_settings " +
-      "(category, image_url, updated_at) " +
-      "VALUES (?, ?, CURRENT_TIMESTAMP) " +
-      "ON CONFLICT(category) " +
-      "DO UPDATE SET " +
-      "image_url=excluded.image_url, " +
-      "updated_at=CURRENT_TIMESTAMP"
+      `UPDATE category_settings
+       SET
+         name=?,
+         image_url=?
+       WHERE category=?`
     )
       .bind(
-        category,
-        image
+        name,
+        imageUrl,
+        category
       )
       .run();
 
     return json({
       ok: true,
       category,
-      image
+      name,
+      image_url:
+        imageUrl
     });
   }
 
   /* =======================================================
-     ADMIN PRODUTOS
+     ADMIN PRODUTOS - LISTAR
   ======================================================= */
 
   if (
     request.method === "GET" &&
-    path ===
-      "/api/admin/products"
+    path === "/api/admin/products"
   ) {
     const products =
       await env.DB.prepare(
-        "SELECT " +
-          "p.*, " +
-          "(" +
-            "SELECT COUNT(*) " +
-            "FROM inventory i " +
-            "WHERE i.product_id=p.id " +
-            "AND i.status='available'" +
-          ") AS stock, " +
-          "(" +
-            "SELECT COUNT(*) " +
-            "FROM inventory i " +
-            "WHERE i.product_id=p.id " +
-            "AND i.status='sold'" +
-          ") AS sold " +
-        "FROM products p " +
-        "ORDER BY p.created_at DESC"
+        `SELECT
+          p.*,
+
+          (
+            SELECT COUNT(*)
+            FROM inventory i
+            WHERE i.product_id=p.id
+              AND i.status='available'
+          ) AS stock,
+
+          (
+            SELECT COUNT(*)
+            FROM inventory i
+            WHERE i.product_id=p.id
+              AND i.status='sold'
+          ) AS sold
+
+         FROM products p
+
+         ORDER BY
+           p.created_at DESC`
       ).all();
 
     return json(
@@ -1924,43 +1870,20 @@ async function api(
 
   if (
     request.method === "POST" &&
-    path ===
-      "/api/admin/products"
+    path === "/api/admin/products"
   ) {
-    let body: any;
-
-    try {
-      body =
-        await request.json<any>();
-    } catch {
-      return json(
-        {
-          error:
-            "JSON inválido."
-        },
-        400
-      );
-    }
+    const body =
+      await request.json<any>();
 
     const name =
       String(
-        body?.name || ""
+        body?.name ||
+        ""
       ).trim();
 
     const description =
       String(
-        body?.description || ""
-      ).trim();
-
-    const category =
-      normalizeCategory(
-        body?.category
-      );
-
-    const image =
-      String(
-        body?.image ??
-        body?.image_url ??
+        body?.description ||
         ""
       ).trim();
 
@@ -1968,6 +1891,18 @@ async function api(
       Number(
         body?.price
       );
+
+    const category =
+      normalizeCategory(
+        body?.category
+      );
+
+    const imageUrl =
+      String(
+        body?.image_url ??
+        body?.image ??
+        ""
+      ).trim();
 
     if (
       !name ||
@@ -1985,28 +1920,22 @@ async function api(
       );
     }
 
-    if (
-      image &&
-      !/^https?:\/\//i.test(
-        image
-      )
-    ) {
-      return json(
-        {
-          error:
-            "A imagem precisa ser uma URL válida."
-        },
-        400
-      );
-    }
-
     const productId =
       id("prd");
 
     await env.DB.prepare(
-      "INSERT INTO products " +
-      "(id, name, description, price_cents, category, image_url, active) " +
-      "VALUES (?, ?, ?, ?, ?, ?, 1)"
+      `INSERT INTO products
+       (
+         id,
+         name,
+         description,
+         price_cents,
+         category,
+         image_url,
+         active
+       )
+       VALUES
+       (?, ?, ?, ?, ?, ?, 1)`
     )
       .bind(
         productId,
@@ -2016,7 +1945,7 @@ async function api(
           price * 100
         ),
         category,
-        image
+        imageUrl || null
       )
       .run();
 
@@ -2057,6 +1986,28 @@ async function api(
       );
     }
 
+    const existing =
+      await env.DB.prepare(
+        `SELECT *
+         FROM products
+         WHERE id=?
+         LIMIT 1`
+      )
+        .bind(
+          productId
+        )
+        .first<any>();
+
+    if (!existing) {
+      return json(
+        {
+          error:
+            "Produto não encontrado."
+        },
+        404
+      );
+    }
+
     let body: any;
 
     try {
@@ -2074,30 +2025,48 @@ async function api(
 
     const name =
       String(
-        body?.name || ""
+        body?.name ??
+        existing.name ??
+        ""
       ).trim();
 
     const description =
       String(
-        body?.description || ""
-      ).trim();
-
-    const category =
-      normalizeCategory(
-        body?.category
-      );
-
-    const image =
-      String(
-        body?.image ??
-        body?.image_url ??
+        body?.description ??
+        existing.description ??
         ""
       ).trim();
 
     const price =
       Number(
-        body?.price
+        body?.price ??
+        Number(
+          existing.price_cents
+        ) / 100
       );
+
+    const category =
+      normalizeCategory(
+        body?.category ??
+        existing.category
+      );
+
+    const imageUrl =
+      String(
+        body?.image_url ??
+        body?.image ??
+        existing.image_url ??
+        ""
+      ).trim();
+
+    const active =
+      body?.active === undefined
+        ? Number(
+            existing.active ?? 1
+          )
+        : body.active
+          ? 1
+          : 0;
 
     if (
       !name ||
@@ -2115,50 +2084,16 @@ async function api(
       );
     }
 
-    if (
-      image &&
-      !/^https?:\/\//i.test(
-        image
-      )
-    ) {
-      return json(
-        {
-          error:
-            "A imagem precisa ser uma URL válida."
-        },
-        400
-      );
-    }
-
-    const product =
-      await env.DB.prepare(
-        "SELECT id " +
-        "FROM products " +
-        "WHERE id=? " +
-        "LIMIT 1"
-      )
-        .bind(productId)
-        .first<any>();
-
-    if (!product) {
-      return json(
-        {
-          error:
-            "Produto não encontrado."
-        },
-        404
-      );
-    }
-
     await env.DB.prepare(
-      "UPDATE products " +
-      "SET " +
-        "name=?, " +
-        "description=?, " +
-        "price_cents=?, " +
-        "category=?, " +
-        "image_url=? " +
-      "WHERE id=?"
+      `UPDATE products
+       SET
+         name=?,
+         description=?,
+         price_cents=?,
+         category=?,
+         image_url=?,
+         active=?
+       WHERE id=?`
     )
       .bind(
         name,
@@ -2167,20 +2102,20 @@ async function api(
           price * 100
         ),
         category,
-        image,
+        imageUrl || null,
+        active,
         productId
       )
       .run();
 
     return json({
       ok: true,
-      id:
-        productId
+      id: productId
     });
   }
 
   /* =======================================================
-     ADMIN EXCLUIR PRODUTO
+     ADMIN EXCLUIR / DESATIVAR PRODUTO
   ======================================================= */
 
   if (
@@ -2209,12 +2144,14 @@ async function api(
 
     const product =
       await env.DB.prepare(
-        "SELECT id, name " +
-        "FROM products " +
-        "WHERE id=? " +
-        "LIMIT 1"
+        `SELECT id, name
+         FROM products
+         WHERE id=?
+         LIMIT 1`
       )
-        .bind(productId)
+        .bind(
+          productId
+        )
         .first<any>();
 
     if (!product) {
@@ -2228,19 +2165,19 @@ async function api(
     }
 
     await env.DB.prepare(
-      "UPDATE products " +
-      "SET active=0 " +
-      "WHERE id=?"
+      `UPDATE products
+       SET active=0
+       WHERE id=?`
     )
-      .bind(productId)
+      .bind(
+        productId
+      )
       .run();
 
     return json({
       ok: true,
-      id:
-        productId,
-      name:
-        product.name
+      id: productId,
+      name: product.name
     });
   }
 
@@ -2250,32 +2187,21 @@ async function api(
 
   if (
     request.method === "POST" &&
-    path ===
-      "/api/admin/stock"
+    path === "/api/admin/stock"
   ) {
-    let body: any;
-
-    try {
-      body =
-        await request.json<any>();
-    } catch {
-      return json(
-        {
-          error:
-            "JSON inválido."
-        },
-        400
-      );
-    }
+    const body =
+      await request.json<any>();
 
     const productId =
       String(
-        body?.productId || ""
+        body?.productId ||
+        ""
       );
 
     const account =
       String(
-        body?.account || ""
+        body?.account ||
+        ""
       ).trim();
 
     if (
@@ -2293,12 +2219,14 @@ async function api(
 
     const product =
       await env.DB.prepare(
-        "SELECT id " +
-        "FROM products " +
-        "WHERE id=? " +
-        "LIMIT 1"
+        `SELECT id
+         FROM products
+         WHERE id=?
+         LIMIT 1`
       )
-        .bind(productId)
+        .bind(
+          productId
+        )
         .first<any>();
 
     if (!product) {
@@ -2321,9 +2249,15 @@ async function api(
       id("inv");
 
     await env.DB.prepare(
-      "INSERT INTO inventory " +
-      "(id, product_id, account_encrypted, status) " +
-      "VALUES (?, ?, ?, 'available')"
+      `INSERT INTO inventory
+       (
+         id,
+         product_id,
+         account_encrypted,
+         status
+       )
+       VALUES
+       (?, ?, ?, 'available')`
     )
       .bind(
         inventoryId,
@@ -2347,25 +2281,25 @@ async function api(
 
   if (
     request.method === "GET" &&
-    path ===
-      "/api/admin/orders"
+    path === "/api/admin/orders"
   ) {
     const orders =
       await env.DB.prepare(
-        "SELECT " +
-          "o.id, " +
-          "o.status, " +
-          "o.amount_cents, " +
-          "o.livepix_id, " +
-          "o.livepix_reference, " +
-          "o.created_at, " +
-          "o.paid_at, " +
-          "p.name AS product " +
-        "FROM orders o " +
-        "JOIN products p " +
-        "ON p.id=o.product_id " +
-        "ORDER BY o.created_at DESC " +
-        "LIMIT 100"
+        `SELECT
+          o.id,
+          o.status,
+          o.amount_cents,
+          o.livepix_id,
+          o.livepix_reference,
+          o.created_at,
+          o.paid_at,
+          p.name AS product
+         FROM orders o
+         JOIN products p
+           ON p.id=o.product_id
+         ORDER BY
+           o.created_at DESC
+         LIMIT 100`
       ).all();
 
     return json(
