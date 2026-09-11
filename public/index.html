@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -5,106 +6,1760 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ONYX STORE — Contas e Produtos Digitais</title>
 <meta name="description" content="ONYX STORE — contas e produtos digitais.">
+
 <style>
-:root{--bg:#030303;--card:#0b0b0d;--line:rgba(255,255,255,.09);--text:#f5f5f5;--muted:#77787e;--green:#55e596;--max:1240px}
-*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{min-height:100vh;color:var(--text);font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at 50% -15%,rgba(255,255,255,.1),transparent 35%),linear-gradient(#020202,#080809 50%,#020202)}a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{cursor:pointer}.container{width:min(var(--max),calc(100% - 36px));margin:auto}
-header{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:rgba(3,3,3,.8);backdrop-filter:blur(20px)}.header{height:72px;display:flex;align-items:center;gap:25px}.brand{display:flex;align-items:center;gap:10px;font-weight:1000;letter-spacing:.2em}.brand-stone{width:40px;height:40px;position:relative;border-radius:12px;background:linear-gradient(145deg,#3b3c40,#080809 45%,#25262a);box-shadow:inset 5px 5px 12px #ffffff18,inset -7px -8px 13px #000,0 10px 25px #000;border:1px solid #ffffff18}.brand-stone:after{content:"";position:absolute;width:10px;height:4px;left:9px;top:8px;border-radius:50%;background:#fff2;transform:rotate(-25deg);filter:blur(1px)}nav{margin-left:auto;display:flex;gap:5px}nav a{padding:10px 12px;border-radius:9px;color:#85868b;font-size:10px;font-weight:850}nav a:hover{color:#fff;background:#ffffff0d}.discord{border:1px solid var(--line);color:#eee!important}
-.hero{padding:85px 0 60px}.hero-grid{display:grid;grid-template-columns:1fr .75fr;align-items:center;gap:50px}.badge{display:inline-flex;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:#aaa;font-size:8px;font-weight:900;letter-spacing:.14em}.badge i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #55e59699}.hero h1{margin-top:23px;font-size:clamp(48px,6.5vw,82px);line-height:.9;letter-spacing:-.075em}.shine{display:block;color:#bbb}.hero p{max-width:600px;margin-top:22px;color:#77787e;font-size:13px;line-height:1.8}.actions{display:flex;gap:9px;margin-top:27px}.btn{min-height:44px;padding:0 18px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:950}.primary{color:#080808;background:linear-gradient(135deg,#f2f2f3,#949599)}.secondary{border:1px solid var(--line);color:#ddd;background:#ffffff08}.hero-stone{height:320px;display:grid;place-items:center;position:relative}.stone-glow{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#fff2,transparent 68%);filter:blur(30px)}.stone{width:215px;height:250px;border-radius:38% 57% 42% 62%;transform:rotate(17deg);background:linear-gradient(135deg,#46474b,#111114 28%,#020203 53%,#292a2d 76%,#050506);box-shadow:-25px 35px 70px #000,inset 12px 12px 25px #fff1,inset -15px -18px 30px #000;animation:float 6s ease-in-out infinite}.stone:after{content:"";display:block;width:70px;height:20px;margin:35px;border-radius:50%;background:#fff1;filter:blur(6px);transform:rotate(-30deg)}@keyframes float{50%{transform:translateY(-10px) rotate(20deg)}}
-.section{padding:35px 0}.head{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}.eyebrow{color:#68696f;font-size:8px;font-weight:950;letter-spacing:.2em}.head h2{margin-top:6px;font-size:32px;letter-spacing:-.05em}.head p{margin-top:5px;color:#62636a;font-size:10px}
-.categories{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.cat{height:205px;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:19px;background:linear-gradient(145deg,#191a1d,#050506);transition:.25s}.cat:hover{transform:translateY(-5px);border-color:#fff3;box-shadow:0 25px 60px #0008}.cat-art{position:absolute;inset:0;display:grid;place-items:center;font-size:65px;font-weight:1000;color:#fff1;background:radial-gradient(circle at 50% 25%,#fff1,transparent 50%)}.cat:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 25%,#0002 45%,#000f 100%)}.cat-content{position:absolute;z-index:2;left:17px;right:17px;bottom:15px}.cat-name{font-size:18px;font-weight:1000}.cat-count{margin-top:4px;color:#9a9ba0;font-size:9px}.cat-count b{color:#fff}
-.catalog{padding:65px 0 90px}.tools{display:flex;gap:8px;margin-bottom:12px}.search{position:relative;flex:1}.search input{width:100%;height:44px;padding:0 14px 0 38px;outline:none;color:#fff;border:1px solid var(--line);border-radius:11px;background:#ffffff06}.search span{position:absolute;left:14px;top:13px;color:#5e5f65}.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}.filter,.sort{height:35px;padding:0 11px;border:1px solid var(--line);border-radius:9px;color:#777;background:#ffffff06;font-size:8px;font-weight:900}.filter.active{color:#fff;background:#ffffff12}.sort{margin-left:auto;background:#0d0d0e;outline:none}
-.products{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.product{overflow:hidden;border:1px solid var(--line);border-radius:19px;background:linear-gradient(145deg,#ffffff0d,#ffffff02);transition:.25s}.product:hover{transform:translateY(-5px);border-color:#fff3;box-shadow:0 25px 65px #0008}.photo{height:175px;position:relative;background:linear-gradient(145deg,#191a1d,#050506);overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover}.photo:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,#000c)}.tag{position:absolute;z-index:2;left:12px;top:12px;padding:6px 8px;border:1px solid #fff2;border-radius:999px;background:#0008;font-size:7px;font-weight:900}.body{padding:17px}.title{font-size:16px;font-weight:950}.desc{height:34px;margin-top:6px;color:#6d6e74;font-size:9px;line-height:1.7;overflow:hidden}.pills{display:flex;gap:6px;margin-top:11px}.pill{padding:5px 7px;border:1px solid var(--line);border-radius:7px;color:#777;font-size:7px}.bottom{display:flex;justify-content:space-between;align-items:end;gap:10px;margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}.price small{display:block;color:#555;font-size:7px;text-transform:uppercase}.price strong{display:block;margin-top:2px;font-size:21px}.buy{height:39px;padding:0 13px;border:0;border-radius:9px;background:linear-gradient(135deg,#eee,#999);font-size:8px;font-weight:950}.buy:disabled{background:#151516;color:#555;cursor:not-allowed}.empty{grid-column:1/-1;padding:70px;text-align:center;border:1px dashed var(--line);border-radius:18px;color:#666}
-.info{padding:80px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.info-card{padding:24px;border:1px solid var(--line);border-radius:17px;background:#ffffff03}.info-card b{color:#555;font-size:8px;letter-spacing:.15em}.info-card h3{margin-top:17px;font-size:15px}.info-card p{margin-top:7px;color:#68696f;font-size:9px;line-height:1.75}
-footer{padding:35px 0;border-top:1px solid var(--line)}.footer{display:flex;justify-content:space-between;gap:20px;align-items:center}.footer strong{font-size:10px;letter-spacing:.15em}.footer small{display:block;margin-top:5px;color:#4d4e53;font-size:8px}.footer-links{display:flex;gap:16px}.footer-links a{color:#5e5f65;font-size:8px;font-weight:800}
-.modal-bg{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:18px;background:#000e;backdrop-filter:blur(18px)}.modal-bg.open{display:grid}.modal{width:min(520px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:25px;border:1px solid #fff2;border-radius:22px;background:#09090a}.close{float:right;width:34px;height:34px;border:1px solid var(--line);border-radius:9px;color:#aaa;background:#ffffff08}.modal h2{margin-top:15px;font-size:22px}.summary{margin-top:20px;padding:15px;border:1px solid var(--line);border-radius:13px}.row{display:flex;justify-content:space-between;padding:7px 0;color:#777;font-size:10px}.row strong{color:#ddd}.row.total{border-top:1px solid var(--line);margin-top:7px;padding-top:13px}.payment{margin-top:13px;padding:14px;border:1px solid var(--line);border-radius:12px;color:#888;font-size:9px}.paybtn{width:100%;height:48px;margin-top:12px;border:0;border-radius:11px;background:linear-gradient(135deg,#eee,#999);font-weight:950;font-size:9px}.paybtn:disabled{opacity:.45}.delivery{display:none;margin-top:20px}.delivery.show{display:block}.account{margin-top:8px;padding:15px;border:1px solid #55e59644;border-radius:12px;font:10px monospace;white-space:pre-wrap;word-break:break-word}.copy{width:100%;height:43px;margin-top:8px;border:0;border-radius:9px;background:linear-gradient(135deg,#7aefa8,#42d681);font-weight:950;font-size:9px}.toast{position:fixed;right:18px;bottom:18px;z-index:200;padding:13px 15px;border:1px solid var(--line);border-radius:11px;background:#111;color:#ddd;font-size:9px}
-@media(max-width:950px){.hero-grid{grid-template-columns:1fr;text-align:center}.hero p{margin-left:auto;margin-right:auto}.actions{justify-content:center}.categories,.products{grid-template-columns:repeat(2,1fr)}.info-grid{grid-template-columns:1fr}}
-@media(max-width:650px){.container,.header{width:calc(100% - 22px)}.header{height:64px}.nav a:not(.discord){display:none}.hero{padding:60px 0 35px}.hero h1{font-size:clamp(43px,12vw,64px)}.categories,.products{grid-template-columns:1fr}.hero-stone{height:270px}.tools{flex-direction:column}.sort{margin-left:0}.footer{flex-direction:column;text-align:center}.footer-links{order:-1}}
+:root{
+  --bg:#030303;
+  --card:#0b0b0d;
+  --line:rgba(255,255,255,.09);
+  --text:#f5f5f5;
+  --muted:#77787e;
+  --green:#55e596;
+  --max:1240px
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+body{
+  min-height:100vh;
+  color:var(--text);
+  font-family:Inter,system-ui,sans-serif;
+  background:
+    radial-gradient(circle at 50% -15%,rgba(255,255,255,.1),transparent 35%),
+    linear-gradient(#020202,#080809 50%,#020202)
+}
+
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit}
+button{cursor:pointer}
+
+.container{
+  width:min(var(--max),calc(100% - 36px));
+  margin:auto
+}
+
+/* HEADER */
+
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  border-bottom:1px solid var(--line);
+  background:rgba(3,3,3,.8);
+  backdrop-filter:blur(20px)
+}
+
+.header{
+  height:72px;
+  display:flex;
+  align-items:center;
+  gap:25px
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:1000;
+  letter-spacing:.2em
+}
+
+.brand-stone{
+  width:40px;
+  height:40px;
+  position:relative;
+  border-radius:12px;
+  background:linear-gradient(145deg,#3b3c40,#080809 45%,#25262a);
+  box-shadow:
+    inset 5px 5px 12px #ffffff18,
+    inset -7px -8px 13px #000,
+    0 10px 25px #000;
+  border:1px solid #ffffff18
+}
+
+.brand-stone:after{
+  content:"";
+  position:absolute;
+  width:10px;
+  height:4px;
+  left:9px;
+  top:8px;
+  border-radius:50%;
+  background:#fff2;
+  transform:rotate(-25deg);
+  filter:blur(1px)
+}
+
+nav{
+  margin-left:auto;
+  display:flex;
+  gap:5px
+}
+
+nav a{
+  padding:10px 12px;
+  border-radius:9px;
+  color:#85868b;
+  font-size:10px;
+  font-weight:850
+}
+
+nav a:hover{
+  color:#fff;
+  background:#ffffff0d
+}
+
+.discord{
+  border:1px solid var(--line);
+  color:#eee!important
+}
+
+/* HERO */
+
+.hero{padding:85px 0 60px}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns:1fr .75fr;
+  align-items:center;
+  gap:50px
+}
+
+.badge{
+  display:inline-flex;
+  gap:8px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:#aaa;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.14em
+}
+
+.badge i{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px #55e59699
+}
+
+.hero h1{
+  margin-top:23px;
+  font-size:clamp(48px,6.5vw,82px);
+  line-height:.9;
+  letter-spacing:-.075em
+}
+
+.shine{
+  display:block;
+  color:#bbb
+}
+
+.hero p{
+  max-width:600px;
+  margin-top:22px;
+  color:#77787e;
+  font-size:13px;
+  line-height:1.8
+}
+
+.actions{
+  display:flex;
+  gap:9px;
+  margin-top:27px
+}
+
+.btn{
+  min-height:44px;
+  padding:0 18px;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:950
+}
+
+.primary{
+  color:#080808;
+  background:linear-gradient(135deg,#f2f2f3,#949599)
+}
+
+.secondary{
+  border:1px solid var(--line);
+  color:#ddd;
+  background:#ffffff08
+}
+
+.hero-stone{
+  height:320px;
+  display:grid;
+  place-items:center;
+  position:relative
+}
+
+.stone-glow{
+  position:absolute;
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  background:radial-gradient(circle,#fff2,transparent 68%);
+  filter:blur(30px)
+}
+
+.stone{
+  width:215px;
+  height:250px;
+  border-radius:38% 57% 42% 62%;
+  transform:rotate(17deg);
+  background:linear-gradient(135deg,#46474b,#111114 28%,#020203 53%,#292a2d 76%,#050506);
+  box-shadow:
+    -25px 35px 70px #000,
+    inset 12px 12px 25px #fff1,
+    inset -15px -18px 30px #000;
+  animation:float 6s ease-in-out infinite
+}
+
+.stone:after{
+  content:"";
+  display:block;
+  width:70px;
+  height:20px;
+  margin:35px;
+  border-radius:50%;
+  background:#fff1;
+  filter:blur(6px);
+  transform:rotate(-30deg)
+}
+
+@keyframes float{
+  50%{transform:translateY(-10px) rotate(20deg)}
+}
+
+/* SECTIONS */
+
+.section{padding:35px 0}
+
+.head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-bottom:20px
+}
+
+.eyebrow{
+  color:#68696f;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.2em
+}
+
+.head h2{
+  margin-top:6px;
+  font-size:32px;
+  letter-spacing:-.05em
+}
+
+.head p{
+  margin-top:5px;
+  color:#62636a;
+  font-size:10px
+}
+
+/* CATEGORIES */
+
+.categories{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:13px
+}
+
+.cat{
+  height:205px;
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:19px;
+  background:linear-gradient(145deg,#191a1d,#050506);
+  transition:.25s;
+  text-align:left
+}
+
+.cat:hover{
+  transform:translateY(-5px);
+  border-color:#fff3;
+  box-shadow:0 25px 60px #0008
+}
+
+.cat-art{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at 50% 25%,#fff1,transparent 50%);
+}
+
+.cat-art img{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  border-radius:16px;
+  opacity:.92;
+  filter:drop-shadow(0 12px 25px #000);
+}
+
+.cat:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(transparent 25%,#0002 45%,#000f 100%);
+  pointer-events:none
+}
+
+.cat-content{
+  position:absolute;
+  z-index:2;
+  left:17px;
+  right:17px;
+  bottom:15px
+}
+
+.cat-name{
+  font-size:18px;
+  font-weight:1000
+}
+
+.cat-count{
+  margin-top:4px;
+  color:#9a9ba0;
+  font-size:9px
+}
+
+.cat-count b{color:#fff}
+
+/* CATALOG */
+
+.catalog{
+  padding:65px 0 90px
+}
+
+.tools{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px
+}
+
+.search{
+  position:relative;
+  flex:1
+}
+
+.search input{
+  width:100%;
+  height:44px;
+  padding:0 14px 0 38px;
+  outline:none;
+  color:#fff;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#ffffff06
+}
+
+.search span{
+  position:absolute;
+  left:14px;
+  top:13px;
+  color:#5e5f65
+}
+
+.filters{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-bottom:20px
+}
+
+.filter,.sort{
+  height:35px;
+  padding:0 11px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  color:#777;
+  background:#ffffff06;
+  font-size:8px;
+  font-weight:900
+}
+
+.filter.active{
+  color:#fff;
+  background:#ffffff12
+}
+
+.sort{
+  margin-left:auto;
+  background:#0d0d0e;
+  outline:none
+}
+
+/* PRODUCTS */
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px
+}
+
+.product{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:19px;
+  background:linear-gradient(145deg,#ffffff0d,#ffffff02);
+  transition:.25s
+}
+
+.product:hover{
+  transform:translateY(-5px);
+  border-color:#fff3;
+  box-shadow:0 25px 65px #0008
+}
+
+/*
+  FOTO DO PRODUTO
+  Pequena e discreta, somente no topo.
+*/
+
+.photo{
+  height:105px;
+  position:relative;
+  background:
+    radial-gradient(circle at center,#ffffff08,transparent 60%),
+    linear-gradient(145deg,#151518,#050506);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:1px solid #ffffff08
+}
+
+.photo img{
+  width:76px;
+  height:76px;
+  object-fit:contain;
+  border-radius:14px;
+  filter:drop-shadow(0 10px 22px #000);
+  position:relative;
+  z-index:1
+}
+
+.photo .fallback{
+  font-size:42px;
+  font-weight:1000;
+  color:#ffffff18
+}
+
+.photo:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(transparent 45%,#0005);
+  pointer-events:none
+}
+
+.tag{
+  position:absolute;
+  z-index:3;
+  left:10px;
+  top:10px;
+  padding:5px 7px;
+  border:1px solid #fff2;
+  border-radius:999px;
+  background:#0009;
+  font-size:7px;
+  font-weight:900
+}
+
+.body{
+  padding:17px
+}
+
+.title{
+  font-size:16px;
+  font-weight:950
+}
+
+.desc{
+  height:34px;
+  margin-top:6px;
+  color:#6d6e74;
+  font-size:9px;
+  line-height:1.7;
+  overflow:hidden
+}
+
+.pills{
+  display:flex;
+  gap:6px;
+  margin-top:11px
+}
+
+.pill{
+  padding:5px 7px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  color:#777;
+  font-size:7px
+}
+
+.bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:10px;
+  margin-top:15px;
+  padding-top:14px;
+  border-top:1px solid var(--line)
+}
+
+.price small{
+  display:block;
+  color:#555;
+  font-size:7px;
+  text-transform:uppercase
+}
+
+.price strong{
+  display:block;
+  margin-top:2px;
+  font-size:21px
+}
+
+.buy{
+  height:39px;
+  padding:0 13px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(135deg,#eee,#999);
+  font-size:8px;
+  font-weight:950
+}
+
+.buy:disabled{
+  background:#151516;
+  color:#555;
+  cursor:not-allowed
+}
+
+.empty{
+  grid-column:1/-1;
+  padding:70px;
+  text-align:center;
+  border:1px dashed var(--line);
+  border-radius:18px;
+  color:#666
+}
+
+/* INFO */
+
+.info{
+  padding:80px 0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line)
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:13px
+}
+
+.info-card{
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:#ffffff03
+}
+
+.info-card b{
+  color:#555;
+  font-size:8px;
+  letter-spacing:.15em
+}
+
+.info-card h3{
+  margin-top:17px;
+  font-size:15px
+}
+
+.info-card p{
+  margin-top:7px;
+  color:#68696f;
+  font-size:9px;
+  line-height:1.75
+}
+
+/* FOOTER */
+
+footer{
+  padding:35px 0;
+  border-top:1px solid var(--line)
+}
+
+.footer{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:center
+}
+
+.footer strong{
+  font-size:10px;
+  letter-spacing:.15em
+}
+
+.footer small{
+  display:block;
+  margin-top:5px;
+  color:#4d4e53;
+  font-size:8px
+}
+
+.footer-links{
+  display:flex;
+  gap:16px
+}
+
+.footer-links a{
+  color:#5e5f65;
+  font-size:8px;
+  font-weight:800
+}
+
+/* MODAL */
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  place-items:center;
+  padding:18px;
+  background:#000e;
+  backdrop-filter:blur(18px)
+}
+
+.modal-bg.open{display:grid}
+
+.modal{
+  width:min(520px,100%);
+  max-height:calc(100vh - 36px);
+  overflow:auto;
+  padding:25px;
+  border:1px solid #fff2;
+  border-radius:22px;
+  background:#09090a
+}
+
+.close{
+  float:right;
+  width:34px;
+  height:34px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  color:#aaa;
+  background:#ffffff08
+}
+
+.modal h2{
+  margin-top:15px;
+  font-size:22px
+}
+
+.summary{
+  margin-top:20px;
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:13px
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:7px 0;
+  color:#777;
+  font-size:10px
+}
+
+.row strong{color:#ddd}
+
+.row.total{
+  border-top:1px solid var(--line);
+  margin-top:7px;
+  padding-top:13px
+}
+
+.payment{
+  margin-top:13px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  color:#888;
+  font-size:9px
+}
+
+.paybtn{
+  width:100%;
+  height:48px;
+  margin-top:12px;
+  border:0;
+  border-radius:11px;
+  background:linear-gradient(135deg,#eee,#999);
+  font-weight:950;
+  font-size:9px
+}
+
+.paybtn:disabled{opacity:.45}
+
+.delivery{
+  display:none;
+  margin-top:20px
+}
+
+.delivery.show{display:block}
+
+.account{
+  margin-top:8px;
+  padding:15px;
+  border:1px solid #55e59644;
+  border-radius:12px;
+  font:10px monospace;
+  white-space:pre-wrap;
+  word-break:break-word
+}
+
+.copy{
+  width:100%;
+  height:43px;
+  margin-top:8px;
+  border:0;
+  border-radius:9px;
+  background:linear-gradient(135deg,#7aefa8,#42d681);
+  font-weight:950;
+  font-size:9px
+}
+
+.toast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:200;
+  padding:13px 15px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#111;
+  color:#ddd;
+  font-size:9px
+}
+
+/* MOBILE */
+
+@media(max-width:950px){
+  .hero-grid{
+    grid-template-columns:1fr;
+    text-align:center
+  }
+
+  .hero p{
+    margin-left:auto;
+    margin-right:auto
+  }
+
+  .actions{justify-content:center}
+
+  .categories,
+  .products{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .info-grid{
+    grid-template-columns:1fr
+  }
+}
+
+@media(max-width:650px){
+  .container,.header{
+    width:calc(100% - 22px)
+  }
+
+  .header{height:64px}
+
+  .nav a:not(.discord){display:none}
+
+  .hero{
+    padding:60px 0 35px
+  }
+
+  .hero h1{
+    font-size:clamp(43px,12vw,64px)
+  }
+
+  .categories,
+  .products{
+    grid-template-columns:1fr
+  }
+
+  .hero-stone{height:270px}
+
+  .tools{flex-direction:column}
+
+  .sort{margin-left:0}
+
+  .footer{
+    flex-direction:column;
+    text-align:center
+  }
+
+  .footer-links{order:-1}
+}
 </style>
 </head>
+
 <body>
 
-<header><div class="header container">
-<a class="brand" href="#"><div class="brand-stone"></div><span>ONYX</span></a>
-<nav><a href="#categories">Categorias</a><a href="#products">Anúncios</a><a href="#how">Como funciona</a><a class="discord" href="https://discord.gg/p9ZmkncQ8q" target="_blank">Discord</a></nav>
-</div></header>
+<header>
+<div class="header container">
+<a class="brand" href="#">
+  <div class="brand-stone"></div>
+  <span>ONYX</span>
+</a>
+
+<nav>
+  <a href="#categories">Categorias</a>
+  <a href="#products">Anúncios</a>
+  <a href="#how">Como funciona</a>
+  <a class="discord" href="https://discord.gg/p9ZmkncQ8q" target="_blank">Discord</a>
+</nav>
+</div>
+</header>
 
 <main>
-<section class="hero"><div class="container hero-grid">
-<div><div class="badge"><i></i> ONYX STORE • ONLINE 24/7</div><h1>ENCONTRE A CONTA <span class="shine">CERTA PARA VOCÊ.</span></h1><p>Explore anúncios individuais, compare as características de cada conta e escolha a opção que mais combina com você.</p><div class="actions"><a class="btn primary" href="#categories">Explorar categorias</a><a class="btn secondary" href="https://discord.gg/p9ZmkncQ8q" target="_blank">Discord</a></div></div>
-<div class="hero-stone"><div class="stone-glow"></div><div class="stone"></div></div>
-</div></section>
+
+<section class="hero">
+<div class="container hero-grid">
+
+<div>
+  <div class="badge">
+    <i></i> ONYX STORE • ONLINE 24/7
+  </div>
+
+  <h1>
+    ENCONTRE A CONTA
+    <span class="shine">CERTA PARA VOCÊ.</span>
+  </h1>
+
+  <p>
+    Explore anúncios individuais, compare as características de cada conta
+    e escolha a opção que mais combina com você.
+  </p>
+
+  <div class="actions">
+    <a class="btn primary" href="#categories">Explorar categorias</a>
+    <a class="btn secondary" href="https://discord.gg/p9ZmkncQ8q" target="_blank">Discord</a>
+  </div>
+</div>
+
+<div class="hero-stone">
+  <div class="stone-glow"></div>
+  <div class="stone"></div>
+</div>
+
+</div>
+</section>
+
 
 <section class="section container" id="categories">
-<div class="head"><div><div class="eyebrow">NAVEGUE POR CATEGORIA</div><h2>Categorias</h2><p>Veja quantos anúncios estão disponíveis em cada categoria.</p></div></div>
+
+<div class="head">
+<div>
+  <div class="eyebrow">NAVEGUE POR CATEGORIA</div>
+  <h2>Categorias</h2>
+  <p>Veja quantos anúncios estão disponíveis em cada categoria.</p>
+</div>
+</div>
+
 <div class="categories">
-<button class="cat" data-category="roblox"><div class="cat-art">RB</div><div class="cat-content"><div class="cat-name">ROBLOX</div><div class="cat-count"><b id="count-roblox">0</b> anúncios disponíveis</div></div></button>
-<button class="cat" data-category="fortnite"><div class="cat-art">FN</div><div class="cat-content"><div class="cat-name">FORTNITE</div><div class="cat-count"><b id="count-fortnite">0</b> anúncios disponíveis</div></div></button>
-<button class="cat" data-category="vbucks"><div class="cat-art">V</div><div class="cat-content"><div class="cat-name">V-BUCKS</div><div class="cat-count"><b id="count-vbucks">0</b> ofertas disponíveis</div></div></button>
-<button class="cat" data-category="nitradas"><div class="cat-art">N</div><div class="cat-content"><div class="cat-name">NITRADAS</div><div class="cat-count"><b id="count-nitradas">0</b> contas disponíveis</div></div></button>
+
+<button class="cat" data-category="roblox">
+  <div class="cat-art">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/512px-Roblox_%282025%29_%28App_Icon%29.svg.png"
+      alt="Roblox"
+      loading="lazy">
+  </div>
+
+  <div class="cat-content">
+    <div class="cat-name">ROBLOX</div>
+    <div class="cat-count">
+      <b id="count-roblox">0</b> anúncios disponíveis
+    </div>
+  </div>
+</button>
+
+
+<button class="cat" data-category="fortnite">
+  <div class="cat-art">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png"
+      alt="Fortnite"
+      loading="lazy">
+  </div>
+
+  <div class="cat-content">
+    <div class="cat-name">FORTNITE</div>
+    <div class="cat-count">
+      <b id="count-fortnite">0</b> anúncios disponíveis
+    </div>
+  </div>
+</button>
+
+
+<button class="cat" data-category="vbucks">
+  <div class="cat-art">
+    <img
+      src="https://static.wikia.nocookie.net/fortnite_ptbr_gamepedia_ptbr/images/5/5a/Icon_VBucks.png"
+      alt="V-Bucks"
+      loading="lazy">
+  </div>
+
+  <div class="cat-content">
+    <div class="cat-name">V-BUCKS</div>
+    <div class="cat-count">
+      <b id="count-vbucks">0</b> ofertas disponíveis
+    </div>
+  </div>
+</button>
+
+
+<button class="cat" data-category="nitradas">
+  <div class="cat-art">
+    <img
+      src="https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
+      alt="Nitradas"
+      loading="lazy">
+  </div>
+
+  <div class="cat-content">
+    <div class="cat-name">NITRADAS</div>
+    <div class="cat-count">
+      <b id="count-nitradas">0</b> contas disponíveis
+    </div>
+  </div>
+</button>
+
 </div>
 </section>
+
 
 <section class="catalog container" id="products">
-<div class="head"><div><div class="eyebrow">CATÁLOGO ONYX</div><h2>Anúncios</h2><p>Cada anúncio pode representar uma conta diferente.</p></div><div class="eyebrow" id="catalogCount">0 anúncios</div></div>
-<div class="tools"><div class="search"><span>⌕</span><input id="searchInput" placeholder="Pesquisar conta, item ou característica..." autocomplete="off"></div></div>
-<div class="filters">
-<button class="filter active" data-filter="all">Todos</button><button class="filter" data-filter="roblox">Roblox</button><button class="filter" data-filter="fortnite">Fortnite</button><button class="filter" data-filter="vbucks">V-Bucks</button><button class="filter" data-filter="nitradas">Nitradas</button>
-<select class="sort" id="sortSelect"><option value="default">Ordenar: padrão</option><option value="priceAsc">Menor preço</option><option value="priceDesc">Maior preço</option><option value="name">Nome A-Z</option></select>
+
+<div class="head">
+<div>
+  <div class="eyebrow">CATÁLOGO ONYX</div>
+  <h2>Anúncios</h2>
+  <p>Cada anúncio pode representar uma conta diferente.</p>
 </div>
-<div class="products" id="productsGrid"><div class="empty">Carregando anúncios...</div></div>
+
+<div class="eyebrow" id="catalogCount">0 anúncios</div>
+</div>
+
+
+<div class="tools">
+<div class="search">
+  <span>⌕</span>
+  <input
+    id="searchInput"
+    placeholder="Pesquisar conta, item ou característica..."
+    autocomplete="off">
+</div>
+</div>
+
+
+<div class="filters">
+
+<button class="filter active" data-filter="all">Todos</button>
+<button class="filter" data-filter="roblox">Roblox</button>
+<button class="filter" data-filter="fortnite">Fortnite</button>
+<button class="filter" data-filter="vbucks">V-Bucks</button>
+<button class="filter" data-filter="nitradas">Nitradas</button>
+
+<select class="sort" id="sortSelect">
+  <option value="default">Ordenar: padrão</option>
+  <option value="priceAsc">Menor preço</option>
+  <option value="priceDesc">Maior preço</option>
+  <option value="name">Nome A-Z</option>
+</select>
+
+</div>
+
+
+<div class="products" id="productsGrid">
+  <div class="empty">Carregando anúncios...</div>
+</div>
+
 </section>
 
-<section class="info" id="how"><div class="container"><div class="head"><div><div class="eyebrow">COMO FUNCIONA</div><h2>Simples e direto.</h2></div></div><div class="info-grid">
-<article class="info-card"><b>01 / ESCOLHA</b><h3>Encontre seu anúncio</h3><p>Navegue pelas categorias e compare as características de cada conta.</p></article>
-<article class="info-card"><b>02 / PAGAMENTO</b><h3>Finalize a compra</h3><p>Escolha o anúncio e siga para o checkout da ONYX.</p></article>
-<article class="info-card"><b>03 / ENTREGA</b><h3>Receba sua compra</h3><p>Após a confirmação, a entrega é liberada automaticamente pelo sistema.</p></article>
-</div></div></section>
+
+<section class="info" id="how">
+
+<div class="container">
+
+<div class="head">
+<div>
+  <div class="eyebrow">COMO FUNCIONA</div>
+  <h2>Simples e direto.</h2>
+</div>
+</div>
+
+<div class="info-grid">
+
+<article class="info-card">
+  <b>01 / ESCOLHA</b>
+  <h3>Encontre seu anúncio</h3>
+  <p>Navegue pelas categorias e compare as características de cada conta.</p>
+</article>
+
+<article class="info-card">
+  <b>02 / PAGAMENTO</b>
+  <h3>Finalize a compra</h3>
+  <p>Escolha o anúncio e siga para o checkout da ONYX.</p>
+</article>
+
+<article class="info-card">
+  <b>03 / ENTREGA</b>
+  <h3>Receba sua compra</h3>
+  <p>Após a confirmação, a entrega é liberada automaticamente pelo sistema.</p>
+</article>
+
+</div>
+</div>
+</section>
+
 </main>
 
-<footer><div class="footer container"><div><strong>ONYX STORE</strong><small>Contas e produtos digitais</small></div><div class="footer-links"><a href="#categories">Categorias</a><a href="#products">Anúncios</a><a href="#how">Como funciona</a><a href="https://discord.gg/p9ZmkncQ8q" target="_blank">Discord</a></div><small>© 2026 ONYX.</small></div></footer>
 
-<div class="modal-bg" id="checkoutModal"><div class="modal"><button class="close" onclick="closeModal()">×</button><div class="eyebrow">FINALIZAR COMPRA</div><h2 id="orderProduct">Preparando pedido...</h2>
-<div class="summary"><div class="row"><span>Anúncio</span><strong id="summaryProduct">—</strong></div><div class="row"><span>Valor</span><strong id="summaryBase">—</strong></div><div class="row"><span>Taxa</span><strong id="summaryFee">—</strong></div><div class="row total"><span>Total</span><strong id="orderPrice">—</strong></div></div>
-<div class="payment" id="paymentStatus"><strong id="statusTitle">Criando cobrança...</strong><br><span id="statusDescription">Aguarde.</span></div><button class="paybtn" id="checkoutBtn" disabled>Preparando pagamento...</button>
-<div class="delivery" id="delivery"><div class="eyebrow">VENDA APROVADA</div><h2>Compra concluída!</h2><div class="account" id="account"></div><button class="copy" onclick="copyAccount()">COPIAR PRODUTO</button></div>
-<div style="margin-top:15px;text-align:center;color:#555;font-size:8px">Pedido: <strong id="orderId">—</strong></div></div></div>
+<footer>
+<div class="footer container">
+
+<div>
+  <strong>ONYX STORE</strong>
+  <small>Contas e produtos digitais</small>
+</div>
+
+<div class="footer-links">
+  <a href="#categories">Categorias</a>
+  <a href="#products">Anúncios</a>
+  <a href="#how">Como funciona</a>
+  <a href="https://discord.gg/p9ZmkncQ8q" target="_blank">Discord</a>
+</div>
+
+<small>© 2026 ONYX.</small>
+
+</div>
+</footer>
+
+
+<div class="modal-bg" id="checkoutModal">
+
+<div class="modal">
+
+<button class="close" onclick="closeModal()">×</button>
+
+<div class="eyebrow">FINALIZAR COMPRA</div>
+
+<h2 id="orderProduct">Preparando pedido...</h2>
+
+<div class="summary">
+
+<div class="row">
+  <span>Anúncio</span>
+  <strong id="summaryProduct">—</strong>
+</div>
+
+<div class="row">
+  <span>Valor</span>
+  <strong id="summaryBase">—</strong>
+</div>
+
+<div class="row">
+  <span>Taxa</span>
+  <strong id="summaryFee">—</strong>
+</div>
+
+<div class="row total">
+  <span>Total</span>
+  <strong id="orderPrice">—</strong>
+</div>
+
+</div>
+
+<div class="payment" id="paymentStatus">
+<strong id="statusTitle">Criando cobrança...</strong>
+<br>
+<span id="statusDescription">Aguarde.</span>
+</div>
+
+<button class="paybtn" id="checkoutBtn" disabled>
+Preparando pagamento...
+</button>
+
+<div class="delivery" id="delivery">
+
+<div class="eyebrow">VENDA APROVADA</div>
+
+<h2>Compra concluída!</h2>
+
+<div class="account" id="account"></div>
+
+<button class="copy" onclick="copyAccount()">
+COPIAR PRODUTO
+</button>
+
+</div>
+
+<div style="margin-top:15px;text-align:center;color:#555;font-size:8px">
+Pedido: <strong id="orderId">—</strong>
+</div>
+
+</div>
+</div>
+
+
 <div id="toast"></div>
 
+
 <script>
-let allProducts=[],currentFilter="all",currentOrderId=null,currentCheckoutUrl=null,pollTimer=null,currentAccount="";
+
+let allProducts=[];
+let currentFilter="all";
+let currentOrderId=null;
+let currentCheckoutUrl=null;
+let pollTimer=null;
+let currentAccount="";
+
 const $=s=>document.querySelector(s);
-function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-function money(c){return(Number(c||0)/100).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
-function price(p){if(p.priceCents!=null)return Number(p.priceCents);if(p.price_cents!=null)return Number(p.price_cents);let n=Number(p.price);return Number.isNaN(n)?0:n<100?Math.round(n*100):Math.round(n)}
-function id(p){return p.id??p.productId??p._id}
-function name(p){return p.name??p.title??"Conta"}
-function desc(p){return p.description??p.desc??"Conta disponível na ONYX STORE."}
-function stock(p){return Number(p.stock??p.stockCount??p.available??p.quantity??1)}
-function cat(p){return String(p.category??p.type??p.game??"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,"")}
-function image(p){return p.image??p.imageUrl??p.image_url??p.thumbnail??p.photo??""}
-function label(c){return({roblox:"ROBLOX",fortnite:"FORTNITE",vbucks:"V-BUCKS",nitradas:"NITRADAS"})[c]||"DIGITAL"}
-function toast(m){let t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
-function counts(){["roblox","fortnite","vbucks","nitradas"].forEach(c=>$("#count-"+c).textContent=allProducts.filter(p=>cat(p)===c&&stock(p)>0).length);$("#catalogCount").textContent=allProducts.length+" anúncio"+(allProducts.length===1?"":"s")}
+
+function esc(v){
+  return String(v??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;")
+}
+
+function money(c){
+  return(Number(c||0)/100).toLocaleString("pt-BR",{
+    style:"currency",
+    currency:"BRL"
+  })
+}
+
+function price(p){
+  if(p.priceCents!=null)return Number(p.priceCents);
+  if(p.price_cents!=null)return Number(p.price_cents);
+
+  let n=Number(p.price);
+
+  return Number.isNaN(n)
+    ?0
+    :n<100
+      ?Math.round(n*100)
+      :Math.round(n)
+}
+
+function id(p){
+  return p.id??p.productId??p._id
+}
+
+function name(p){
+  return p.name??p.title??"Conta"
+}
+
+function desc(p){
+  return p.description??p.desc??"Conta disponível na ONYX STORE."
+}
+
+function stock(p){
+  return Number(
+    p.stock??
+    p.stockCount??
+    p.available??
+    p.quantity??
+    1
+  )
+}
+
+function cat(p){
+  return String(
+    p.category??
+    p.type??
+    p.game??
+    ""
+  )
+  .toLowerCase()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g,"")
+  .replace(/\s+/g,"")
+}
+
+function image(p){
+  /*
+    O PRODUTO PODE TER SUA PRÓPRIA FOTO.
+
+    O backend pode retornar qualquer um destes campos:
+    image
+    imageUrl
+    image_url
+    thumbnail
+    photo
+
+    Se não tiver foto, usa o ícone da categoria.
+  */
+
+  return p.image??
+         p.imageUrl??
+         p.image_url??
+         p.thumbnail??
+         p.photo??
+         ""
+}
+
+function label(c){
+  return({
+    roblox:"ROBLOX",
+    fortnite:"FORTNITE",
+    vbucks:"V-BUCKS",
+    nitradas:"NITRADAS"
+  })[c]||"DIGITAL"
+}
+
+function fallback(c){
+
+  if(c==="fortnite")return"FN";
+  if(c==="roblox")return"RB";
+  if(c==="vbucks")return"V";
+  if(c==="nitradas")return"N";
+
+  return"ON";
+}
+
+function toast(m){
+  let t=document.createElement("div");
+
+  t.className="toast";
+  t.textContent=m;
+
+  document.body.appendChild(t);
+
+  setTimeout(()=>t.remove(),2800)
+}
+
+function counts(){
+
+  ["roblox","fortnite","vbucks","nitradas"].forEach(c=>{
+
+    $("#count-"+c).textContent=
+      allProducts.filter(
+        p=>cat(p)===c&&stock(p)>0
+      ).length
+
+  });
+
+  $("#catalogCount").textContent=
+    allProducts.length+
+    " anúncio"+
+    (allProducts.length===1?"":"s")
+}
+
 function render(){
- let arr=[...allProducts],q=$("#searchInput").value.trim().toLowerCase();
- if(currentFilter!=="all")arr=arr.filter(p=>cat(p)===currentFilter);
- if(q)arr=arr.filter(p=>(name(p)+" "+desc(p)+" "+cat(p)).toLowerCase().includes(q));
- let s=$("#sortSelect").value;if(s==="priceAsc")arr.sort((a,b)=>price(a)-price(b));if(s==="priceDesc")arr.sort((a,b)=>price(b)-price(a));if(s==="name")arr.sort((a,b)=>name(a).localeCompare(name(b),"pt-BR"));
- if(!arr.length){$("#productsGrid").innerHTML='<div class="empty">Nenhum anúncio encontrado.</div>';return}
- $("#productsGrid").innerHTML=arr.map(p=>{let im=image(p),c=cat(p),ok=stock(p)>0,safe=String(id(p)).replace(/\\/g,"\\\\").replace(/'/g,"\\'");
- return `<article class="product"><div class="photo">${im?`<img src="${esc(im)}" alt="${esc(name(p))}" loading="lazy">`:`<div class="cat-art">${c==="fortnite"?"FN":c==="roblox"?"RB":c==="vbucks"?"V":"N"}</div>`}<span class="tag">${label(c)}</span></div><div class="body"><div class="title">${esc(name(p))}</div><div class="desc">${esc(desc(p))}</div><div class="pills"><span class="pill">⚡ Automático</span><span class="pill">${ok?"✓ Disponível":"× Esgotado"}</span></div><div class="bottom"><div class="price"><small>Preço</small><strong>${money(price(p))}</strong></div><button class="buy" ${ok?"":"disabled"} onclick="buy('${safe}')">${ok?"Comprar":"Esgotado"}</button></div></div></article>`}).join("")}
-async function load(){try{let r=await fetch("/api/products",{cache:"no-store"});let d=await r.json();allProducts=Array.isArray(d)?d:(Array.isArray(d.products)?d.products:[]);counts();render()}catch(e){$("#productsGrid").innerHTML='<div class="empty">Não foi possível carregar os anúncios.</div>'}}
-function openModal(){$("#checkoutModal").classList.add("open")}
-function closeModal(){if(pollTimer)clearInterval(pollTimer);$("#checkoutModal").classList.remove("open")}
+
+  let arr=[...allProducts];
+
+  let q=$("#searchInput")
+    .value
+    .trim()
+    .toLowerCase();
+
+  if(currentFilter!=="all"){
+    arr=arr.filter(
+      p=>cat(p)===currentFilter
+    )
+  }
+
+  if(q){
+
+    arr=arr.filter(p=>
+      (
+        name(p)+" "+
+        desc(p)+" "+
+        cat(p)
+      )
+      .toLowerCase()
+      .includes(q)
+    )
+
+  }
+
+  let s=$("#sortSelect").value;
+
+  if(s==="priceAsc")
+    arr.sort((a,b)=>price(a)-price(b));
+
+  if(s==="priceDesc")
+    arr.sort((a,b)=>price(b)-price(a));
+
+  if(s==="name")
+    arr.sort(
+      (a,b)=>
+        name(a).localeCompare(
+          name(b),
+          "pt-BR"
+        )
+    );
+
+  if(!arr.length){
+
+    $("#productsGrid").innerHTML=
+      '<div class="empty">Nenhum anúncio encontrado.</div>';
+
+    return
+  }
+
+  $("#productsGrid").innerHTML=
+    arr.map(p=>{
+
+      let im=image(p);
+      let c=cat(p);
+      let ok=stock(p)>0;
+
+      let safe=String(id(p))
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+
+      /*
+        Se o produto tiver foto:
+        mostra a foto pequena no topo.
+
+        Se não tiver:
+        mostra somente o símbolo da categoria.
+      */
+
+      let visual=im
+        ?`
+          <img
+            src="${esc(im)}"
+            alt="${esc(name(p))}"
+            loading="lazy"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+
+          <div
+            class="fallback"
+            style="display:none">
+            ${fallback(c)}
+          </div>
+        `
+        :`
+          <div class="fallback">
+            ${fallback(c)}
+          </div>
+        `;
+
+      return`
+
+      <article class="product">
+
+        <div class="photo">
+
+          ${visual}
+
+          <span class="tag">
+            ${label(c)}
+          </span>
+
+        </div>
+
+        <div class="body">
+
+          <div class="title">
+            ${esc(name(p))}
+          </div>
+
+          <div class="desc">
+            ${esc(desc(p))}
+          </div>
+
+          <div class="pills">
+
+            <span class="pill">
+              ⚡ Automático
+            </span>
+
+            <span class="pill">
+              ${ok?"✓ Disponível":"× Esgotado"}
+            </span>
+
+          </div>
+
+          <div class="bottom">
+
+            <div class="price">
+
+              <small>Preço</small>
+
+              <strong>
+                ${money(price(p))}
+              </strong>
+
+            </div>
+
+            <button
+              class="buy"
+              ${ok?"":"disabled"}
+              onclick="buy('${safe}')">
+
+              ${ok?"Comprar":"Esgotado"}
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+      `
+
+    }).join("")
+}
+
+async function load(){
+
+  try{
+
+    let r=await fetch(
+      "/api/products",
+      {cache:"no-store"}
+    );
+
+    let d=await r.json();
+
+    allProducts=
+      Array.isArray(d)
+        ?d
+        :(Array.isArray(d.products)
+          ?d.products
+          :[]);
+
+    counts();
+    render();
+
+  }catch(e){
+
+    $("#productsGrid").innerHTML=
+      '<div class="empty">Não foi possível carregar os anúncios.</div>'
+
+  }
+}
+
+function openModal(){
+  $("#checkoutModal").classList.add("open")
+}
+
+function closeModal(){
+
+  if(pollTimer)
+    clearInterval(pollTimer);
+
+  $("#checkoutModal")
+    .classList
+    .remove("open")
+}
+
 async function buy(pid){
- let p=allProducts.find(x=>String(id(x))===String(pid));if(!p)return toast("Anúncio não encontrado.");if(stock(p)<=0)return toast("Esse anúncio está esgotado.");
- openModal();$("#orderProduct").textContent=name(p);$("#summaryProduct").textContent=name(p);$("#summaryBase").textContent=money(price(p));$("#summaryFee").textContent="Calculando...";$("#orderPrice").textContent="Calculando...";$("#statusTitle").textContent="Criando cobrança...";$("#statusDescription").textContent="Aguarde.";$("#checkoutBtn").disabled=true;$("#checkoutBtn").textContent="Preparando pagamento...";$("#delivery").classList.remove("show");
- try{let r=await fetch("/api/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({productId:id(p)})});let d=await r.json();if(!r.ok)throw Error(d.error||d.message||"Erro ao criar pedido.");currentOrderId=d.orderId;currentCheckoutUrl=d.checkout||d.redirectUrl||d.paymentUrl;let amount=Number(d.amountCents??d.totalAmountCents??price(p)),base=Number(d.baseAmountCents??price(p));$("#orderId").textContent=currentOrderId||"—";$("#summaryBase").textContent=money(base);$("#summaryFee").textContent=amount>base?money(amount-base):"Incluída";$("#orderPrice").textContent=money(amount);$("#statusTitle").textContent="Pagamento pronto";$("#statusDescription").textContent="Abra o checkout para pagar.";if(currentCheckoutUrl){$("#checkoutBtn").disabled=false;$("#checkoutBtn").textContent="Abrir pagamento";$("#checkoutBtn").onclick=()=>window.open(currentCheckoutUrl,"_blank")}else toast("Link de pagamento não retornado.");if(pollTimer)clearInterval(pollTimer);pollTimer=setInterval(check,3000);check()}catch(e){$("#statusTitle").textContent="Erro";$("#statusDescription").textContent=e.message;toast(e.message)}}
-async function check(){if(!currentOrderId)return;try{let r=await fetch("/api/order/"+encodeURIComponent(currentOrderId),{cache:"no-store"});if(!r.ok)return;let d=await r.json();if(d.status==="paid"&&(d.delivered||d.account||d.product)){if(pollTimer)clearInterval(pollTimer);currentAccount=d.account??d.product??d.delivery??"";$("#statusTitle").textContent="Pagamento confirmado!";$("#statusDescription").textContent="Compra liberada.";$("#checkoutBtn").style.display="none";$("#delivery").classList.add("show");$("#account").textContent=currentAccount;toast("✓ Venda aprovada!")}}catch(e){}}
-async function copyAccount(){try{await navigator.clipboard.writeText(currentAccount);toast("Produto copiado.")}catch(e){toast("Não foi possível copiar.")}}
-document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentFilter=b.dataset.filter;render()});
-document.querySelectorAll(".cat").forEach(b=>b.onclick=()=>{currentFilter=b.dataset.category;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.dataset.filter===currentFilter));document.querySelector("#products").scrollIntoView({behavior:"smooth"});render()});
-$("#searchInput").oninput=render;$("#sortSelect").onchange=render;$("#checkoutModal").onclick=e=>{if(e.target.id==="checkoutModal")closeModal()};load();
+
+  let p=allProducts.find(
+    x=>String(id(x))===String(pid)
+  );
+
+  if(!p)
+    return toast("Anúncio não encontrado.");
+
+  if(stock(p)<=0)
+    return toast("Esse anúncio está esgotado.");
+
+  openModal();
+
+  $("#orderProduct").textContent=name(p);
+  $("#summaryProduct").textContent=name(p);
+  $("#summaryBase").textContent=money(price(p));
+  $("#summaryFee").textContent="Calculando...";
+  $("#orderPrice").textContent="Calculando...";
+
+  $("#statusTitle").textContent="Criando cobrança...";
+  $("#statusDescription").textContent="Aguarde.";
+
+  $("#checkoutBtn").disabled=true;
+  $("#checkoutBtn").textContent="Preparando pagamento...";
+
+  $("#delivery").classList.remove("show");
+
+  try{
+
+    let r=await fetch(
+      "/api/checkout",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          productId:id(p)
+        })
+      }
+    );
+
+    let d=await r.json();
+
+    if(!r.ok)
+      throw Error(
+        d.error||
+        d.message||
+        "Erro ao criar pedido."
+      );
+
+    currentOrderId=d.orderId;
+
+    currentCheckoutUrl=
+      d.checkout||
+      d.redirectUrl||
+      d.paymentUrl;
+
+    let amount=
+      Number(
+        d.amountCents??
+        d.totalAmountCents??
+        price(p)
+      );
+
+    let base=
+      Number(
+        d.baseAmountCents??
+        price(p)
+      );
+
+    $("#orderId").textContent=
+      currentOrderId||"—";
+
+    $("#summaryBase").textContent=
+      money(base);
+
+    $("#summaryFee").textContent=
+      amount>base
+        ?money(amount-base)
+        :"Incluída";
+
+    $("#orderPrice").textContent=
+      money(amount);
+
+    $("#statusTitle").textContent=
+      "Pagamento pronto";
+
+    $("#statusDescription").textContent=
+      "Abra o checkout para pagar.";
+
+    if(currentCheckoutUrl){
+
+      $("#checkoutBtn").disabled=false;
+
+      $("#checkoutBtn").textContent=
+        "Abrir pagamento";
+
+      $("#checkoutBtn").onclick=
+        ()=>window.open(
+          currentCheckoutUrl,
+          "_blank"
+        )
+
+    }else{
+
+      toast(
+        "Link de pagamento não retornado."
+      )
+
+    }
+
+    if(pollTimer)
+      clearInterval(pollTimer);
+
+    pollTimer=setInterval(
+      check,
+      3000
+    );
+
+    check();
+
+  }catch(e){
+
+    $("#statusTitle").textContent="Erro";
+    $("#statusDescription").textContent=e.message;
+
+    toast(e.message)
+
+  }
+}
+
+async function check(){
+
+  if(!currentOrderId)return;
+
+  try{
+
+    let r=await fetch(
+      "/api/order/"+
+      encodeURIComponent(currentOrderId),
+      {cache:"no-store"}
+    );
+
+    if(!r.ok)return;
+
+    let d=await r.json();
+
+    if(
+      d.status==="paid" &&
+      (
+        d.delivered||
+        d.account||
+        d.product
+      )
+    ){
+
+      if(pollTimer)
+        clearInterval(pollTimer);
+
+      currentAccount=
+        d.account??
+        d.product??
+        d.delivery??
+        "";
+
+      $("#statusTitle").textContent=
+        "Pagamento confirmado!";
+
+      $("#statusDescription").textContent=
+        "Compra liberada.";
+
+      $("#checkoutBtn").style.display="none";
+
+      $("#delivery").classList.add("show");
+
+      $("#account").textContent=
+        currentAccount;
+
+      toast("✓ Venda aprovada!")
+    }
+
+  }catch(e){}
+
+}
+
+async function copyAccount(){
+
+  try{
+
+    await navigator.clipboard.writeText(
+      currentAccount
+    );
+
+    toast("Produto copiado.");
+
+  }catch(e){
+
+    toast("Não foi possível copiar.")
+
+  }
+}
+
+document
+  .querySelectorAll(".filter")
+  .forEach(b=>{
+
+    b.onclick=()=>{
+
+      document
+        .querySelectorAll(".filter")
+        .forEach(x=>
+          x.classList.remove("active")
+        );
+
+      b.classList.add("active");
+
+      currentFilter=
+        b.dataset.filter;
+
+      render()
+    }
+
+  });
+
+
+document
+  .querySelectorAll(".cat")
+  .forEach(b=>{
+
+    b.onclick=()=>{
+
+      currentFilter=
+        b.dataset.category;
+
+      document
+        .querySelectorAll(".filter")
+        .forEach(x=>
+          x.classList.toggle(
+            "active",
+            x.dataset.filter===
+            currentFilter
+          )
+        );
+
+      document
+        .querySelector("#products")
+        .scrollIntoView({
+          behavior:"smooth"
+        });
+
+      render()
+    }
+
+  });
+
+
+$("#searchInput").oninput=render;
+$("#sortSelect").onchange=render;
+
+$("#checkoutModal").onclick=e=>{
+
+  if(e.target.id==="checkoutModal")
+    closeModal()
+
+};
+
+load();
+
 </script>
+
 </body>
 </html>
+```
