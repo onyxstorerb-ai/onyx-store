@@ -1,423 +1,229 @@
+```html
 <!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
-  <title>ONYX Admin</title>
+  <title>ONYX — Admin</title>
 
   <style>
-    * {
-      box-sizing: border-box;
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      background:#050505;
+      color:#fff;
+      font-family:Arial,Helvetica,sans-serif;
     }
 
-    :root {
-      --bg: #050505;
-      --card: #0b0b0b;
-      --card2: #101010;
-      --line: #202020;
-      --text: #f5f5f5;
-      --muted: #777;
-      --green: #35d07f;
-      --red: #ff4d5a;
+    .wrap{
+      width:min(1150px,94%);
+      margin:40px auto;
     }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+    h1,h2,h3{margin-top:0}
+
+    .sub{
+      color:#888;
+      margin-bottom:25px;
     }
 
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
+    .card{
+      background:#0d0d0d;
+      border:1px solid #222;
+      border-radius:14px;
+      padding:22px;
+      margin-bottom:20px;
     }
 
-    button {
-      cursor: pointer;
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
     }
 
-    .login {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin-bottom:20px;
     }
 
-    .login-box {
-      width: 100%;
-      max-width: 380px;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 28px;
+    .stat{
+      background:#0d0d0d;
+      border:1px solid #222;
+      border-radius:14px;
+      padding:20px;
     }
 
-    .logo {
-      font-size: 25px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      margin-bottom: 6px;
+    .stat small{
+      display:block;
+      color:#888;
+      margin-bottom:8px;
     }
 
-    .subtitle {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 25px;
+    .stat strong{
+      font-size:25px;
     }
 
-    .app {
-      display: none;
-      min-height: 100vh;
+    input,textarea,select,button{
+      width:100%;
+      padding:13px;
+      border-radius:9px;
+      border:1px solid #292929;
+      background:#151515;
+      color:#fff;
+      font:inherit;
+      outline:none;
     }
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(5,5,5,.95);
-      border-bottom: 1px solid var(--line);
-      padding: 16px 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    input:focus,textarea:focus,select:focus{
+      border-color:#555;
     }
 
-    header strong {
-      font-size: 18px;
-      letter-spacing: 1px;
+    textarea{
+      min-height:90px;
+      resize:vertical;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 22px;
+    button{
+      cursor:pointer;
+      background:#fff;
+      color:#000;
+      font-weight:700;
+      border:0;
     }
 
-    .nav {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 22px;
+    button:hover{opacity:.9}
+
+    .danger{
+      background:#b91c1c;
+      color:#fff;
     }
 
-    .nav button {
-      background: #0d0d0d;
-      border: 1px solid var(--line);
-      color: #aaa;
-      border-radius: 10px;
-      padding: 10px 14px;
+    .full{
+      grid-column:1/-1;
     }
 
-    .nav button:hover {
-      color: white;
-      border-color: #333;
+    .products{
+      display:grid;
+      gap:12px;
     }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 12px;
-      margin-bottom: 20px;
+    .product{
+      display:flex;
+      align-items:center;
+      gap:15px;
+      background:#111;
+      border:1px solid #222;
+      padding:14px;
+      border-radius:12px;
     }
 
-    .stat {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 18px;
+    .product img{
+      width:70px;
+      height:70px;
+      object-fit:cover;
+      border-radius:10px;
+      background:#181818;
     }
 
-    .stat small {
-      color: var(--muted);
-      display: block;
-      margin-bottom: 8px;
+    .info{
+      flex:1;
     }
 
-    .stat strong {
-      font-size: 22px;
+    .info strong{
+      display:block;
+      margin-bottom:5px;
     }
 
-    .section {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
+    .info small{
+      color:#888;
     }
 
-    .section-title {
-      font-size: 17px;
-      font-weight: 900;
-      margin-bottom: 4px;
+    .sales{
+      display:grid;
+      gap:10px;
     }
 
-    .section-desc {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 18px;
+    .sale{
+      background:#111;
+      border:1px solid #222;
+      border-radius:12px;
+      padding:15px;
+      display:flex;
+      justify-content:space-between;
+      gap:15px;
+      align-items:center;
     }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2,1fr);
-      gap: 12px;
+    .sale-left strong{
+      display:block;
+      margin-bottom:6px;
     }
 
-    .full {
-      grid-column: 1 / -1;
+    .sale-left small{
+      color:#888;
+      display:block;
+      line-height:1.5;
     }
 
-    label {
-      display: block;
-      font-size: 11px;
-      font-weight: 800;
-      color: #aaa;
-      margin-bottom: 6px;
+    .sale-right{
+      text-align:right;
+      white-space:nowrap;
     }
 
-    input,
-    textarea,
-    select {
-      width: 100%;
-      background: #070707;
-      border: 1px solid #252525;
-      color: white;
-      border-radius: 10px;
-      padding: 12px;
-      outline: none;
+    .sale-right strong{
+      font-size:17px;
     }
 
-    textarea {
-      min-height: 90px;
-      resize: vertical;
+    .status{
+      display:inline-block;
+      margin-top:5px;
+      font-size:12px;
+      color:#aaa;
     }
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: #444;
+    .login{
+      max-width:420px;
+      margin:100px auto;
     }
 
-    .btn {
-      border: 0;
-      border-radius: 10px;
-      padding: 11px 16px;
-      font-weight: 800;
+    .hidden{display:none}
+
+    .msg{
+      margin-top:12px;
+      color:#aaa;
+      white-space:pre-wrap;
     }
 
-    .btn-primary {
-      background: white;
-      color: black;
+    .refresh{
+      width:auto;
+      padding:10px 16px;
+      margin-bottom:15px;
     }
 
-    .btn-danger {
-      background: rgba(255,77,90,.12);
-      border: 1px solid rgba(255,77,90,.25);
-      color: #ff6974;
-    }
-
-    .btn-secondary {
-      background: #151515;
-      border: 1px solid #292929;
-      color: white;
-    }
-
-    .products {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 12px;
-    }
-
-    .product {
-      background: var(--card2);
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      padding: 15px;
-    }
-
-    .product-image {
-      height: 90px;
-      border-radius: 10px;
-      background: #080808;
-      border: 1px solid #1c1c1c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-      overflow: hidden;
-    }
-
-    .product-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      padding: 8px;
-    }
-
-    .product-name {
-      font-weight: 900;
-      margin-bottom: 5px;
-    }
-
-    .product-desc {
-      color: #777;
-      font-size: 12px;
-      min-height: 30px;
-    }
-
-    .badges {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin: 12px 0;
-    }
-
-    .badge {
-      font-size: 10px;
-      padding: 5px 8px;
-      border-radius: 7px;
-      background: #171717;
-      color: #aaa;
-    }
-
-    .badge.green {
-      color: var(--green);
-      background: rgba(53,208,127,.08);
-    }
-
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(2,1fr);
-      gap: 12px;
-    }
-
-    .category {
-      border: 1px solid var(--line);
-      background: var(--card2);
-      border-radius: 13px;
-      padding: 15px;
-    }
-
-    .category-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .category-image {
-      width: 52px;
-      height: 52px;
-      border-radius: 10px;
-      background: #080808;
-      border: 1px solid #222;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .category-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      padding: 5px;
-    }
-
-    .category-name {
-      font-weight: 900;
-    }
-
-    .category-key {
-      color: #666;
-      font-size: 10px;
-      margin-top: 3px;
-    }
-
-    .orders {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 650px;
-    }
-
-    th,
-    td {
-      padding: 12px 8px;
-      text-align: left;
-      border-bottom: 1px solid var(--line);
-      font-size: 12px;
-    }
-
-    th {
-      color: #777;
-      font-size: 10px;
-      text-transform: uppercase;
-    }
-
-    .empty {
-      color: #666;
-      padding: 25px 0;
-      text-align: center;
-    }
-
-    .alert {
-      display: none;
-      background: rgba(255,77,90,.1);
-      border: 1px solid rgba(255,77,90,.25);
-      color: #ff6974;
-      padding: 10px;
-      border-radius: 9px;
-      font-size: 12px;
-      margin-bottom: 12px;
-    }
-
-    .toast {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      background: #151515;
-      border: 1px solid #292929;
-      color: white;
-      padding: 13px 16px;
-      border-radius: 10px;
-      display: none;
-      z-index: 100;
-      font-size: 13px;
-    }
-
-    @media (max-width: 850px) {
-      .stats {
-        grid-template-columns: repeat(2,1fr);
+    @media(max-width:700px){
+      .grid,
+      .stats{
+        grid-template-columns:1fr;
       }
 
-      .products {
-        grid-template-columns: repeat(2,1fr);
-      }
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 14px;
+      .product{
+        align-items:flex-start;
       }
 
-      .form-grid,
-      .category-grid,
-      .products {
-        grid-template-columns: 1fr;
+      .product button{
+        width:auto;
       }
 
-      .stats {
-        grid-template-columns: 1fr 1fr;
+      .sale{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .sale-right{
+        text-align:left;
       }
     }
   </style>
@@ -426,1160 +232,791 @@
 <body>
 
   <!-- LOGIN -->
-  <div id="login" class="login">
-    <div class="login-box">
-      <div class="logo">ONYX</div>
-      <div class="subtitle">Painel administrativo</div>
+  <div id="login" class="wrap login">
+    <div class="card">
+      <h1>ONYX Admin</h1>
+      <div class="sub">Painel de gerenciamento</div>
 
-      <div id="loginAlert" class="alert"></div>
-
-      <label for="password">Senha administrativa</label>
       <input
         id="password"
         type="password"
-        placeholder="Digite sua senha"
-        autocomplete="off"
+        placeholder="Senha do administrador"
       >
 
-      <button
-        class="btn btn-primary"
-        style="width:100%;margin-top:12px"
-        onclick="login()"
-      >
-        Entrar
-      </button>
+      <br><br>
+
+      <button onclick="login()">Entrar</button>
+
+      <div id="loginMsg" class="msg"></div>
     </div>
   </div>
 
-  <!-- APP -->
-  <div id="app" class="app">
 
-    <header>
-      <strong>ONYX ADMIN</strong>
+  <!-- PAINEL -->
+  <div id="panel" class="wrap hidden">
+
+    <h1>ONYX Admin</h1>
+    <div class="sub">Gerencie produtos, estoque e vendas.</div>
+
+
+    <!-- ESTATÍSTICAS -->
+    <div class="stats">
+
+      <div class="stat">
+        <small>Vendas hoje</small>
+        <strong id="todaySales">R$ 0,00</strong>
+      </div>
+
+      <div class="stat">
+        <small>Pedidos hoje</small>
+        <strong id="todayOrders">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Total vendido</small>
+        <strong id="totalSales">R$ 0,00</strong>
+      </div>
+
+    </div>
+
+
+    <!-- NOVO PRODUTO -->
+    <div class="card">
+
+      <h2>Novo produto</h2>
+
+      <div class="grid">
+
+        <input
+          id="name"
+          placeholder="Nome do produto"
+        >
+
+        <input
+          id="price"
+          type="number"
+          step="0.01"
+          placeholder="Preço (ex: 29.90)"
+        >
+
+        <select id="category">
+          <option value="roblox">Roblox</option>
+          <option value="fortnite">Fortnite</option>
+          <option value="vbucks">V-Bucks</option>
+          <option value="nitradas">Nitradas</option>
+        </select>
+
+        <input
+          id="image"
+          placeholder="URL da imagem do produto"
+        >
+
+        <textarea
+          id="description"
+          class="full"
+          placeholder="Descrição do produto"
+        ></textarea>
+
+      </div>
+
+      <br>
+
+      <button onclick="createProduct()">
+        Cadastrar produto
+      </button>
+
+      <div id="productMsg" class="msg"></div>
+
+    </div>
+
+
+    <!-- ESTOQUE -->
+    <div class="card">
+
+      <h2>Adicionar estoque</h2>
+
+      <div class="grid">
+
+        <select id="stockProduct">
+          <option value="">Selecione o produto</option>
+        </select>
+
+        <textarea
+          id="stock"
+          placeholder="Cole os itens do estoque, um por linha"
+        ></textarea>
+
+      </div>
+
+      <br>
+
+      <button onclick="addStock()">
+        Adicionar estoque
+      </button>
+
+      <div id="stockMsg" class="msg"></div>
+
+    </div>
+
+
+    <!-- PRODUTOS -->
+    <div class="card">
+
+      <h2>Produtos cadastrados</h2>
+
+      <div id="products" class="products">
+        Carregando...
+      </div>
+
+    </div>
+
+
+    <!-- HISTÓRICO -->
+    <div class="card">
+
+      <h2>Histórico de vendas</h2>
 
       <button
-        class="btn btn-secondary"
-        onclick="logout()"
+        class="refresh"
+        onclick="loadOrders()"
       >
-        Sair
+        Atualizar histórico
       </button>
-    </header>
 
-    <main class="container">
-
-      <div class="nav">
-        <button onclick="go('dashboard')">Dashboard</button>
-        <button onclick="go('categories')">Categorias</button>
-        <button onclick="go('productsSection')">Produtos</button>
-        <button onclick="go('stock')">Estoque</button>
-        <button onclick="go('orders')">Pedidos</button>
+      <div id="sales" class="sales">
+        Carregando...
       </div>
 
-      <!-- STATS -->
-      <div id="dashboard" class="stats">
-        <div class="stat">
-          <small>Produtos</small>
-          <strong id="statProducts">0</strong>
-        </div>
+    </div>
 
-        <div class="stat">
-          <small>Estoque</small>
-          <strong id="statStock">0</strong>
-        </div>
-
-        <div class="stat">
-          <small>Vendidos</small>
-          <strong id="statSold">0</strong>
-        </div>
-
-        <div class="stat">
-          <small>Pedidos pagos</small>
-          <strong id="statOrders">0</strong>
-        </div>
-      </div>
-
-      <!-- CATEGORIAS -->
-      <section id="categories" class="section">
-
-        <div class="section-title">
-          Categorias
-        </div>
-
-        <div class="section-desc">
-          Escolha a imagem que aparece para cada categoria na loja.
-        </div>
-
-        <div id="categoriesList" class="category-grid">
-          <div class="empty">Carregando...</div>
-        </div>
-
-      </section>
-
-      <!-- CRIAR PRODUTO -->
-      <section id="productsSection" class="section">
-
-        <div class="section-title">
-          Criar produto
-        </div>
-
-        <div class="section-desc">
-          Cadastre um produto para aparecer na loja.
-        </div>
-
-        <div id="productAlert" class="alert"></div>
-
-        <div class="form-grid">
-
-          <div>
-            <label>Nome</label>
-            <input
-              id="productName"
-              type="text"
-              placeholder="Ex: Conta Roblox"
-            >
-          </div>
-
-          <div>
-            <label>Preço</label>
-            <input
-              id="productPrice"
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="29.90"
-            >
-          </div>
-
-          <div>
-            <label>Categoria</label>
-
-            <select id="productCategory">
-              <option value="roblox">Roblox</option>
-              <option value="fortnite">Fortnite</option>
-              <option value="vbucks">V-Bucks</option>
-              <option value="nitradas">Nitradas</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Imagem do produto</label>
-
-            <input
-              id="productImage"
-              type="url"
-              placeholder="https://site.com/imagem.png"
-            >
-          </div>
-
-          <div class="full">
-            <label>Descrição</label>
-
-            <textarea
-              id="productDescription"
-              placeholder="Descrição do produto..."
-            ></textarea>
-          </div>
-
-          <div class="full">
-            <button
-              class="btn btn-primary"
-              onclick="addProduct()"
-            >
-              Criar produto
-            </button>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- PRODUTOS -->
-      <section class="section">
-
-        <div class="section-title">
-          Produtos cadastrados
-        </div>
-
-        <div class="section-desc">
-          Produtos atualmente cadastrados no sistema.
-        </div>
-
-        <div
-          id="productsList"
-          class="products"
-        >
-          <div class="empty">Carregando...</div>
-        </div>
-
-      </section>
-
-      <!-- ESTOQUE -->
-      <section id="stock" class="section">
-
-        <div class="section-title">
-          Adicionar estoque
-        </div>
-
-        <div class="section-desc">
-          Cada linha adicionada representa uma conta/produto disponível.
-        </div>
-
-        <div id="stockAlert" class="alert"></div>
-
-        <div class="form-grid">
-
-          <div>
-            <label>Produto</label>
-
-            <select id="stockProduct">
-              <option value="">Selecione um produto</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Conta / Estoque</label>
-
-            <input
-              id="stockAccount"
-              type="text"
-              placeholder="email:senha ou conteúdo do produto"
-            >
-          </div>
-
-          <div class="full">
-            <button
-              class="btn btn-primary"
-              onclick="addStock()"
-            >
-              Adicionar ao estoque
-            </button>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- PEDIDOS -->
-      <section id="orders" class="section">
-
-        <div class="section-title">
-          Pedidos
-        </div>
-
-        <div class="section-desc">
-          Últimos pedidos registrados.
-        </div>
-
-        <div class="orders">
-
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Produto</th>
-                <th>Valor</th>
-                <th>Status</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-
-            <tbody id="ordersList">
-              <tr>
-                <td colspan="5" class="empty">
-                  Carregando...
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-        </div>
-      </section>
-
-    </main>
   </div>
 
-  <div id="toast" class="toast"></div>
 
-  <script>
-    let password = "";
-    let products = [];
-    let orders = [];
-    let categories = [];
+<script>
 
-    const CATEGORY_NAMES = {
-      roblox: "Roblox",
-      fortnite: "Fortnite",
-      vbucks: "V-Bucks",
-      nitradas: "Nitradas"
-    };
+let adminPassword = "";
 
-    const DEFAULT_CATEGORY_IMAGES = {
-      roblox:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/512px-Roblox_%282025%29_%28App_Icon%29.svg.png",
 
-      fortnite:
-        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png",
+/* =========================
+   API
+========================= */
 
-      vbucks:
-        "https://static.wikia.nocookie.net/fortnite_ptbr_gamepedia_ptbr/images/5/5a/Icon_VBucks.png",
+async function api(url, options = {}) {
 
-      nitradas:
-        "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ijJMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source&h=210"
-    };
+  options.headers = {
+    "Content-Type": "application/json",
+    "x-admin-password": adminPassword,
+    ...(options.headers || {})
+  };
 
-    function $(id) {
-      return document.getElementById(id);
-    }
+  const response = await fetch(url, options);
 
-    function headers() {
-      return {
-        "Content-Type": "application/json",
-        "x-admin-password": password
-      };
-    }
+  let data = {};
 
-    function money(cents) {
-      return (
-        Number(cents || 0) / 100
-      ).toLocaleString(
-        "pt-BR",
-        {
-          style: "currency",
-          currency: "BRL"
-        }
-      );
-    }
+  try {
+    data = await response.json();
+  } catch {}
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+  if (!response.ok) {
+    throw new Error(
+      data.error || "Erro na requisição."
+    );
+  }
 
-    function showToast(message) {
-      const toast = $("toast");
+  return data;
+}
 
-      toast.textContent = message;
-      toast.style.display = "block";
 
-      clearTimeout(
-        showToast.timer
-      );
+/* =========================
+   LOGIN
+========================= */
 
-      showToast.timer =
-        setTimeout(() => {
-          toast.style.display = "none";
-        }, 2500);
-    }
+async function login() {
 
-    function showAlert(id, message) {
-      const el = $(id);
+  const password =
+    document.getElementById("password").value.trim();
 
-      el.textContent = message;
-      el.style.display = "block";
+  if (!password) {
+    document.getElementById("loginMsg").textContent =
+      "Digite a senha.";
+    return;
+  }
 
-      setTimeout(() => {
-        el.style.display = "none";
-      }, 4000);
-    }
+  adminPassword = password;
 
-    function go(id) {
-      const element = $(id);
+  try {
 
-      if (element) {
-        element.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-    }
+    await api("/api/admin/products");
 
-    async function login() {
-      const value =
-        $("password").value.trim();
+    document
+      .getElementById("login")
+      .classList.add("hidden");
 
-      if (!value) {
-        showAlert(
-          "loginAlert",
-          "Digite a senha."
-        );
-        return;
-      }
+    document
+      .getElementById("panel")
+      .classList.remove("hidden");
 
-      password = value;
+    await loadProducts();
+    await loadOrders();
 
-      try {
-        const response =
-          await fetch(
-            "/api/admin/products",
-            {
-              headers:
-                headers()
-            }
-          );
+  } catch(error) {
 
-        if (!response.ok) {
-          password = "";
+    adminPassword = "";
 
-          showAlert(
-            "loginAlert",
-            "Senha incorreta ou acesso negado."
-          );
+    document.getElementById("loginMsg").textContent =
+      error.message;
 
-          return;
-        }
+  }
+}
 
-        $("login").style.display =
-          "none";
 
-        $("app").style.display =
-          "block";
+/* =========================
+   PRODUTOS
+========================= */
 
-        await refresh();
+async function loadProducts() {
 
-      } catch (error) {
-        password = "";
+  const container =
+    document.getElementById("products");
 
-        showAlert(
-          "loginAlert",
-          "Não foi possível conectar ao servidor."
-        );
-      }
-    }
+  const select =
+    document.getElementById("stockProduct");
 
-    function logout() {
-      password = "";
+  try {
 
-      $("app").style.display =
-        "none";
+    const data =
+      await api("/api/admin/products");
 
-      $("login").style.display =
-        "flex";
+    const products =
+      Array.isArray(data)
+        ? data
+        : (data.products || []);
 
-      $("password").value = "";
-    }
+    container.innerHTML = "";
 
-    async function refresh() {
-      try {
-        const [
-          productsResponse,
-          ordersResponse,
-          categoriesResponse
-        ] = await Promise.all([
-          fetch(
-            "/api/admin/products",
-            {
-              headers:
-                headers()
-            }
-          ),
+    select.innerHTML =
+      '<option value="">Selecione o produto</option>';
 
-          fetch(
-            "/api/admin/orders",
-            {
-              headers:
-                headers()
-            }
-          ),
 
-          fetch(
-            "/api/admin/categories",
-            {
-              headers:
-                headers()
-            }
-          )
-        ]);
-
-        if (
-          productsResponse.status === 401 ||
-          ordersResponse.status === 401 ||
-          categoriesResponse.status === 401
-        ) {
-          logout();
-          showAlert(
-            "loginAlert",
-            "Sua sessão expirou."
-          );
-          return;
-        }
-
-        if (productsResponse.ok) {
-          products =
-            await productsResponse.json();
-        } else {
-          products = [];
-        }
-
-        if (ordersResponse.ok) {
-          orders =
-            await ordersResponse.json();
-        } else {
-          orders = [];
-        }
-
-        if (categoriesResponse.ok) {
-          categories =
-            await categoriesResponse.json();
-        } else {
-          categories = [];
-        }
-
-        renderCategories();
-        renderProducts();
-        renderStockProducts();
-        renderOrders();
-        updateStats();
-
-      } catch (error) {
-        showToast(
-          "Erro ao atualizar painel."
-        );
-
-        console.error(error);
-      }
-    }
-
-    function updateStats() {
-      let stock = 0;
-      let sold = 0;
-
-      products.forEach(product => {
-        stock += Number(
-          product.stock || 0
-        );
-
-        sold += Number(
-          product.sold || 0
-        );
-      });
-
-      const paidOrders =
-        orders.filter(
-          order =>
-            String(
-              order.status
-            ).toLowerCase() ===
-            "paid"
-        ).length;
-
-      $("statProducts")
-        .textContent =
-        products.length;
-
-      $("statStock")
-        .textContent =
-        stock;
-
-      $("statSold")
-        .textContent =
-        sold;
-
-      $("statOrders")
-        .textContent =
-        paidOrders;
-    }
-
-    function renderCategories() {
-      const container =
-        $("categoriesList");
-
-      if (!categories.length) {
-        categories = [
-          {
-            id: "roblox",
-            name: "Roblox",
-            image:
-              DEFAULT_CATEGORY_IMAGES.roblox
-          },
-          {
-            id: "fortnite",
-            name: "Fortnite",
-            image:
-              DEFAULT_CATEGORY_IMAGES.fortnite
-          },
-          {
-            id: "vbucks",
-            name: "V-Bucks",
-            image:
-              DEFAULT_CATEGORY_IMAGES.vbucks
-          },
-          {
-            id: "nitradas",
-            name: "Nitradas",
-            image:
-              DEFAULT_CATEGORY_IMAGES.nitradas
-          }
-        ];
-      }
+    if (!products.length) {
 
       container.innerHTML =
-        categories.map(category => {
+        '<div class="sub">Nenhum produto cadastrado.</div>';
 
-          const id =
-            String(
-              category.id ||
-              category.category ||
-              ""
-            ).toLowerCase();
-
-          const name =
-            category.name ||
-            CATEGORY_NAMES[id] ||
-            id;
-
-          const image =
-            category.image ||
-            category.image_url ||
-            DEFAULT_CATEGORY_IMAGES[id] ||
-            "";
-
-          return `
-            <div class="category">
-
-              <div class="category-top">
-
-                <div class="category-image">
-                  ${
-                    image
-                      ? `<img
-                          src="${escapeHtml(image)}"
-                          alt="${escapeHtml(name)}"
-                          onerror="this.style.display='none'"
-                        >`
-                      : ""
-                  }
-                </div>
-
-                <div>
-                  <div class="category-name">
-                    ${escapeHtml(name)}
-                  </div>
-
-                  <div class="category-key">
-                    ${escapeHtml(id)}
-                  </div>
-                </div>
-
-              </div>
-
-              <label>URL da imagem</label>
-
-              <input
-                id="cat-${escapeHtml(id)}"
-                value="${escapeHtml(image)}"
-                placeholder="https://..."
-              >
-
-              <button
-                class="btn btn-primary"
-                style="margin-top:10px;width:100%"
-                onclick="saveCategory('${escapeHtml(id)}')"
-              >
-                Salvar imagem
-              </button>
-
-            </div>
-          `;
-        }).join("");
+      return;
     }
 
-    async function saveCategory(category) {
-      const input =
-        $(`cat-${category}`);
 
-      if (!input) {
-        return;
-      }
+    products.forEach(product => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = product.id;
+      option.textContent = product.name;
+
+      select.appendChild(option);
+
+
+      const item =
+        document.createElement("div");
+
+      item.className = "product";
+
 
       const image =
-        input.value.trim();
+        document.createElement("img");
 
-      if (
-        image &&
-        !/^https?:\/\//i.test(
-          image
-        )
-      ) {
-        showToast(
-          "Digite uma URL válida."
-        );
-        return;
-      }
+      image.src =
+        product.image_url ||
+        product.image ||
+        "";
 
-      try {
-        const response =
-          await fetch(
-            "/api/admin/categories/" +
-            encodeURIComponent(
-              category
-            ),
-            {
-              method: "PUT",
-              headers:
-                headers(),
-              body:
-                JSON.stringify({
-                  image_url:
-                    image
-                })
-            }
-          );
+      image.onerror = () => {
+        image.style.visibility = "hidden";
+      };
 
-        const data =
-          await response.json()
-            .catch(() => ({}));
 
-        if (!response.ok) {
-          throw new Error(
-            data.error ||
-            "Não foi possível salvar."
-          );
-        }
+      const info =
+        document.createElement("div");
 
-        showToast(
-          "Categoria atualizada."
-        );
-
-        await refresh();
-
-      } catch (error) {
-        showToast(
-          error.message ||
-          "Erro ao salvar categoria."
-        );
-      }
-    }
-
-    function renderProducts() {
-      const container =
-        $("productsList");
-
-      if (!products.length) {
-        container.innerHTML =
-          `<div class="empty">Nenhum produto cadastrado.</div>`;
-
-        return;
-      }
-
-      container.innerHTML =
-        products.map(product => {
-
-          const image =
-            product.image_url ||
-            product.image ||
-            "";
-
-          const category =
-            String(
-              product.category ||
-              "roblox"
-            ).toLowerCase();
-
-          const categoryName =
-            CATEGORY_NAMES[category] ||
-            category;
-
-          return `
-            <div class="product">
-
-              ${
-                image
-                  ? `
-                    <div class="product-image">
-                      <img
-                        src="${escapeHtml(image)}"
-                        alt="${escapeHtml(product.name)}"
-                        onerror="this.parentElement.innerHTML='<span style=&quot;color:#555;font-size:11px&quot;>Imagem indisponível</span>'"
-                      >
-                    </div>
-                  `
-                  : ""
-              }
-
-              <div class="product-name">
-                ${escapeHtml(product.name)}
-              </div>
-
-              <div class="product-desc">
-                ${escapeHtml(product.description || "Sem descrição.")}
-              </div>
-
-              <div class="badges">
-
-                <span class="badge">
-                  ${escapeHtml(categoryName)}
-                </span>
-
-                <span class="badge">
-                  ${money(product.price_cents)}
-                </span>
-
-                <span class="badge green">
-                  Estoque: ${Number(product.stock || 0)}
-                </span>
-
-                <span class="badge">
-                  Vendidos: ${Number(product.sold || 0)}
-                </span>
-
-              </div>
-
-              <button
-                class="btn btn-danger"
-                style="width:100%"
-                onclick="deleteProduct('${escapeHtml(product.id)}','${escapeHtml(product.name)}')"
-              >
-                Excluir produto
-              </button>
-
-            </div>
-          `;
-        }).join("");
-    }
-
-    function renderStockProducts() {
-      const select =
-        $("stockProduct");
-
-      select.innerHTML =
-        `<option value="">Selecione um produto</option>`;
-
-      products.forEach(product => {
-        const option =
-          document.createElement(
-            "option"
-          );
-
-        option.value =
-          product.id;
-
-        option.textContent =
-          product.name;
-
-        select.appendChild(
-          option
-        );
-      });
-    }
-
-    async function addProduct() {
-      const name =
-        $("productName")
-          .value
-          .trim();
+      info.className = "info";
 
       const price =
+        Number(product.price || 0)
+          .toFixed(2)
+          .replace(".", ",");
+
+
+      info.innerHTML = `
+        <strong>${escapeHtml(product.name)}</strong>
+        <small>
+          ${escapeHtml(product.category || "roblox")}
+          • R$ ${price}
+          • Estoque: ${product.stock ?? 0}
+        </small>
+      `;
+
+
+      const button =
+        document.createElement("button");
+
+      button.className = "danger";
+      button.textContent = "Excluir";
+
+      button.onclick = () =>
+        deleteProduct(product.id);
+
+
+      item.appendChild(image);
+      item.appendChild(info);
+      item.appendChild(button);
+
+      container.appendChild(item);
+
+    });
+
+  } catch(error) {
+
+    container.innerHTML =
+      `<div class="msg">${escapeHtml(error.message)}</div>`;
+
+  }
+}
+
+
+/* =========================
+   CRIAR PRODUTO
+========================= */
+
+async function createProduct() {
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const price =
+    Number(document.getElementById("price").value);
+
+  const category =
+    document.getElementById("category").value;
+
+  const image =
+    document.getElementById("image").value.trim();
+
+  const description =
+    document.getElementById("description").value.trim();
+
+  const msg =
+    document.getElementById("productMsg");
+
+
+  if (!name) {
+    msg.textContent =
+      "Digite o nome do produto.";
+    return;
+  }
+
+  if (!price || price <= 0) {
+    msg.textContent =
+      "Digite um preço válido.";
+    return;
+  }
+
+
+  try {
+
+    await api("/api/admin/products", {
+
+      method:"POST",
+
+      body:JSON.stringify({
+
+        name,
+        price,
+        category,
+        image,
+        description
+
+      })
+
+    });
+
+
+    msg.textContent =
+      "Produto cadastrado com sucesso.";
+
+    document.getElementById("name").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("image").value = "";
+    document.getElementById("description").value = "";
+
+
+    await loadProducts();
+
+  } catch(error) {
+
+    msg.textContent =
+      error.message;
+
+  }
+}
+
+
+/* =========================
+   ESTOQUE
+========================= */
+
+async function addStock() {
+
+  const productId =
+    document.getElementById("stockProduct").value;
+
+  const stockText =
+    document.getElementById("stock").value;
+
+  const msg =
+    document.getElementById("stockMsg");
+
+
+  if (!productId) {
+    msg.textContent =
+      "Selecione um produto.";
+    return;
+  }
+
+
+  const items =
+    stockText
+      .split("\n")
+      .map(x => x.trim())
+      .filter(Boolean);
+
+
+  if (!items.length) {
+    msg.textContent =
+      "Cole pelo menos um item.";
+    return;
+  }
+
+
+  try {
+
+    await api("/api/admin/stock", {
+
+      method:"POST",
+
+      body:JSON.stringify({
+
+        product_id:Number(productId),
+        items
+
+      })
+
+    });
+
+
+    msg.textContent =
+      `${items.length} item(ns) adicionados ao estoque.`;
+
+    document.getElementById("stock").value = "";
+
+    await loadProducts();
+
+  } catch(error) {
+
+    msg.textContent =
+      error.message;
+
+  }
+}
+
+
+/* =========================
+   EXCLUIR PRODUTO
+========================= */
+
+async function deleteProduct(id) {
+
+  if (!confirm(
+    "Tem certeza que deseja excluir este produto?"
+  )) {
+    return;
+  }
+
+
+  try {
+
+    await api(
+      "/api/admin/products/" + id,
+      {
+        method:"DELETE"
+      }
+    );
+
+    await loadProducts();
+
+  } catch(error) {
+
+    alert(error.message);
+
+  }
+}
+
+
+/* =========================
+   HISTÓRICO DE VENDAS
+========================= */
+
+async function loadOrders() {
+
+  const container =
+    document.getElementById("sales");
+
+
+  try {
+
+    const data =
+      await api("/api/admin/orders");
+
+
+    const orders =
+      Array.isArray(data)
+        ? data
+        : (data.orders || []);
+
+
+    let todayTotal = 0;
+    let todayCount = 0;
+    let total = 0;
+
+
+    const now = new Date();
+
+
+    orders.forEach(order => {
+
+      const value =
         Number(
-          $("productPrice")
-            .value
+          order.amount ??
+          order.price ??
+          order.total ??
+          0
         );
 
-      const category =
-        $("productCategory")
-          .value;
 
-      const image =
-        $("productImage")
-          .value
-          .trim();
+      const dateValue =
+        order.created_at ??
+        order.createdAt ??
+        order.paid_at ??
+        order.paidAt;
 
-      const description =
-        $("productDescription")
-          .value
-          .trim();
 
-      if (!name) {
-        showAlert(
-          "productAlert",
-          "Digite o nome do produto."
-        );
-        return;
-      }
+      const date =
+        dateValue
+          ? new Date(dateValue)
+          : null;
+
+
+      total += value;
+
 
       if (
-        !Number.isFinite(price) ||
-        price <= 0
+        date &&
+        date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
       ) {
-        showAlert(
-          "productAlert",
-          "Digite um preço válido."
-        );
-        return;
+
+        todayTotal += value;
+        todayCount++;
+
       }
 
-      if (
-        image &&
-        !/^https?:\/\//i.test(
-          image
-        )
-      ) {
-        showAlert(
-          "productAlert",
-          "A imagem precisa ser uma URL válida."
-        );
-        return;
-      }
+    });
 
-      try {
-        const response =
-          await fetch(
-            "/api/admin/products",
-            {
-              method: "POST",
-              headers:
-                headers(),
-              body:
-                JSON.stringify({
-                  name,
-                  price,
-                  description,
-                  category,
-                  image_url:
-                    image
-                })
-            }
-          );
 
-        const data =
-          await response.json()
-            .catch(() => ({}));
+    document.getElementById("todaySales")
+      .textContent =
+        money(todayTotal);
 
-        if (!response.ok) {
-          throw new Error(
-            data.error ||
-            "Não foi possível criar o produto."
-          );
-        }
 
-        $("productName")
-          .value = "";
+    document.getElementById("todayOrders")
+      .textContent =
+        todayCount;
 
-        $("productPrice")
-          .value = "";
 
-        $("productDescription")
-          .value = "";
+    document.getElementById("totalSales")
+      .textContent =
+        money(total);
 
-        $("productImage")
-          .value = "";
 
-        $("productCategory")
-          .value = "roblox";
+    container.innerHTML = "";
 
-        showToast(
-          "Produto criado com sucesso."
-        );
 
-        await refresh();
+    if (!orders.length) {
 
-      } catch (error) {
-        showAlert(
-          "productAlert",
-          error.message ||
-          "Erro ao criar produto."
-        );
-      }
+      container.innerHTML =
+        '<div class="sub">Nenhuma venda registrada.</div>';
+
+      return;
     }
 
-    async function deleteProduct(
-      productId,
-      productName
-    ) {
-      const confirmDelete =
-        confirm(
-          `Excluir "${productName}"?`
+
+    orders.forEach(order => {
+
+      const value =
+        Number(
+          order.amount ??
+          order.price ??
+          order.total ??
+          0
         );
 
-      if (!confirmDelete) {
-        return;
-      }
 
-      try {
-        const response =
-          await fetch(
-            "/api/admin/products/" +
-            encodeURIComponent(
-              productId
-            ),
-            {
-              method: "DELETE",
-              headers:
-                headers()
-            }
-          );
+      const dateValue =
+        order.created_at ??
+        order.createdAt ??
+        order.paid_at ??
+        order.paidAt;
 
-        const data =
-          await response.json()
-            .catch(() => ({}));
 
-        if (!response.ok) {
-          throw new Error(
-            data.error ||
-            "Não foi possível excluir."
-          );
-        }
+      const date =
+        dateValue
+          ? new Date(dateValue)
+          : null;
 
-        showToast(
-          "Produto excluído."
-        );
 
-        await refresh();
+      const product =
+        order.product_name ??
+        order.productName ??
+        order.name ??
+        "Produto";
 
-      } catch (error) {
-        showToast(
-          error.message ||
-          "Erro ao excluir."
-        );
-      }
+
+      const status =
+        order.status ??
+        "unknown";
+
+
+      const item =
+        document.createElement("div");
+
+      item.className = "sale";
+
+
+      const left =
+        document.createElement("div");
+
+      left.className = "sale-left";
+
+
+      const title =
+        document.createElement("strong");
+
+      title.textContent =
+        product;
+
+
+      const details =
+        document.createElement("small");
+
+      details.textContent =
+        "Pedido #" +
+        (order.id ?? "—") +
+        (date
+          ? " • " + formatDate(date)
+          : "");
+
+
+      const statusText =
+        document.createElement("span");
+
+      statusText.className = "status";
+
+      statusText.textContent =
+        "Status: " + status;
+
+
+      left.appendChild(title);
+      left.appendChild(details);
+      left.appendChild(statusText);
+
+
+      const right =
+        document.createElement("div");
+
+      right.className = "sale-right";
+
+
+      const price =
+        document.createElement("strong");
+
+      price.textContent =
+        money(value);
+
+
+      right.appendChild(price);
+
+
+      item.appendChild(left);
+      item.appendChild(right);
+
+
+      container.appendChild(item);
+
+    });
+
+
+  } catch(error) {
+
+    container.innerHTML =
+      `<div class="msg">${escapeHtml(error.message)}</div>`;
+
+  }
+}
+
+
+/* =========================
+   FORMATADORES
+========================= */
+
+function money(value) {
+
+  return Number(value || 0)
+    .toLocaleString("pt-BR", {
+      style:"currency",
+      currency:"BRL"
+    });
+
+}
+
+
+function formatDate(date) {
+
+  return date.toLocaleString(
+    "pt-BR",
+    {
+      dateStyle:"short",
+      timeStyle:"short"
     }
+  );
 
-    async function addStock() {
-      const productId =
-        $("stockProduct")
-          .value;
+}
 
-      const account =
-        $("stockAccount")
-          .value
-          .trim();
 
-      if (!productId) {
-        showAlert(
-          "stockAlert",
-          "Selecione um produto."
-        );
-        return;
-      }
+function escapeHtml(value) {
 
-      if (!account) {
-        showAlert(
-          "stockAlert",
-          "Digite o conteúdo do estoque."
-        );
-        return;
-      }
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
-      try {
-        const response =
-          await fetch(
-            "/api/admin/stock",
-            {
-              method: "POST",
-              headers:
-                headers(),
-              body:
-                JSON.stringify({
-                  productId,
-                  account
-                })
-            }
-          );
+}
 
-        const data =
-          await response.json()
-            .catch(() => ({}));
-
-        if (!response.ok) {
-          throw new Error(
-            data.error ||
-            "Não foi possível adicionar."
-          );
-        }
-
-        $("stockAccount")
-          .value = "";
-
-        showToast(
-          "Estoque adicionado."
-        );
-
-        await refresh();
-
-      } catch (error) {
-        showAlert(
-          "stockAlert",
-          error.message ||
-          "Erro ao adicionar estoque."
-        );
-      }
-    }
-
-    function renderOrders() {
-      const tbody =
-        $("ordersList");
-
-      if (!orders.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" class="empty">
-              Nenhum pedido encontrado.
-            </td>
-          </tr>
-        `;
-
-        return;
-      }
-
-      tbody.innerHTML =
-        orders.map(order => {
-
-          const date =
-            order.created_at
-              ? new Date(
-                  order.created_at
-                ).toLocaleString(
-                  "pt-BR"
-                )
-              : "-";
-
-          const status =
-            String(
-              order.status ||
-              ""
-            );
-
-          return `
-            <tr>
-
-              <td>
-                ${escapeHtml(order.id)}
-              </td>
-
-              <td>
-                ${escapeHtml(order.product || "-")}
-              </td>
-
-              <td>
-                ${money(order.amount_cents)}
-              </td>
-
-              <td>
-                ${escapeHtml(status)}
-              </td>
-
-              <td>
-                ${escapeHtml(date)}
-              </td>
-
-            </tr>
-          `;
-        }).join("");
-    }
-
-    $("password")
-      .addEventListener(
-        "keydown",
-        function(event) {
-          if (
-            event.key === "Enter"
-          ) {
-            login();
-          }
-        }
-      );
-  </script>
+</script>
 
 </body>
 </html>
+```
