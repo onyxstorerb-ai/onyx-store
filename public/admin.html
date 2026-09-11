@@ -4199,12 +4199,6 @@
           })
           .join('');
 
-      container.querySelectorAll('.delete-product-btn').forEach(button => {
-        button.addEventListener('click', () => {
-          deleteProduct(button.dataset.productId, button.dataset.productName);
-        });
-      });
-
     }
 
 
@@ -4390,6 +4384,12 @@
 
           })
           .join('');
+
+      container.querySelectorAll('.delete-product-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          deleteProduct(button.dataset.productId, button.dataset.productName);
+        });
+      });
 
     }
 
