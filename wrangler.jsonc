@@ -1,43 +1,22 @@
 {
-
   "$schema": "node_modules/wrangler/config-schema.json",
-
-  "name": "onyx-store",
-
+  "name": "onyx-store-v2",
   "main": "./src/index.ts",
-
   "compatibility_date": "2026-09-10",
-
   "compatibility_flags": [
-
     "nodejs_compat"
-
   ],
-
   "workers_dev": true,
-
   "assets": {
-
     "directory": "./public",
-
     "binding": "ASSETS"
-
   },
-
   "d1_databases": [
-
     {
-
       "binding": "DB",
-
       "database_name": "onyx-store-db",
-
       "database_id": "7123ee2d-7b90-4664-b365-2fcc213ee05b",
-
       "migrations_dir": "migrations"
-
     }
-
   ]
-
 }
